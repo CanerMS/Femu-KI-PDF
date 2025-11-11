@@ -13,8 +13,8 @@ logger = logging.getLogger(__name__)
 
 class PDFLoader:
     """Handles loading PDF files from directory"""
-    
-    def __init__(self, pdf_dir: str = "data/raw_pdfs"):
+
+    def __init__(self, pdf_dir: str = "data/raw_pdfs"): 
         """
         Initialize PDF loader
         

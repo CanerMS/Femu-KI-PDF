@@ -146,6 +146,14 @@ If anomaly detection doesn't work well:
 - Check if PDFs contain extractable text
 - Review text in `data/extracted_texts/`
 
+**The vectorizer learns:**
+
+- Vocabulary - Which words/phrases exist in your training data
+- Document frequencies - How many documents contain each word
+- IDF weights - How rare/common each word is across all documents
+- Feature selection - Which 1000 words are most important
+
+
 ##  License
 
 This project is open source and available for educational purposes.

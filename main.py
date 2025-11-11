@@ -88,12 +88,12 @@ def main():
     logger.info(f"Test set: {len(test_files)} PDFs")
     logger.info(f"Detected {test_predictions.sum()} potentially useful PDFs in test set")
     logger.info(f"\nResults saved to: results/predictions.csv")
-    logger.info("="*60)
+    logger.info("="*60) # End of pipeline
     
     # Save model
-    detector.save_model('results/anomaly_detector.joblib')
+    detector.save_model('results/anomaly_detector.joblib') # Save trained model
     
-    return results_df
+    return results_df # Return results dataframe
 
 if __name__ == "__main__":
     main()
