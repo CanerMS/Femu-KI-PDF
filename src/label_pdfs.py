@@ -10,7 +10,9 @@ import pandas as pd
 from pathlib import Path
 import logging
 
-Path('logs').mkdir(exist_ok=True)  # Ensure logs/ directory exists
+if not Path('logs').exists():  # Ensure logs/ directory exists
+    Path('logs').mkdir()
+
 
 logging.basicConfig(
     filename = 'logs/label_pdfs.log', # Log file path
@@ -85,7 +87,7 @@ def create_labels():
     output_path = Path('data/labels.csv')
     output_path.parent.mkdir(parents=True, exist_ok=True) # Ensure directory exists
     all_labels.to_csv(output_path, index=False)
-    logger.info(f"Labels saved to {output_path} successfully.")
+    logger.info(f"Label saved to {output_path} successfully.")
 
     # Print summary
     
@@ -98,7 +100,7 @@ def create_labels():
 
 
     logger.info("\nLabel Distribution:")
-    label_counts = all_labels.groupby['split','label'].size() # Count labels in the combined DataFrame
+    label_counts = all_labels.groupby(['split', 'label']).size() # Count labels in the combined DataFrame
 
     for (split, label), count in label_counts.items():
         logger.info(f"  {split} - {label}: {count}") # Log count for each split and label combination
@@ -114,7 +116,7 @@ if __name__ == "__main__":
     try:
         create_labels()
     except Exception as e:
-        logger.error(f"An error occured during labeling: {e}", exc_info=True)
+        logger.error(f"An error occurred during labeling: {e}", exc_info=True)
         sys.exit(1)
 
 

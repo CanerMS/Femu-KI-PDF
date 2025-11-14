@@ -16,18 +16,24 @@ class FeatureExtractor:
     Uses sklearn's TfidfVectorizer
     """
     
-    def __init__(self, max_features: int = 1000, ngram_range: tuple = (1, 2)):
+    def __init__(self, max_features: int = 2000, ngram_range: tuple = (1, 2)): # tuple 1,2 means unigrams and bigrams
         self.vectorizer = TfidfVectorizer( # Sklearn TF-IDF tool for converting text to numerical features 
             max_features=max_features, # Keep only top N features by TF-IDF score
-            ngram_range=ngram_range,
-            min_df=2 # Ignore terms that appear in only one document
+            ngram_range=ngram_range, # Consider unigrams and bigrams as specified
+            min_df=3, # Ignore terms that appear in only one document
+            stop_words='english' # Remove common English stop words (like "the", "is", etc.
         )
 
         """
         Indicates if the vectorizer has been fitted
         keep only the top 1000 features (words) by TF-IDF score
         considers via ngram_range unigrams ("invoice", "payment") and bigrams ("invoice payment")
-        """
+        ignores terms that appear in only one document (min_df=2)
+        tf means, how frequently a word appears in a document
+        idf means, how important a word is across all documents and rares words get higher weights       
+         """
+        # if a word either appears very often and is common (like "the", "is", "and") 
+        # or appears very rarely (like a typo), it gets lower weight
 
         self.is_fitted = False
 

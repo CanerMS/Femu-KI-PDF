@@ -12,11 +12,15 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 class AnomalyDetector:
-    def __init__(self, contamination: float = 0.1, random_state: int = 42):
+    """
+    Anomaly Detection using Isolation Forest
+    Isolation Forest isolates anomalies instead of profiling normal data
+    """
+    def __init__(self, contamination: float = 'auto', random_state: int = 42):
         self.model = IsolationForest(
-            contamination=contamination,
-            random_state=random_state,
-            n_estimators=100
+            contamination=contamination, # Proportion of anomalies in the data
+            random_state=random_state, # Seed for reproducibility means results can be replicated
+            n_estimators=100 # Number of trees in the forest
         )
         self.is_trained = False
     
@@ -31,11 +35,11 @@ class AnomalyDetector:
             raise ValueError("Model not trained yet")
         predictions = self.model.predict(X)
         # Convert: -1 (anomaly/useful) to 1, 1 (normal/not useful) to 0
-        predictions = np.where(predictions == -1, 1, 0)
+        predictions = np.where(predictions == -1, 1, 0) # Map Isolation Forest output to binary labels
         return predictions
     
     def predict_scores(self, X):
-        if not self.is_trained:
+        if not self.is_trained: # check if model is trained
             raise ValueError("Model not trained yet")
         return self.model.score_samples(X)
     
@@ -54,10 +58,10 @@ class AnomalyDetector:
         return predictions, scores
     
     def save_model(self, path: str):
-        joblib.dump(self.model, path)
+        joblib.dump(self.model, path) # Save the trained model to disk
         logger.info(f"Model saved to {path}")
     
     def load_model(self, path: str):
-        self.model = joblib.load(path)
+        self.model = joblib.load(path) # Load the trained model from disk
         self.is_trained = True
         logger.info(f"Model loaded from {path}")

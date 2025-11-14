@@ -32,25 +32,25 @@ class PDFLoader:
         Returns:
             List of Path objects for PDF files
         """
-        pdf_files = list(self.pdf_dir.glob("*.pdf"))
+        pdf_files = list(self.pdf_dir.glob("*.pdf")) # Get all .pdf files in the directory
         logger.info(f"Found {len(pdf_files)} PDF files in {self.pdf_dir}")
-        return sorted(pdf_files)
+        return sorted(pdf_files) # it sorts the list of PDF files alphabetically
     
-    def get_pdf_info(self) -> List[Dict[str, str]]:
+    def get_pdf_info(self) -> List[Dict[str, str]]: # returns list of dictionaries with PDF metadata
         """
         Get information about all PDFs
         
         Returns:
             List of dictionaries with PDF metadata
         """
-        pdf_files = self.get_pdf_files()
-        pdf_info = []
+        pdf_files = self.get_pdf_files() # Get all PDF files
+        pdf_info = [] # Initialize list to hold PDF metadata
         
-        for pdf_path in pdf_files:
+        for pdf_path in pdf_files: # Iterate over each PDF file
             info = {
-                'filename': pdf_path.name,
-                'path': str(pdf_path),
-                'size_kb': pdf_path.stat().st_size / 1024
+                'filename': pdf_path.name, # filename
+                'path': str(pdf_path), # Full path as string 
+                'size_kb': pdf_path.stat().st_size / 1024 # Size in kilobytes
             }
             pdf_info.append(info)
         
@@ -69,14 +69,16 @@ class PDFLoader:
         """
         import random
         
-        pdf_files = self.get_pdf_files()
-        random.seed(random_seed)
-        shuffled = pdf_files.copy()
-        random.shuffle(shuffled)
+        pdf_files = self.get_pdf_files() # Get all PDF files
         
-        split_idx = int(len(shuffled) * (1 - test_size))
-        train_files = shuffled[:split_idx]
-        test_files = shuffled[split_idx:]
+        # without seed, different runs would produce different splits
+        random.seed(random_seed) # Set random seed for reproducibility
+        shuffled = pdf_files.copy() # Create a copy to shuffle
+        random.shuffle(shuffled) # Shuffle the list of PDF files
+        
+        split_idx = int(len(shuffled) * (1 - test_size)) # Calculate split index
+        train_files = shuffled[:split_idx] # First part for training
+        test_files = shuffled[split_idx:] # Second part for testing
         
         logger.info(f"Split: {len(train_files)} training, {len(test_files)} testing")
         return train_files, test_files
@@ -84,11 +86,11 @@ class PDFLoader:
 
 if __name__ == "__main__":
     # Test the loader
-    loader = PDFLoader()
-    pdf_info = loader.get_pdf_info()
-    print(f"\nFound {len(pdf_info)} PDFs")
+    loader = PDFLoader() # Initialize loader with default directory
+    pdf_info = loader.get_pdf_info() # Get metadata for all PDFs
+    print(f"\nFound {len(pdf_info)} PDFs") # Log number of found PDFs
     
     if pdf_info:
-        print("\nFirst 3 PDFs:")
-        for info in pdf_info[:3]:
-            print(f"  - {info['filename']} ({info['size_kb']:.2f} KB)")
+        print("\nFirst 3 PDFs:") # Display first 3 PDFs
+        for info in pdf_info[:3]: # Show info for first 3 PDFs
+            print(f"  - {info['filename']} ({info['size_kb']:.2f} KB)") # Log filename and size

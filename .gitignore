@@ -6,6 +6,10 @@ __pycache__/
 .Python
 env/
 venv/
+.venv/
+__pycache__/
+*.pyc
+logs/label_pdfs.log
 ENV/
 build/
 develop-eggs/

@@ -24,8 +24,8 @@ logging.basicConfig(level=logging.INFO) # Configure logging
 logger = logging.getLogger(__name__) # Create logger for this module
 
 
-class PDFExtractor:
-    """Extracts text from PDF files"""
+class PDFExtractor: 
+    """Extracts text from PDF files into plain text format"""
 
     # self is the instance of the class
     
@@ -119,12 +119,12 @@ class PDFExtractor:
         """
         results = {}
         
-        for pdf_path in pdf_files:
-            text = self.extract_text_from_pdf(pdf_path)
-            results[pdf_path.name] = text
+        for pdf_path in pdf_files: # Iterate over each PDF file
+            text = self.extract_text_from_pdf(pdf_path) # Extract text
+            results[pdf_path.name] = text # Store in results dictionary
             
             # Also save to file
-            self.extract_and_save(pdf_path)
+            self.extract_and_save(pdf_path) 
         
         logger.info(f"Extracted text from {len(results)} PDFs")
         return results
