@@ -39,4 +39,6 @@ class TextPreprocessor:
     
     def preprocess_batch(self, texts: List[str]) -> List[str]:
         logger.info(f"Preprocessing {len(texts)} documents")
-        return [self.clean_text(text) for text in texts]
+        cleaned_texts = [self.clean_text(text) for text in texts]
+        logger.info("Preprocessing complete")
+        return cleaned_texts

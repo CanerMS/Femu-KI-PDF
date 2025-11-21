@@ -5,6 +5,7 @@ Extracts text content from PDF files
 from pathlib import Path
 from typing import Dict, List
 import logging
+from project_config import EXTRACTED_TEXTS_DIR
 
 
 # pdf plumber is preferred for text, tables and metadata from PDFs extraction due to better handling of complex PDFs
@@ -29,7 +30,7 @@ class PDFExtractor:
 
     # self is the instance of the class
     
-    def __init__(self, output_dir: str = "data/extracted_texts"): # initializer constructor
+    def __init__(self, output_dir: Path = EXTRACTED_TEXTS_DIR): # initializer constructor
         """
         Initialize extractor
         
@@ -38,6 +39,7 @@ class PDFExtractor:
         """
         self.output_dir = Path(output_dir)
         self.output_dir.mkdir(parents=True, exist_ok=True)
+        logger.info(f"Initialized PDFExtractor with output directory: {self.output_dir}")
     
     def extract_text_from_pdf(self, pdf_path: Path) -> str:
         """

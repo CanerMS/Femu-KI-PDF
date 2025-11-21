@@ -3,120 +3,98 @@ Automatically label PDFs using an external labeling service.
 '''
 
 import sys
+import logging
+import pandas as pd
+
 sys.path.insert(0, 'src')
 
 from loader import PDFLoader
-import pandas as pd
 from pathlib import Path
-import logging
+from project_config import RAW_PDFS_DIR, USEFUL_PDFS_DIR, LABELS_PATH, LOGS_DIR, TEST_SIZE, RANDOM_STATE 
 
-if not Path('logs').exists():  # Ensure logs/ directory exists
-    Path('logs').mkdir()
+if not LOGS_DIR.exists():  # Ensure logs directory exists
+    LOGS_DIR.mkdir() # Create logs directory if it doesn't exist
 
-
-logging.basicConfig(
-    filename = 'logs/label_pdfs.log', # Log file path
-    filemode = 'a', # Append mode
-    level = logging.INFO, # Show INFO, WARNING, ERROR, CRITICAL messages, hide DEBUG messages
-    format = '%(asctime)s - %(name)s - %(levelname)s - %(message)s', # Log format
-    datefmt='%Y-%m-%d %H:%M:%S' # Timestamp format, e.g., 2025-11-11 14:30:15 
-    # asctime = timestamp, when log was created
-    # name = module name where log was created, here label_pdfs.py
-    # levelname = log level (INFO, WARNING, etc.)
-    # message = your log message explaining what happened
+logging.basicConfig( # Configure logging
+    filename=LOGS_DIR / 'label_pdfs.log', # Log file path 
+    filemode='a', # Append mode
+    level=logging.INFO, # Log level 
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', # Log format
+    datefmt='%Y-%m-%d %H:%M:%S' # Date format
 )
 
-logger = logging.getLogger(__name__)
- 
+logger = logging.getLogger(__name__) # Get logger instance
 
-def create_labels():
+
+def create_labels(): 
     """
-    Create labels for PDFs in the data/raw_pdfs directory.
-    Splits PDFs into train and test sets (50/50) and labels all as 'not_useful'.
-    Saves labels to data/labels/pdf_labels.csv.
+    Create labels for PDFs in RAW_PDFS_DIR (not useful) and USEFUL_PDFS_DIR (useful).
     """
     logger.info("=" * 60)
-    logger.info("PDF LABELING - AUTOMATIC TRAIN-TEST SPLIT")
+    logger.info("PDF Labeling - Supervised Mode")
     logger.info("=" * 60)
+    
+    # Load PDFs from both directories
+    loader_not_useful = PDFLoader(pdf_dir=RAW_PDFS_DIR)  # Load 'not useful' PDFs
+    loader_useful = PDFLoader(pdf_dir=USEFUL_PDFS_DIR)   # Load 'useful' PDFs
+    
+    not_useful_files = loader_not_useful.get_pdf_files()  # Get 'not useful' PDFs
+    useful_files = loader_useful.get_pdf_files() # Get 'useful' PDFs
 
-    # Load all PDFs
-    logger.info("loading PDFs from data/raw_pdfs...")
-    loader = PDFLoader(pdf_dir="data/raw_pdfs")
-    pdf_files = loader.get_pdf_files()
-
-    if len(pdf_files) == 0:
-        logger.warning("No PDF files found in the specified directory.")
-        logger.info("Exiting labeling process.")
+    logger.info(f"Found {len(not_useful_files)} 'not useful' PDFs") # Log count of 'not useful' PDFs 
+    logger.info(f"Found {len(useful_files)} 'useful' PDFs") # Log count of 'useful' PDFs
+            
+    if len(useful_files) == 0: # Check if there are any 'useful' PDFs
+        logger.warning("No 'useful' PDF files found in data/useful_pdfs/. Please add PDFs and rerun.") # Log warning
+        logger.info("Exiting labeling process.") # Log exit message
         return
 
-    logger.info(f"Found {len(pdf_files)} PDF files. Preparing to label...") # Log number of found PDFs
+    # Combine all PDFs and labels
+    all_pdfs = not_useful_files + useful_files # Combine lists of PDFs
+    all_labels_list = ['not_useful'] * len(not_useful_files) + ['useful'] * len(useful_files) # Create corresponding labels
 
-    # Split into train and test sets separating it 50/50 
-
-    train_pdfs, test_pdfs = loader.split_train_test(test_size=0.5, random_seed=42)
-
-    logger.info(f"Train set {len(train_pdfs)} training PDFs")
-    logger.info(f"Test set {len(test_pdfs)} testing PDFs")
-
-    # Create traning labels
-
-    logger.info("Creating labels for training PDFs...")
-
-    train_labels = pd.DataFrame({
-        'filename': [f.name for f in train_pdfs],
-        'label' : ['not_useful'] * len(train_pdfs),
-        'split': ['train'] * len(train_pdfs)
+    # Create DataFrame
+    df = pd.DataFrame({ # Create DataFrame with filenames and labels
+        'filename': [f.name for f in all_pdfs], # Extract filenames
+        'label': all_labels_list # Corresponding labels
     })
 
-    logger.info("Creating labels for testing PDFs...")
+    # Split into train/test
+    from sklearn.model_selection import train_test_split # Import train_test_split function
 
-    # Create testing labels
-    test_labels = pd.DataFrame({
-        'filename' : [f.name for f in test_pdfs], # Get filenames for test PDFs
-        'label' : ['not_useful'] * len(test_pdfs),
-        'split': ['test'] * len(test_pdfs)
-    })
+    train_df, test_df = train_test_split( # Split DataFrame into train and test sets
+        df, # DataFrame to split
+        test_size=TEST_SIZE, # Proportion of test set
+        stratify=df['label'], # Stratify by label
+        random_state=RANDOM_STATE  # Random state for reproducibility
+    )
 
-    logger.info("Combining train and test labels...")
+    train_df['split'] = 'train'      # 75%
+    test_df['split'] = 'test'        # 25%
 
-    # Combine
-    all_labels = pd.concat([train_labels, test_labels], ignore_index=True) # Combine train and test labels into a single DataFrame
-    all_labels = all_labels.sort_values(by='filename').reset_index(drop=True) # Sort by filename for consistency
+    all_labels = pd.concat([train_df, test_df], ignore_index=True) # Combine train and test DataFrames
+    all_labels = all_labels.sort_values(by='filename').reset_index(drop=True) # Sort by filename
 
-    # Save to CSV
-    output_path = Path('data/labels.csv')
-    output_path.parent.mkdir(parents=True, exist_ok=True) # Ensure directory exists
-    all_labels.to_csv(output_path, index=False)
-    logger.info(f"Label saved to {output_path} successfully.")
-
-    # Print summary
+    # Save labels
+    all_labels.to_csv(LABELS_PATH, index=False) # Save labels to CSV
+    logger.info(f"\n✅ Labels saved to {LABELS_PATH}") # Log success message
     
-    logger.info("=" * 60)
-    logger.info(f"Labels saved to {output_path}")
-    logger.info("\nDataset Summary:\n")
-    logger.info(f"  Training samples: {len(train_labels)} ({len(train_labels)/len(pdf_files)*100:.1f}%)") # Log training samples and percentage
-    logger.info(f"  Testing samples: {len(test_labels)} ({len(test_labels)/len(pdf_files)*100:.1f}%)") # Log testing samples and percentage
-    logger.info(f" Total samples: {len(pdf_files)}")
-
-
-    logger.info("\nLabel Distribution:")
-    label_counts = all_labels.groupby(['split', 'label']).size() # Count labels in the combined DataFrame
-
-    for (split, label), count in label_counts.items():
-        logger.info(f"  {split} - {label}: {count}") # Log count for each split and label combination
-
-    # Show first 10 rows of the labels
-    logger.info("\nFirst 10 label entries:")
-    print(all_labels.head(10))
-    logger.info("\n Next step: Run 'python main.py' to train the model")
-
-    return all_labels # Return the DataFrame containing all labels
+    logger.info("=" * 60) # Separator
+    logger.info(f"Labels saved to {LABELS_PATH} successfully.") # Log success message
+    logger.info(f"\nDataset Summary:") # Log dataset summary
+    logger.info(f"  Total: {len(all_labels)} PDFs") # Log total count
+    logger.info(f"  Training: {len(train_df)} ({len(train_df)/len(all_labels)*100:.1f}%)")  # Log training count
+    logger.info(f"  Testing: {len(test_df)} ({len(test_df)/len(all_labels)*100:.1f}%)") # Log testing count
+    logger.info(f"\nClass Distribution:") # Log class distribution
+    for split in ['train', 'test']: # Log distribution per split
+        split_data = all_labels[all_labels['split'] == split]
+        for label in ['not_useful', 'useful']:
+            count = len(split_data[split_data['label'] == label])
+            logger.info(f"  {split} - {label}: {count}")
+    
+    logger.info("\nNext step: Run 'python main.py' to train the model")
+    
+    return all_labels
 
 if __name__ == "__main__":
-    try:
-        create_labels()
-    except Exception as e:
-        logger.error(f"An error occurred during labeling: {e}", exc_info=True)
-        sys.exit(1)
-
-
+    create_labels()

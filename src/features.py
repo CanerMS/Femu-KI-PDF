@@ -5,6 +5,7 @@ Creates TF-IDF features from text
 from sklearn.feature_extraction.text import TfidfVectorizer
 import numpy as np
 import logging
+from project_config import MAX_FEATURES, NGRAM_RANGE
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -16,7 +17,7 @@ class FeatureExtractor:
     Uses sklearn's TfidfVectorizer
     """
     
-    def __init__(self, max_features: int = 2000, ngram_range: tuple = (1, 2)): # tuple 1,2 means unigrams and bigrams
+    def __init__(self, max_features: int = 2000, ngram_range: tuple = NGRAM_RANGE): # tuple 1,2 means unigrams and bigrams
         self.vectorizer = TfidfVectorizer( # Sklearn TF-IDF tool for converting text to numerical features 
             max_features=max_features, # Keep only top N features by TF-IDF score
             ngram_range=ngram_range, # Consider unigrams and bigrams as specified

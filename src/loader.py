@@ -6,15 +6,22 @@ import os
 from pathlib import Path
 from typing import List, Dict
 import logging
+import sys
+from pathlib import Path
+sys.path.insert(0, str(Path(__file__).parent))
+
+from project_config import RAW_PDFS_DIR, USEFUL_PDFS_DIR 
+import logging
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 
+
 class PDFLoader:
     """Handles loading PDF files from directory"""
 
-    def __init__(self, pdf_dir: str = "data/raw_pdfs"): 
+    def __init__(self, pdf_dir: Path = RAW_PDFS_DIR): 
         """
         Initialize PDF loader
         
@@ -32,6 +39,7 @@ class PDFLoader:
         Returns:
             List of Path objects for PDF files
         """
+        
         pdf_files = list(self.pdf_dir.glob("*.pdf")) # Get all .pdf files in the directory
         logger.info(f"Found {len(pdf_files)} PDF files in {self.pdf_dir}")
         return sorted(pdf_files) # it sorts the list of PDF files alphabetically
@@ -56,7 +64,63 @@ class PDFLoader:
         
         return pdf_info
     
-    def split_train_test(self, test_size: float = 0.5, random_seed: int = 42) -> tuple:
+    def get_pdfs_by_split(self, split: str, labels_df) -> List[Path]:
+        """
+        Get PDFs for a specific split (train/test) based on labels DataFrame
+        Checks both data/raw_pdfs and data/useful_pdfs directories
+        
+        Args:
+            split: 'train' or 'test'
+            labels_df: DataFrame containing 'filename', 'label' and 'split' columns
+            
+        Returns:
+            List of Path objects for the specified split
+        """
+        split_filenames = labels_df[labels_df['split'] == split]['filename'].tolist() # Get filenames for the split, e.g., 'train' or 'test'
+        
+        pdf_files = []
+        for filename in split_filenames:
+            pdf_path = self.pdf_dir / filename
+
+            if pdf_path.exists():
+                pdf_files.append(pdf_path)
+            else:
+                # Check in useful_pdfs directory
+                useful_path = USEFUL_PDFS_DIR / filename  # Use constant
+                if useful_path.exists():
+                    pdf_files.append(useful_path)
+                else:
+                    logger.warning(f"PDF file not found for {filename}")
+
+        logger.info(f"Found {len(pdf_files)} PDFs for split '{split}'")
+        return pdf_files
+    
+    def get_labels_for_pdfs(self, pdf_files: List[Path], labels_df) -> List[int]:
+        """
+        Get numeric labels (0/1) for the given PDF files based on labels DataFrame
+
+        Args:
+            pdf_files: List of Path objects for PDF files
+            labels_df: DataFrame containing 'filename' and 'label' columns
+        """
+        
+        label_map = {'not_useful': 0, 'useful': 1} # Map string labels to numeric
+        labels = []
+
+        for pdf_path in pdf_files:
+            label_row = labels_df[labels_df['filename'] == pdf_path.name] # Find label for the PDF
+            if not label_row.empty:
+                label_str = label_row.iloc[0]['label'] # Get label string, e.g., 'useful' or 'not_useful'
+                # iloc is used to access the first row of the filtered DataFrame
+                
+                labels.append(label_map[label_str]) # Default to 0 if label not found
+            else:
+                logger.warning(f"No label found for {pdf_path.name}, defaulting to 0")
+                labels.append(0)
+
+        return labels
+
+    def split_train_test(self, test_size: float = 0.5, random_seed: int = 42) -> tuple: # returns train and test splits
         """
         Split PDFs into train and test sets
         
@@ -67,6 +131,7 @@ class PDFLoader:
         Returns:
             Tuple of (train_files, test_files)
         """
+        
         import random
         
         pdf_files = self.get_pdf_files() # Get all PDF files
