@@ -77,7 +77,7 @@ def create_labels():
 
     # Save labels
     all_labels.to_csv(LABELS_PATH, index=False) # Save labels to CSV
-    logger.info(f"\n✅ Labels saved to {LABELS_PATH}") # Log success message
+    logger.info(f"\nLabels saved to {LABELS_PATH}") # Log success message
     
     logger.info("=" * 60) # Separator
     logger.info(f"Labels saved to {LABELS_PATH} successfully.") # Log success message

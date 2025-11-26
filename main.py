@@ -53,9 +53,24 @@ def main():
     # Analyze class balance in training set 
     useful_count = sum(train_labels)
     not_useful_count = len(train_labels) - useful_count
-    imbalance_ratio = not_useful_count / useful_count if useful_count > 0 else 0
 
-    logger.info(f"\n Class Balance:")
+    # Safety checks
+    if len(train_labels) == 0:
+        logger.error("No training data found!")
+        return
+
+    if useful_count == 0:
+        logger.error("No useful PDFs in training set!")
+        logger.error("Please run: py src\\label_pdfs.py")
+        return
+
+    if not_useful_count == 0:
+        logger.error("No 'not useful' PDFs in training set!")
+        return
+
+    imbalance_ratio = not_useful_count / useful_count  # Now safe
+
+    logger.info(f"\nClass Balance:")
     logger.info(f"   Useful: {useful_count} ({useful_count/len(train_labels)*100:.1f}%)")
     logger.info(f"   Not Useful: {not_useful_count} ({not_useful_count/len(train_labels)*100:.1f}%)")
     logger.info(f"   Imbalance Ratio: 1:{imbalance_ratio:.1f}")
@@ -73,7 +88,7 @@ def main():
     logger.info("\n[Step 4] Preprocessing text...")
     preprocessor = TextPreprocessor()
     train_texts_clean = preprocessor.preprocess_batch(list(train_texts_dict.values()))
-    val_texts_clean = preprocessor.preprocess_batch(list(val_texts_dict.values()))
+    # val_texts_clean = preprocessor.preprocess_batch(list(val_texts_dict.values()))
     test_texts_clean = preprocessor.preprocess_batch(list(test_texts_dict.values()))
     
     # 5. Extract features
@@ -90,7 +105,6 @@ def main():
             
             k_neighbors = min(5, useful_count - 1)
             
-            # Add safety check
             if k_neighbors < 1:
                 logger.warning("⚠️  Not enough minority samples for SMOTE (need at least 2). Skipping.")
             else:
@@ -99,8 +113,9 @@ def main():
                 
                 logger.info(f"   Before SMOTE: Useful={useful_count}, Not Useful={not_useful_count}")
                 logger.info(f"   After SMOTE: Useful={sum(train_labels_balanced)}, Not Useful={len(train_labels_balanced) - sum(train_labels_balanced)}")
+                logger.info(f"   Total samples: {len(train_labels_balanced)}")
                 
-                train_labels = train_labels_balanced.tolist()
+                train_labels = train_labels_balanced 
 
         except ImportError:
             logger.warning("imbalanced-learn not installed. Skipping SMOTE.")
@@ -129,8 +144,9 @@ def main():
             logger.info(f"  {i}. '{feature_names[idx]}': {importances[idx]:.4f}")
     
     # Compare validation vs test performance
-    logger.info(f"\nValidation Accuracy: (see classification report above)")
-    logger.info("If validation accuracy is much higher than test, you may be overfitting.")
+    
+    # logger.info(f"\nValidation Accuracy: (see classification report above)")
+    # logger.info("If validation accuracy is much higher than test, you may be overfitting.")
     
     # 7. Evaluate
     logger.info("\n[Step 7] Evaluating on test set...")
