@@ -96,17 +96,21 @@ def main():
     feature_extractor = FeatureExtractor(max_features=MAX_FEATURES) 
     X_train = feature_extractor.fit_transform(train_texts_clean)
     X_test = feature_extractor.transform(test_texts_clean)
+
+    logger.info("\n[Step 5.4] Analyzing feature importance...")
+    y_train_numeric = np.array(train_labels)
+    feature_extractor.get_top_features(X_train, y_train_numeric, top_n=50)
     
     # Apply SMOTE if severe class imbalance
     if not_useful_count / useful_count > SMOTE_THRESHOLD: 
-        logger.info("\n[Step 5.5] Applying SMOTE to balance classes...")
+        logger.info("\n[Step 5.6] Applying SMOTE to balance classes...")
         try:
             from imblearn.over_sampling import SMOTE
             
             k_neighbors = min(5, useful_count - 1)
             
             if k_neighbors < 1:
-                logger.warning("⚠️  Not enough minority samples for SMOTE (need at least 2). Skipping.")
+                logger.warning("Not enough minority samples for SMOTE (need at least 2). Skipping.")
             else:
                 smote = SMOTE(random_state=42, k_neighbors=k_neighbors)
                 X_train, train_labels_balanced = smote.fit_resample(X_train, train_labels)

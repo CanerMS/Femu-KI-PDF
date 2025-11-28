@@ -73,7 +73,7 @@ class PDFClassifier:
     """
     PDF Classifier supporting both supervised and unsupervised methods
     """
-    def __init__(self, mode='supervised', contamination=0.1, random_state=42):
+    def __init__(self, mode='supervised', contamination=0.1, random_state= RANDOM_STATE):
         """
         mode_supervised: 'supervised' or 'unsupervised' (anomaly detection)
         contamination: Proportion of anomalies for unsupervised mode
@@ -82,14 +82,18 @@ class PDFClassifier:
         self.mode = mode
         self.random_state = random_state
 
-        if mode == 'supervised':
-            self.model = RandomForestClassifier(
-                n_estimators=N_ESTIMATORS, # Number of trees
-                random_state=random_state, # Seed for reproducibility
-                max_depth=MAX_DEPTH, # Limit depth to prevent overfitting
-                min_samples_split=MIN_SAMPLES_SPLIT, # Prevent overfitting
-                class_weight='balanced' # Handle class imbalance for supervised learning
+        if mode == 'supervised': # supervised classification
+            self.model = RandomForestClassifier( # Using Random Forest for supervised classification
+                n_estimators=100, # Number of trees
+                max_depth=10, # To prevent overfitting
+                min_samples_split=5, # To prevent overfitting
+                min_samples_leaf=2, # To prevent overfitting
+                class_weight={0: 1, 1: 15},  # Adjust class weights to handle imbalance
+                random_state=RANDOM_STATE, # Seed for reproducibility
+                n_jobs=-1 # Use all available cores
             )
+            logger.info("Initialized supervised classifier with class_weight={0: 1, 1: 15}") # Log model initialization
+            
 
         else:
             self.model = IsolationForest(
@@ -196,7 +200,7 @@ class PDFClassifier:
         joblib.dump(self.model, path) # Save the trained model to disk
         logger.info(f"Model saved to {path}")
 
-    def load_model(self, path: str):
+    def load_model(self, path: str): 
         self.model = joblib.load(path) # Load the trained model from disk
         self.is_trained = True
         logger.info(f"Model loaded from {path}")

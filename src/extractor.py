@@ -53,14 +53,14 @@ class PDFExtractor:
         """
         # Check if cached text file exists
 
-        txt_file = self.output_dir / (f"{pdf_path.stem}.txt")
+        txt_file = self.output_dir / (f"{pdf_path.stem}.txt") # Corresponding text file path
 
-        if txt_file.exists():
+        if txt_file.exists(): # Load from cache if available
             try:
-                cached_text = txt_file.read_text(encoding='utf-8')
-                if cached_text.strip():
-                    logger.info(f"Loaded from cache: {pdf_path.name} ({len(cached_text)} characters)")
-                    return cached_text
+                cached_text = txt_file.read_text(encoding='utf-8') # Read cached text
+                if cached_text.strip(): # Check if cached text is not empty
+                    logger.info(f"Loaded from cache: {pdf_path.name} ({len(cached_text)} characters)") # Log cache load
+                    return cached_text # Return cached text
                 else:
                     logger.warning(f"Cache file is empty, re-extracting: {pdf_path.name}")
             except Exception as e:
@@ -69,7 +69,7 @@ class PDFExtractor:
         # Extract if not cached
         logger.info(f"Extracting text from: {pdf_path.name}")
         try:
-            if USE_PDFPLUMBER: # Use pdfplumber if available
+            if USE_PDFPLUMBER: # Use pdfplumber if available, better extraction quality
                 text = self._extract_with_pdfplumber(pdf_path) # Use pdfplumber for extraction
             else: # Fallback to PyPDF2, because pdfplumber is not available
                 text = self._extract_with_pypdf2(pdf_path) # Use PyPDF2 for extraction
@@ -79,7 +79,7 @@ class PDFExtractor:
         
         # Save extracted text to cache
         if text.strip():  # Only save if text is not empty
-            txt_file.write_text(text, encoding='utf-8')
+            txt_file.write_text(text, encoding='utf-8') # Write extracted text to file
             logger.info(f"Saved extracted text to cache: {txt_file.name} ({len(text)} characters)")
         
         return text
@@ -143,42 +143,42 @@ class PDFExtractor:
         Returns:
             Dictionary mapping filenames to extracted text
         """
-        results = {}
-        total = len(pdf_files)
-        cached_count = 0
-        extracted_count = 0
+        results = {} # Initialize results dictionary
+        total = len(pdf_files) # Total number of PDFs to process
+        cached_count = 0 # Count of cached files used
+        extracted_count = 0 # Count of newly extracted files
 
         logger.info(f"Processing batch of {total} PDFs for text extraction.")
         
         for i, pdf_path in enumerate(pdf_files, 1): # Iterate over each PDF file
-            txt_file = self.output_dir / f"{pdf_path.stem}.txt"
-            was_cached = txt_file.exists() and txt_file.stat().st_size > 0
+            txt_file = self.output_dir / f"{pdf_path.stem}.txt" # Corresponding text file path
+            was_cached = txt_file.exists() and txt_file.stat().st_size > 0 # Check if cached file exists and is non-empty, stat().st_size gets file size in bytes
             
             # Extract (will use cache if available and valid)
             text = self.extract_text_from_pdf(pdf_path) # Extract text
             results[pdf_path.name] = text # Store in results dictionary
             
             # Track caching stats
-            if was_cached:
-                cached_count += 1
+            if was_cached: # If text was loaded from cache
+                cached_count += 1 # Increment cached count
             else:
-                extracted_count += 1
+                extracted_count += 1 # Increment extracted count
 
             # progress logging
-            if i % 25 == 0 or i == total:
-                logger.info(f"Processed {i}/{total} PDFs. Cached: {cached_count}, Newly Extracted: {extracted_count}")
+            if i % 25 == 0 or i == total: # Log progress every 25 PDFs or at the end
+                logger.info(f"Processed {i}/{total} PDFs. Cached: {cached_count}, Newly Extracted: {extracted_count}") # Log progress
 
         # final summary
         logger.info(f"Batch complete! Total PDFs: {total}, Cached: {cached_count}, Newly Extracted: {extracted_count}")
         
        
-        return results
+        return results # Return results dictionary
     
     def clear_cache(self):
         """
         Clear all cached extracted text files
         """
-        if self.output_dir.exists():
+        if self.output_dir.exists(): # Check if output directory exists
             count = 0
             for txt_file in self.output_dir.glob("*.txt"):
                 txt_file.unlink()

@@ -78,17 +78,17 @@ class PDFLoader:
         """
         split_filenames = labels_df[labels_df['split'] == split]['filename'].tolist() # Get filenames for the split, e.g., 'train' or 'test'
         
-        pdf_files = []
-        for filename in split_filenames:
-            pdf_path = self.pdf_dir / filename
+        pdf_files = [] # Initialize list to hold PDF file paths
+        for filename in split_filenames: # Iterate over each filename
+            pdf_path = self.pdf_dir / filename # Check in raw_pdfs directory
 
-            if pdf_path.exists():
-                pdf_files.append(pdf_path)
+            if pdf_path.exists(): # If file exists in raw_pdfs
+                pdf_files.append(pdf_path) # Add to list
             else:
                 # Check in useful_pdfs directory
                 useful_path = USEFUL_PDFS_DIR / filename  # Use constant
-                if useful_path.exists():
-                    pdf_files.append(useful_path)
+                if useful_path.exists(): # If file exists in useful_pdfs
+                    pdf_files.append(useful_path) # Add to list
                 else:
                     logger.warning(f"PDF file not found for {filename}")
 
@@ -105,7 +105,7 @@ class PDFLoader:
         """
         
         label_map = {'not_useful': 0, 'useful': 1} # Map string labels to numeric
-        labels = []
+        labels = [] # Initialize list to hold labels
 
         for pdf_path in pdf_files:
             label_row = labels_df[labels_df['filename'] == pdf_path.name] # Find label for the PDF
