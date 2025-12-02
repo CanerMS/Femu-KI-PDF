@@ -2,12 +2,12 @@
 Feature Extraction Module
 Creates TF-IDF features from text
 """
-from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.feature_extraction.text import TfidfVectorizer, ENGLISH_STOP_WORDS
 import numpy as np
 import pandas as pd
 from pathlib import Path
 import logging
-from project_config import MAX_FEATURES, NGRAM_RANGE
+from project_config import MAX_FEATURES, NGRAM_RANGE, CUSTOM_STOP_WORDS
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -20,11 +20,19 @@ class FeatureExtractor:
     """
     
     def __init__(self, max_features: int = MAX_FEATURES, ngram_range: tuple = NGRAM_RANGE): # tuple 1,2 means unigrams and bigrams
+        # Combine English stop words with custom
+        from sklearn.feature_extraction.text import ENGLISH_STOP_WORDS
+        all_stop_words = list(ENGLISH_STOP_WORDS) + CUSTOM_STOP_WORDS
+        
+        logger.info(f"Initializing TfidfVectorizer with {len(all_stop_words)} stop words")
+        logger.info(f"Custom stop words: {len(CUSTOM_STOP_WORDS)} words")
+
         self.vectorizer = TfidfVectorizer( # Sklearn TF-IDF tool for converting text to numerical features 
             max_features=max_features, # Keep only top N features by TF-IDF score
             ngram_range=ngram_range, # Consider unigrams and bigrams as specified
-            min_df=3, # Ignore terms that appear in only one document
-            stop_words='english' # Remove common English stop words (like "the", "is", etc.
+            min_df=5, # Ignore terms that appear in only one document
+            stop_words=all_stop_words, # Remove common English stop words (like "the", "is", etc.
+            token_pattern=r'\b[a-z]{2,}\b' # Tokens must be at least 2 letters long (ignore single letters and numbers
         )
 
         """
@@ -86,8 +94,8 @@ class FeatureExtractor:
         features_df.to_csv(output_path, index = False)
         logger.info(f"{len(self.feature_names)} Saved feature names to {output_path}")
 
-        logger.info("\nFirst 20 selected features: ")
-        for i, name in enumerate(self.feature_names[:20]):
+        logger.info("\nFirst 50 selected features: ")
+        for i, name in enumerate(self.feature_names[:50]):
             logger.info(f"  {i}: {name}")
 
     def get_top_features(self, X, y, top_n=50):

@@ -7,6 +7,8 @@ from pathlib import Path
 import numpy as np
 import logging
 
+from sklearn.metrics import accuracy_score
+
 # Add src to path
 sys.path.insert(0, str(Path(__file__).parent / 'src'))
 
@@ -16,7 +18,8 @@ from preprocess import TextPreprocessor
 from features import FeatureExtractor
 from model import PDFClassifier
 from utils import save_predictions, load_labels
-from project_config import LABELS_PATH, MAX_FEATURES, SMOTE_THRESHOLD, RESULTS_DIR  
+from project_config import * # Import all necessary configurations
+from imblearn.over_sampling import SMOTE
 
 logging.basicConfig(
     level=logging.INFO,
@@ -87,10 +90,81 @@ def main():
     
     logger.info("\n[Step 4] Preprocessing text...")
     preprocessor = TextPreprocessor()
-    train_texts_clean = preprocessor.preprocess_batch(list(train_texts_dict.values()))
-    # val_texts_clean = preprocessor.preprocess_batch(list(val_texts_dict.values()))
-    test_texts_clean = preprocessor.preprocess_batch(list(test_texts_dict.values()))
+    train_texts_clean = preprocessor.preprocess_batch(
+        list(train_texts_dict.values()),
+        filenames=[f.stem for f in train_files]
+        )
     
+    # val_texts_clean = preprocessor.preprocess_batch(list(val_texts_dict.values()))
+    test_texts_clean = preprocessor.preprocess_batch(
+        list(test_texts_dict.values()),
+        filenames=[f.stem for f in test_files]
+        )
+
+    logger.info("\n[Step 4.1] Saving sample preprocessed texts...")
+    clean_dir = PREPROCESSED_TEXTS_DIR
+    clean_dir.mkdir(parents=True, exist_ok=True)
+
+    # Save the train preprocessed texts
+    for file_id, clean_text in zip(train_files, train_texts_clean):
+        clean_path = clean_dir / f"train_{file_id.stem}_clean.txt"
+        with open(clean_path, 'w', encoding='utf-8') as f:
+            f.write(clean_text)
+
+    # Save the test preprocessed texts
+    for file_id, clean_text in zip(test_files, test_texts_clean):
+        clean_path = clean_dir / f"test_{file_id.stem}_clean.txt"
+        with open(clean_path, 'w', encoding='utf-8') as f:
+            f.write(clean_text)
+
+    logger.info(f"Saved {len(train_texts_clean)} preprocessed training texts to {clean_dir}")
+    logger.info(f"Saved {len(test_texts_clean)} preprocessed testing texts to {clean_dir}")
+
+    # Create a comparison report
+    logger.info("\n[Step 4.2] Generating preprocessing comparison report...")
+    report_path = RESULTS_DIR / 'preprocessing_report.txt'
+    report_path.parent.mkdir(parents=True, exist_ok=True)
+
+    with open(report_path, 'w', encoding='utf-8') as report_file:
+        report_file.write("="*60 + "\n")
+        report_file.write("Preprocessing Comparison Report\n")
+        report_file.write("="*60 + "\n\n")
+
+        for i, (file_id, raw_text, clean_text) in enumerate(zip(
+            train_files[:5],
+            list(train_texts_dict.values())[:5],
+            train_texts_clean[:5]
+        ), 1): # 1 is for starting index
+            report_file.write(f"\n{'='*60}\n")
+            report_file.write(f"PDF #{i}: {file_id.stem}.pdf\n")
+            report_file.write(f"{'='*60}\n\n")
+
+            report_file.write(f"Original length: {len(raw_text)} characters\n")
+            report_file.write(f"Cleaned (preprocessed) length: {len(clean_text)} characters\n\n")
+            report_file.write(f"Reduction in size: {(1 - len(clean_text)/len(raw_text))*100:.1f}%\n\n")
+            report_file.write("----- Original Text (First 500 chars) -----\n")
+            report_file.write(raw_text[:500] + "\n\n")
+            report_file.write("----- Preprocessed Text (First 500 chars) -----\n")
+            report_file.write(clean_text[:500] + "\n")
+            report_file.write("\n" + ("="*60) + "\n\n")
+            # Removed keywords
+            removed_words = []
+            if 'education' in raw_text.lower() and 'education' not in clean_text.lower():
+                removed_words.append('education')
+            if 'university' in raw_text.lower() and 'university' not in clean_text.lower():
+                removed_words.append('university')
+            if "studying" in raw_text.lower() and "studying" not in clean_text.lower():
+                removed_words.append('studying')
+            if 'author' in raw_text.lower() and 'author' not in clean_text.lower():
+                removed_words.append('author')
+
+            if removed_words:
+                report_file.write(f"Removed sensitive (noise) keywords: {', '.join(removed_words)}\n")
+            else:
+                report_file.write("No sensitive (noise) keywords removed.\n")
+
+    logger.info(f"Preprocessing comparison report saved to {report_path}")
+
     # 5. Extract features
     logger.info("\n[Step 5] Extracting TF-IDF features...")
     feature_extractor = FeatureExtractor(max_features=MAX_FEATURES) 
@@ -105,7 +179,7 @@ def main():
     if not_useful_count / useful_count > SMOTE_THRESHOLD: 
         logger.info("\n[Step 5.6] Applying SMOTE to balance classes...")
         try:
-            from imblearn.over_sampling import SMOTE
+            
             
             k_neighbors = min(5, useful_count - 1)
             
@@ -146,6 +220,10 @@ def main():
         logger.info("\nTop 10 Most Important Features:")
         for i, idx in enumerate(indices, 1):
             logger.info(f"  {i}. '{feature_names[idx]}': {importances[idx]:.4f}")
+
+    logger.info("\n[Step 6.6] Evaluating on TRAINING set...")
+    train_predictions, _ = classifier.evaluate(X_train, np.array(train_labels))
+    logger.info(f"Training Accuracy: {accuracy_score(train_labels, train_predictions)}")
     
     # Compare validation vs test performance
     

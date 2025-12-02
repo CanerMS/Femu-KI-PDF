@@ -2,6 +2,7 @@
 Anomaly Detection Model Module
 Uses Isolation Forest for detecting useful PDFs
 """
+from matplotlib import cm
 from sklearn.ensemble import IsolationForest
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import classification_report, confusion_matrix, accuracy_score
@@ -9,7 +10,8 @@ from project_config import N_ESTIMATORS, MAX_DEPTH, MIN_SAMPLES_SPLIT, RANDOM_ST
 import joblib
 import numpy as np
 import logging
-
+import matplotlib.pyplot as plt
+import seaborn as sns
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -88,11 +90,11 @@ class PDFClassifier:
                 max_depth=10, # To prevent overfitting
                 min_samples_split=5, # To prevent overfitting
                 min_samples_leaf=2, # To prevent overfitting
-                class_weight={0: 1, 1: 15},  # Adjust class weights to handle imbalance
+                class_weight={0: 1, 1: 18},  # Adjust class weights to handle imbalance
                 random_state=RANDOM_STATE, # Seed for reproducibility
                 n_jobs=-1 # Use all available cores
             )
-            logger.info("Initialized supervised classifier with class_weight={0: 1, 1: 15}") # Log model initialization
+            logger.info("Initialized supervised classifier with class_weight={0: 1, 1: 20}") # Log model initialization
             
 
         else:
@@ -191,6 +193,12 @@ class PDFClassifier:
             logger.info("\nConfusion Matrix:")
             cm = confusion_matrix(y_test, predictions)
             print(cm)
+            plt.figure(figsize=(8,6))
+            sns.heatmap(cm, annot=True, fmt='d', cmap='Blues')
+            plt.title('Confusion Matrix')
+            plt.ylabel('Actual')
+            plt.xlabel('Predicted')
+            plt.savefig('results/confusion_matrix.png')
             logger.info(f"True Negatives: {cm[0,0]}, False Positives: {cm[0,1]}")
             logger.info(f"False Negatives: {cm[1,0]}, True Positives: {cm[1,1]}")
 

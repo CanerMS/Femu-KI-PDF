@@ -34,11 +34,21 @@ wheels/
 data/raw_pdfs/*.pdf
 data/extracted_texts/*.txt
 data/useful_pdfs/*.pdf
+data/processed_data/*.csv
+data/features/*.joblib
+data/labels.csv
+data/preprocessed_texts/*.txt
 
 
 # Results
 results/*.joblib
 results/predictions.csv
+results/models/*.joblib
+results/reports/*.txt
+results/selected_features/*.txt
+results/selected_features/*.csv
+results/top_useful_features/*.csv
+results/top_not_useful_features/*.csv
 
 # IDEs
 .vscode/

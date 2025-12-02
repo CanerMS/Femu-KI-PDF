@@ -1,0 +1,141 @@
+============================================================
+Preprocessing Comparison Report
+============================================================
+
+
+============================================================
+PDF #1: 37870716.pdf
+============================================================
+
+Original length: 45914 characters
+Cleaned (preprocessed) length: 39470 characters
+
+Reduction in size: 14.0%
+
+----- Original Text (First 500 chars) -----
+Purinergic Signalling (2025) 21:533–547
+https://doi.org/10.1007/s11302-023-09972-9
+ORIGINAL ARTICLE
+Electroacupuncture may alleviate diabetic neuropathic pain
+by inhibiting the microglia P2X4R and neuroinflammation
+Si‑ying Qu1 · Han‑zhi Wang1,2 · Qun‑qi Hu1 · Yi‑qi Ma1 · Yu‑rong Kang1 · Li‑qian Ma1 · Xiang Li1 · Lu‑hang Chen1 ·
+Bo‑yu Liu1,3 · Xiao‑mei Shao1,3 · Bo‑yi Liu1,3 · Jun‑ying Du1,3 · Yi Liang1,3 · Hong‑li Zhao2 · Yong‑liang Jiang1,3 ·
+Jian‑qiao Fang1,3 · Xiao‑fen He1,3
+Received: 9 June 
+
+----- Preprocessed Text (First 500 chars) -----
+purinergic signalling original article electroacupuncture may alleviate diabetic neuropathic pain by inhibiting the microglia p2x4r and neuroinflammation si ying qu1 han zhi wang1 qun qi hu1 yi qi ma1 yu rong kang1 li qian ma1 xiang li1 lu hang chen1 bo yu liu1 xiao mei shao1 bo yi liu1 jun ying du1 yi liang1 hong li zhao2 yong liang jiang1 jian qiao fang1 xiao fen he1 june accepted october published online october the author s under exclusive licence to springer nature b v abstract diabetic neu
+
+============================================================
+
+Removed sensitive (noise) keywords: education, university, studying
+
+============================================================
+PDF #2: 38604218.pdf
+============================================================
+
+Original length: 60677 characters
+Cleaned (preprocessed) length: 1928 characters
+
+Reduction in size: 96.8%
+
+----- Original Text (First 500 chars) -----
+HHS Public Access
+Author manuscript
+Appl Neuropsychol Child. Author manuscript; available in PMC 2025 September 19.
+Published in final edited form as:
+Appl Neuropsychol Child. 2025 ; 14(4): 496–506. doi:10.1080/21622965.2024.2337208.
+The long-term impact of cerebellar tumor resection on executive
+functioning, anxiety, and fear of pain: A mixed methodology pilot
+study
+Claire E. Lunde, BS, BA1,2,3, Madison R. Dudek, BS2,4, Cameron A. Talbert, BS2,4, Christine
+B. Sieberg, PhD, MA1,2,5,6,7, Katie E.
+
+----- Preprocessed Text (First 500 chars) -----
+hhs public access author manuscript appl neuropsychol child author manuscript available in pmc september published in final edited form as appl neuropsychol child doi 10 21622965 2024 the long term impact of cerebellar tumor resection on executive functioning anxiety and fear of pain a mixed methodology pilot study claire e lunde bs ba1 madison r dudek bs2 cameron a talbert bs2 christine b sieberg ma1 katie e silva bs2 christos papadelis phd8 nicole j ullrich md phd10 peter e manley md11 eric a 
+
+============================================================
+
+Removed sensitive (noise) keywords: education, university
+
+============================================================
+PDF #3: 39946274.pdf
+============================================================
+
+Original length: 45007 characters
+Cleaned (preprocessed) length: 28660 characters
+
+Reduction in size: 36.3%
+
+----- Original Text (First 500 chars) -----
+PostgraduateMedicalJournal,2025,101,1200,949–959
+https://doi.org/10.1093/postmj/qgaf027
+Advanceaccesspublicationdate13February2025
+Review
+Effect of non-invasive brain stimulation on
+cancer-related pain: evidence from meta-analyses
+of randomized controlled trials
+YaqiZhang 1,2,3,XiuyunHe1,4,ChenGong1,2,3,YafeiWang1,2,3,LongfeiYou1,2,3,YangyangLin1,2,3,†,YulingWang1,2,3,†,
+BeibeiFeng1,2,3,*,†
+1DepartmentofRehabilitationMedicine,TheSixthAffiliatedHospital,SunYat-senUniversity,Guangzhou510655,China
+
+
+----- Preprocessed Text (First 500 chars) -----
+postgraduatemedicaljournal advanceaccesspublicationdate13february2025 review effect of non invasive brain stimulation on cancer related pain evidence from meta analyses of randomized controlled trials yaqizhang xiuyunhe1 chengong1 yafeiwang1 longfeiyou1 yangyanglin1 yulingwang1 beibeifeng1 1departmentofrehabilitationmedicine thesixthaffiliatedhospital sunyat senuniversity guangzhou510655 china 2guangdongprovincialclinicalresearchcenterforrehabilitationmedicine thesixthaffiliatedhospital sunyat s
+
+============================================================
+
+No sensitive (noise) keywords removed.
+
+============================================================
+PDF #4: 40119850.pdf
+============================================================
+
+Original length: 54285 characters
+Cleaned (preprocessed) length: 49155 characters
+
+Reduction in size: 9.5%
+
+----- Original Text (First 500 chars) -----
+2194 Neuro-Oncology
+27(8), 2194–2205, 2025 | https://doi.org/10.1093/neuonc/noaf084 | Advance Access date 22 March 2025
+Diffusion and contrast-enhancement MRI phenotypes
+associated with immune checkpoint inhibitor exposure
+and with immune cell infiltration in brain metastases
+Francesco Sanvito , Gianluca Nocera, Zexi Wang, Eileen Shiuan, Lu Sun, Sonoko Oshima ,
+Asher Kim, Irina Kryukov, Guowen Shao, Nicholas S. Cho , Noriko Salamon ,
+Benjamin M. Ellingson, Robert Prins, Won Kim , and Jingwen Yao
+
+----- Preprocessed Text (First 500 chars) -----
+neuro oncology advance access date march diffusion and contrast enhancement mri phenotypes associated with immune checkpoint inhibitor exposure and with immune cell infiltration in brain metastases francesco sanvito gianluca nocera zexi wang eileen shiuan lu sun sonoko oshima asher kim irina kryukov guowen shao nicholas s cho noriko salamon benjamin m ellingson robert prins won kim and jingwen yao all author affiliations are listed at the end of the article corresponding author francesco sanvito
+
+============================================================
+
+Removed sensitive (noise) keywords: university
+
+============================================================
+PDF #5: 40126608.pdf
+============================================================
+
+Original length: 53613 characters
+Cleaned (preprocessed) length: 40385 characters
+
+Reduction in size: 24.7%
+
+----- Original Text (First 500 chars) -----
+Abdominal Radiology (2025) 50:4981–4994
+https://doi.org/10.1007/s00261-025-04869-0
+REVIEW
+Contrast-enhanced ultrasound in pregnancy
+Stephanie A. Nguyen1 · David P. Burrowes1 · Christina Merrill1 · Stephanie R. Wilson1
+Received: 24 December 2024 / Revised: 28 February 2025 / Accepted: 2 March 2025 / Published online: 24 March 2025
+© The Author(s), under exclusive licence to Springer Science+Business Media, LLC, part of Springer Nature 2025
+Abstract
+There are complex problems related to diagnostic
+
+----- Preprocessed Text (First 500 chars) -----
+abdominal radiology review contrast enhanced ultrasound in pregnancy stephanie a nguyen1 david p burrowes1 christina merrill1 stephanie r wilson1 december revised february accepted march published online march the author s under exclusive licence to springer science business media llc part of springer nature abstract there are complex problems related to diagnostic imaging of the pregnant patient cross sectional imaging with computed tomography ct tends to be avoided to due to the risk radiation
+
+============================================================
+
+Removed sensitive (noise) keywords: university
