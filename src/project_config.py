@@ -32,7 +32,7 @@ MIN_SAMPLES_SPLIT = 5 # Minimum samples required to split a node
 analysis_results_dir = RESULTS_DIR / "feature_analysis" # Directory for feature analysis results
 
 # Custom stop words
-CUSTOM_STOP_WORDS = [
+CUSTOM_STOP_WORDS = [ # List of custom stop words to exclude from text analysis
     # ════════════════════════════════════════════
     # GENERIC RESEARCH TERMS 
     # ════════════════════════════════════════════
@@ -297,6 +297,19 @@ CUSTOM_STOP_WORDS = [
     'bangkok', 'phuket', 'chiang mai', 
     'yangon', 'mandalay',
     'cairo', 'alexandria'
+
+    # ════════════════════════════════════════════
+    # Months
+    # ════════════════════════════════════════════
+
+    'january', 'february', 'march', 'april', 'may', 'june',
+    'july', 'august', 'september', 'october', 'november', 'december'
+
+    # ════════════════════════════════════════════
+    # Days
+    # ════════════════════════════════════════════
+    
+    'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'
 
     # ════════════════════════════════════════════
     # Add more as needed

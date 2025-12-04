@@ -176,7 +176,7 @@ def main():
     feature_extractor.get_top_features(X_train, y_train_numeric, top_n=50)
     
     # Apply SMOTE if severe class imbalance
-    if not_useful_count / useful_count > SMOTE_THRESHOLD: 
+    if imbalance_ratio > SMOTE_THRESHOLD: 
         logger.info("\n[Step 5.6] Applying SMOTE to balance classes...")
         try:
             

@@ -1,24 +1,24 @@
 ﻿# PDF Classification System - Supervised Learning
 
-A machine learning system for classifying PDF documents as "useful" or "not useful" using supervised learning with Random Forest and intelligent text extraction caching.
+A system that provides a detection of the pdf documents as "useful" or "not useful" profiting from supervised learning with Random Forest and intelligent text extraction caching.
 
 ---
 
-## 📊 **Project Status**
+## **Project Status**
 
-| Component            | Status      |          Performance            |
-|----------------------|-------------|---------------------------------|
-| **Pipeline**         | ✅ Complete | Fully operational               |
-| **Text Extraction**  | ✅ Complete | 333/333 PDFs processed          |
-| **Preprocessing**    | ✅ Enhanced | Author info removal, noise filtering |
-| **Model Training**   | ✅ Complete | Random Forest trained           |
-| **Caching System**   | ✅ Complete | 36x speedup                     |
-| **Overall Accuracy** | ✅ 82%      | Not useful: 89%, Useful: 36%    |
-| **Production Ready** | ⚠️ Progress | Data quality improvement ongoing |
+| Component            | Status   |          Performance                 |
+|----------------------|----------|--------------------------------------|
+| **Pipeline**         | Complete | Fully operational                    |
+| **Text Extraction**  | Complete | 333/333 PDFs processed               |
+| **Preprocessing**    | Enhanced | Author info removal, noise filtering |
+| **Model Training**   | Complete | Random Forest trained                |
+| **Caching System**   | Complete | 36x speedup                          |
+| **Overall Accuracy** | 82%      | Not useful: 89%, Useful: 36%         |
+| **Production Ready** | Progress | Data quality improvement ongoing     |
 
 ---
 
-## 🎯 **Current Results**
+## **Current Results**
 
 ### **Performance Metrics (Test Set: 84 PDFs)**
 
@@ -34,29 +34,24 @@ Classification Report:
 weighted avg       0.83      0.82      0.82        84
 ```
 
-**Confusion Matrix:**
-```
-                Actual
-              Not_U  Useful
-Predicted     ─────────────
-Not_Useful │    65       7  │
-Useful     │     8       4  │
-```
 
 **Key Improvements (v0.3.0):**
-- ✅ **4x better "useful" detection** (9% → 36% recall)
-- ✅ **Model now learns both classes** (not just memorizing majority)
-- ✅ **Better text preprocessing** (author info removal)
-- ⚠️ **Trade-off:** Slight accuracy drop (88% → 82%) but more balanced learning
+- **4x better "useful" detection** (9% → 36% recall)
+- **Model now learns both classes** (not just memorizing majority)
+- **Better text preprocessing** (author info removal)
+- **Trade-off:** Slight accuracy drop (88% → 82%) but more balanced learning
 
 **Remaining Issues:**
 - Still missing 64% of "useful" PDFs (7/11)
 - Generic features dominating ("age", "score", "scan")
 - Need more aggressive noise filtering
+- New Idea: integrate the script also for the .txt files instead of pdf.files
+- New Base Class implemented and must get integrated to the programm
+
 
 ---
 
-## 🚀 **Recent Improvements (v0.3.0)**
+## **Recent Improvements (v0.3.0)**
 
 ### **1. Enhanced Text Preprocessing**
 
@@ -112,7 +107,7 @@ results/preprocessing_comparison.txt
   - Progress tracking with statistics
   - **NEW:** Preprocessed text caching (`data/preprocessed_texts/`)
   
-- **Advanced Text Preprocessing** ⭐ NEW
+- **Advanced Text Preprocessing** NEW
   - Author section removal (contributions, affiliations)
   - Education background filtering
   - Noise keyword elimination
@@ -148,20 +143,20 @@ Femu-KI-PDF/
 │   ├── raw_pdfs/              # "Not useful" PDFs (290 files)
 │   ├── useful_pdfs/           # "Useful" PDFs (43 files)
 │   ├── extracted_texts/       # Cached raw text extractions (333 files)
-│   ├── preprocessed_texts/    # ⭐ NEW: Cleaned texts (333 files)
+│   ├── preprocessed_texts/    # NEW: Cleaned texts (333 files)
 │   └── labels.csv             # Training labels (333 entries)
 ├── src/
 │   ├── project_config.py      # Centralized configuration
 │   ├── loader.py              # PDF loading with label integration
 │   ├── extractor.py           # Text extraction with caching
-│   ├── preprocess.py          # ⭐ ENHANCED: Advanced text cleaning
+│   ├── preprocess.py          # ENHANCED: Advanced text cleaning
 │   ├── features.py            # TF-IDF feature extraction
 │   ├── model.py               # Random Forest classifier
 │   ├── utils.py               # Helper functions
 │   └── label_pdfs.py          # Automated labeling system
 ├── results/
 │   ├── predictions.csv        # Test set predictions
-│   ├── preprocessing_comparison.txt  # ⭐ NEW: Before/after analysis
+│   ├── preprocessing_comparison.txt  # Before/after analysis
 │   └── pdf_classifier.joblib  # Trained model
 ├── logs/
 │   └── label_pdfs.log         # Labeling process logs
@@ -205,7 +200,7 @@ numpy>=1.24.0              # Numerical operations
 
 ---
 
-## 📖 **Usage**
+## **Usage**
 
 ### **Quick Start**
 
@@ -275,8 +270,8 @@ python main.py
 **Pipeline Stages:**
 1. Load labels and PDFs
 2. Extract text (with caching)
-3. **⭐ Preprocess and clean text (with progress bars)**
-4. **⭐ Save preprocessed texts**
+3. **Preprocess and clean text (with progress bars)**
+4. **Save preprocessed texts**
 5. Extract TF-IDF features (2000 features)
 6. Apply SMOTE balancing (32→217)
 7. Train Random Forest classifier
@@ -293,8 +288,8 @@ INFO:preprocess:Preprocessing 249 documents
 INFO:preprocess:[████████████████░░░░░░░░░] 150/249 (60.2%) | 40064745
 INFO:preprocess:  Original: 45,914 chars, Cleaned: 28,500 chars, Reduction: 38.0%
 ...
-INFO:preprocess:✅ Preprocessing complete
-INFO:__main__:✅ Saved 249 preprocessed texts to: data\preprocessed_texts
+INFO:preprocess:Preprocessing complete
+INFO:__main__:Saved 249 preprocessed texts to: data\preprocessed_texts
 ```
 
 ---
@@ -308,7 +303,7 @@ Edit `src/project_config.py` to customize:
 RAW_PDFS_DIR = Path("data/raw_pdfs")
 USEFUL_PDFS_DIR = Path("data/useful_pdfs")
 EXTRACTED_TEXTS_DIR = Path("data/extracted_texts")
-PREPROCESSED_TEXTS_DIR = Path("data/preprocessed_texts")  # ⭐ NEW
+PREPROCESSED_TEXTS_DIR = Path("data/preprocessed_texts") 
 RESULTS_DIR = Path("results")
 
 # Model Hyperparameters
@@ -333,7 +328,7 @@ SMOTE_THRESHOLD = 3.0       # Apply SMOTE if imbalance ratio > 3
 
 ### **Known Issues**
 
-1. **Moderate Minority Class Recall (36%)** ⚠️ IMPROVED from 9%
+1. **Moderate Minority Class Recall (36%)** IMPROVED from 9%
    - Model detected 4 out of 11 "useful" PDFs in test set
    - Root cause: Generic features still dominating
 
@@ -348,7 +343,7 @@ SMOTE_THRESHOLD = 3.0       # Apply SMOTE if imbalance ratio > 3
 
 ### **Immediate Next Steps (Priority Order)**
 
-#### **🔴 HIGH PRIORITY: Aggressive Stop Words (1-2 hours)**
+#### **HIGH PRIORITY: Aggressive Stop Words (1-2 hours)**
 
 **Problem:** Generic words dominating features
 ```python
@@ -394,7 +389,7 @@ self.vectorizer = TfidfVectorizer(
 
 ---
 
-#### **🟡 MEDIUM PRIORITY: Data Expansion (2-3 weeks)**
+#### **MEDIUM PRIORITY: Data Expansion (2-3 weeks)**
 
 **Target:** Collect 70-120 additional "useful" PDFs
 - Current: 32 samples
@@ -403,7 +398,7 @@ self.vectorizer = TfidfVectorizer(
 
 ---
 
-#### **🟢 LOW PRIORITY: Model Tuning (after data expansion)**
+#### **LOW PRIORITY: Model Tuning (after data expansion)**
 
 - Increase class weight: `{0: 1, 1: 20}` (from 15)
 - Add trigrams: `NGRAM_RANGE = (1, 3)`
@@ -453,13 +448,13 @@ After SMOTE:
 
 ### **Top 10 Features (v0.3.0)**
 ```
-1. age           (0.0348)  # ⚠️ Generic - needs filtering
-2. detection     (0.0285)  # ⚠️ Generic
+1. age           (0.0348)  # Generic - filtering added
+2. detection     (0.0285)  # Generic
 3. optical       (0.0266)
 4. superior      (0.0243)
 5. sampling      (0.0210)
-6. score         (0.0202)  # ⚠️ Generic - needs filtering
-7. scan          (0.0170)  # ⚠️ Generic - needs filtering
+6. score         (0.0202)  # Generic - filtering added
+7. scan          (0.0170)  # Generic - filtering added
 8. algorithm     (0.0167)
 9. visible       (0.0159)
 10. targeting    (0.0155)
@@ -491,13 +486,13 @@ pip install imbalanced-learn
 - Subsequent runs use cache (~5 seconds)
 
 ### **Issue: "All text being removed during preprocessing"**
-✅ **FIXED in v0.3.0**
+**FIXED in v0.3.0**
 - Updated regex patterns to be less aggressive
 - Numbers now preserved (important for scientific notation)
 - Only author-specific sections removed
 
 ### **Issue: "Model performance is poor"**
-⚠️ **Partially addressed in v0.3.0**
+**Partially addressed in v0.3.0**
 - Useful recall improved from 9% → 36%
 - Next step: Add custom stop words (see "Immediate Next Steps")
 - Long term: Expand dataset to 100+ useful samples
@@ -506,7 +501,7 @@ pip install imbalanced-learn
 
 ## **Performance Optimization**
 
-### **Dual Caching System** ⭐ ENHANCED
+### **Dual Caching System** 
 
 The intelligent caching system now operates at two levels:
 
@@ -517,7 +512,7 @@ Second run: ~5 seconds   (load from cache)
 Location:   data/extracted_texts/
 ```
 
-**Level 2: Preprocessing Cache** ⭐ NEW
+**Level 2: Preprocessing Cache** 
 ```
 First run:  ~60 seconds  (preprocess 333 texts)
 Second run: ~3 seconds   (load from cache)
@@ -527,7 +522,7 @@ Location:   data/preprocessed_texts/
 **Total Speedup:** 
 - Without cache: ~4 minutes
 - With cache: ~8 seconds
-- **50x faster!** 🚀
+- **50x faster!** 
 
 **To force complete re-processing:**
 ```bash
@@ -545,17 +540,17 @@ python main.py
 
 ### **Current Priority Tasks**
 
-1. **🔴 Add Custom Stop Words** (Immediate - 1-2 hours)
+1. **Add Custom Stop Words** (Immediate - 1-2 hours)
    - Implement CUSTOM_STOP_WORDS in project_config.py
    - Update features.py to use combined stop word list
    - Test and evaluate impact on recall
 
-2. **🟡 Data Collection** (High Priority - 2-3 weeks)
+2. **Data Collection** (High Priority - 2-3 weeks)
    - Collect 70-120 additional "useful" PDFs
    - Document clear labeling criteria
    - Verify existing labels
 
-3. **🟢 Experimentation** (After data expansion)
+3. **Experimentation** (After data expansion)
    - Test different hyperparameters
    - Try alternative ML algorithms
    - Implement cross-validation
@@ -588,7 +583,7 @@ canerrcc1@gmail.com
 
 ## **Changelog**
 
-### [0.3.0] - 2025-12-02 ⭐ MAJOR UPDATE
+### [0.3.0] - 2025-12-02 MAJOR UPDATE
 - **4x improvement in useful PDF detection** (9% → 36% recall)
 - Enhanced text preprocessing with author section removal
 - Added preprocessing cache system (data/preprocessed_texts/)
@@ -614,15 +609,15 @@ canerrcc1@gmail.com
 
 ## **Important Notes**
 
-1. **⚠️ Not Production Ready:** Current model has 36% recall on minority class
+1. **Not Production Ready:** Current model has 36% recall on minority class
    - **Immediate action needed:** Implement custom stop words
    - **Long term:** Expand dataset to 100+ useful samples
 
-2. **✅ Significant Progress:** 4x improvement in useful detection (v0.2 → v0.3)
+2. **Significant Progress:** 4x improvement in useful detection (v0.2 → v0.3)
 
-3. **🎯 Next Milestone:** 50-60% useful recall (achievable with stop words)
+3. **Next Milestone:** 50-60% useful recall (achievable with stop words)
 
-4. **📈 Final Target:** 70%+ useful recall (requires data expansion)
+4. **Final Target:** 70%+ useful recall (requires data expansion)
 
 ---
 

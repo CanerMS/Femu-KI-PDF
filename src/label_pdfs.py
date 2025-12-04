@@ -87,12 +87,12 @@ def create_labels():
     logger.info(f"  Testing: {len(test_df)} ({len(test_df)/len(all_labels)*100:.1f}%)") # Log testing count
     logger.info(f"\nClass Distribution:") # Log class distribution
     for split in ['train', 'test']: # Log distribution per split
-        split_data = all_labels[all_labels['split'] == split]
-        for label in ['not_useful', 'useful']:
-            count = len(split_data[split_data['label'] == label])
-            logger.info(f"  {split} - {label}: {count}")
+        split_data = all_labels[all_labels['split'] == split] # Filter data for the split
+        for label in ['not_useful', 'useful']: # Log count per label
+            count = len(split_data[split_data['label'] == label]) # Count of each label
+            logger.info(f"  {split} - {label}: {count}") # Log count
     
-    logger.info("\nNext step: Run 'python main.py' to train the model")
+    logger.info("\nNext step: Run 'python main.py' to train the model") # Log next step message
     
     return all_labels
 

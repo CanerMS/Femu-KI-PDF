@@ -6,7 +6,9 @@ from matplotlib import cm
 from sklearn.ensemble import IsolationForest
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import classification_report, confusion_matrix, accuracy_score
-from project_config import N_ESTIMATORS, MAX_DEPTH, MIN_SAMPLES_SPLIT, RANDOM_STATE
+from project_config import *
+from visualize_cm import plot_confusion_matrix_advanced  # Advanced visualization
+
 import joblib
 import numpy as np
 import logging
@@ -189,7 +191,9 @@ class PDFClassifier:
 
         if y_test is not None:  
             logger.info("\nClassification Report:")
-            print(classification_report(y_test, predictions, target_names=['not_useful', 'useful']))
+            class_names = ['not_useful', 'useful']
+            print(classification_report(y_test, predictions, target_names=class_names))
+            
             logger.info("\nConfusion Matrix:")
             cm = confusion_matrix(y_test, predictions)
             print(cm)
@@ -199,8 +203,18 @@ class PDFClassifier:
             plt.ylabel('Actual')
             plt.xlabel('Predicted')
             plt.savefig('results/confusion_matrix.png')
+
+
+            plot_confusion_matrix_advanced(
+                cm, 
+                class_names, 
+                output_path='results/confusion_matrix_advanced.png'
+            )
+
             logger.info(f"True Negatives: {cm[0,0]}, False Positives: {cm[0,1]}")
             logger.info(f"False Negatives: {cm[1,0]}, True Positives: {cm[1,1]}")
+
+
 
         return predictions, scores
     

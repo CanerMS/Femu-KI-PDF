@@ -4,21 +4,126 @@ Loads PDF files from the raw_pdfs directory
 """
 import os
 from pathlib import Path
-from typing import List, Dict
+from typing import List, Dict, Literal
 import logging
 import sys
 from pathlib import Path
 sys.path.insert(0, str(Path(__file__).parent))
 
-from project_config import RAW_PDFS_DIR, USEFUL_PDFS_DIR 
+from project_config import RAW_PDFS_DIR, RAW_TXTS_DIR, USEFUL_PDFS_DIR 
 import logging
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 
+# Base Class for Loaders
+class UnifiedLoader():
+    """ Unified Loader for PDF and TXT files"""
+    def __init__(self, 
+                pdf_dir: Path = RAW_PDFS_DIR, 
+                txt_dir: Path = RAW_TXTS_DIR,
+                file_type: Literal['pdf', 'txt'] = 'pdf' # 'pdf' or 'txt' Literal type hint 
+                ):
+        """
+        Initialize Unified Loader
+        
+        :param self: Description
+        :param pdf_dir: Directory containing PDF files
+        :type pdf_dir: Path
+        :param txt_dir: Directory containing TXT files
+        :type txt_dir: Path
+        """
+        self.pdf_loader = PDFLoader(pdf_dir=pdf_dir)
+        self.txt_loader = TXTLoader(txt_dir=txt_dir)
 
-class PDFLoader:
+class TXTLoader():
+    """ Handles Loading TXT files from directory"""
+    def __init__(self, txt_dir: Path = RAW_TXTS_DIR):
+        """
+        Initialize TXT loader
+        
+        :param self: Description
+        :param txt_dir: Description
+        :type txt_dir: Path
+        """
+        super().__init__(txt_dir=txt_dir)
+        self.txt_dir = Path(txt_dir)
+        if not self.txt_dir.exists():
+            raise ValueError(f"TXT directory not found: {txt_dir}")
+        
+    def get_text_files(self) -> List[Path]:
+        """
+        Get all TXT files from the directory
+        
+        :return: List of Path objects for TXT files
+        :rtype: List[Path]
+        """
+        txt_files = list(self.txt_dir.glob("*.txt")) # Get all .txt files in the directory
+        logger.info(f"Found {len(txt_files)} TXT files in {self.txt_dir}")
+        return sorted(txt_files) # it sorts the list of TXT files alphabetically
+        
+    def get_txt_info(self) -> List[Dict[str, str]]:
+        """
+        Get information about all TXTs
+
+        :return: List of dictionaries with TXT metadata
+        :rtype: List[Dict[str, str]]
+        """
+        txt_files = self.get_text_files() # Get all TXT files
+        txt_info = [] # Initialize list to hold TXT metadata
+        for txt_path in txt_files: # Iterate over each TXT file
+            info = {
+                'filename': txt_path.name, # filename
+                'path': str(txt_path), # Full path as string
+                'size_kb': txt_path.stat().st_size / 1024 # Size in kilobytes
+            }
+            txt_info.append(info)
+        
+        return txt_info
+    
+    def read_txt_file(self, txt_path: Path) -> str:
+        """
+        Read the content of a TXT file
+        
+        :param txt_path: Path to the TXT file
+        :type txt_path: Path
+        
+        :return: Content of the TXT file as a string
+        :rtype: str
+        """
+        with open(txt_path, 'r', encoding='utf-8') as file:
+            content = file.read() # Read the entire content of the TXT file
+        return content
+    
+    def get_txt_by_split(self, split: str, labels_df) -> List[Path]:
+        """
+        Get TXTs for a specific split (train/test) based on labels DataFrame
+        
+        :param split: 'train' or 'test'
+        :type split: str
+        :param labels_df: DataFrame containing 'filename' and 'split' columns
+        :type labels_df: pd.DataFrame
+        
+        :return: List of Path objects for the specified split
+        :rtype: List[Path]
+        """
+        split_filenames = labels_df[labels_df['split'] == split]['filename'].tolist() # Get filenames for the split, e.g., 'train' or 'test'
+        
+        txt_files = [] # Initialize list to hold TXT file paths
+        for filename in split_filenames: # Iterate over each filename
+            txt_path = self.txt_dir / filename # Construct full path
+            
+            if txt_path.exists(): # If file exists
+                txt_files.append(txt_path) # Add to list
+            else:
+                logger.warning(f"TXT file not found for {filename}")
+        
+        logger.info(f"Found {len(txt_files)} TXTs for split '{split}'")
+        return txt_files
+
+
+class PDFLoader():
     """Handles loading PDF files from directory"""
 
     def __init__(self, pdf_dir: Path = RAW_PDFS_DIR): 
