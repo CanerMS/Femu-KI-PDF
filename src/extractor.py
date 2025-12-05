@@ -180,48 +180,184 @@ class PDFExtractor:
         """
         if self.output_dir.exists(): # Check if output directory exists
             count = 0
-            for txt_file in self.output_dir.glob("*.txt"):
-                txt_file.unlink()
-                count += 1
-            logger.info(f"Cleared {count} cached text files from {self.output_dir}")
+            for txt_file in self.output_dir.glob("*.txt"): # Iterate over all text files in output directory
+                txt_file.unlink() # Delete the text file
+                count += 1 # Increment count of deleted files
+            logger.info(f"Cleared {count} cached text files from {self.output_dir}") # Log number of files cleared
 
-    def get_cache_stats(self) -> Dict:
+    def get_cache_stats(self) -> Dict: # returns dictionary with cache statistics
         """
         get statistics about cached extracted text files
         """
-        if not self.output_dir.exists():
-            return {'cached_files': 0, 'total_size_kb': 0}
+        if not self.output_dir.exists(): # Check if output directory exists
+            return {'cached_files': 0, 'total_size_kb': 0} # Return zero stats if directory doesn't exist
         
-        txt_files = list(self.output_dir.glob("*.txt"))
-        total_size = sum(f.stat().st_size for f in txt_files)
+        txt_files = list(self.output_dir.glob("*.txt")) # Get list of all text files in output directory
+        total_size = sum(f.stat().st_size for f in txt_files) # Calculate total size of all text files in bytes
 
         return {
-            'cached_files': len(txt_files),
-            'total_size_mb': round(total_size / (1024 * 1024), 2),
-            'cache_dir': str(self.output_dir)
+            'cached_files': len(txt_files), # Number of cached text files
+            'total_size_mb': round(total_size / (1024 * 1024), 2), # Total size in megabytes
+            'cache_dir': str(self.output_dir) # Cache directory path
         }
 
+class TXTExtractor:
+    """
+    Extracts text from TXT files 
+    Simple reader, no complex parsing needed
+    """
+    
+    def __init__(self):
+        """Initialize TXT extractor"""
+        logger.info("Initialized TXTExtractor")
+    
+    def extract_text(self, txt_path: Path) -> str:
+        """Read TXT file directly"""
+        try:
+            with open(txt_path, 'r', encoding='utf-8') as f:
+                text = f.read()
+            
+            logger.info(f"Read {len(text)} characters from {txt_path.name}")
+            return text
+            
+        except UnicodeDecodeError:
+            # Fallback encoding
+            logger.warning(f"UTF-8 failed for {txt_path.name}, trying latin-1")
+            try:
+                with open(txt_path, 'r', encoding='latin-1') as f:
+                    text = f.read()
+                return text
+            except Exception as e:
+                logger.error(f"Error reading {txt_path.name}: {str(e)}")
+                return ""
+        
+        except Exception as e:
+            logger.error(f"Error reading {txt_path.name}: {str(e)}")
+            return ""
+    
+    def extract_batch(self, txt_files: List[Path]) -> Dict[str, str]:
+        """Read multiple TXT files"""
+        results = {}
+        for txt_path in txt_files:
+            text = self.extract_text(txt_path)
+            if text:
+                results[txt_path.stem] = text
+        return results
+    
+class UnifiedExtractor:
+    """
+    Unified extractor that can handle both PDF and TXT files
+    Automatically detects file type based on extension
+    """
+    
+    def __init__(self, output_dir: Path = EXTRACTED_TEXTS_DIR):
+        """
+        Initialize unified extractor
+        
+        Args:
+            output_dir: Directory for PDF extraction cache
+        """
+        self.pdf_extractor = PDFExtractor(output_dir=output_dir)
+        self.txt_extractor = TXTExtractor()
+        logger.info("Initialized UnifiedExtractor (supports PDF and TXT)")
+    
+    def extract_text(self, file_path: Path) -> str:
+        """
+        Extract text from file (auto-detect PDF or TXT)
+        
+        Args:
+            file_path: Path to PDF or TXT file
+            
+        Returns:
+            Extracted text as string
+        """
+        if file_path.suffix.lower() == '.pdf':
+            return self.pdf_extractor.extract_text(file_path)
+        elif file_path.suffix.lower() == '.txt':
+            return self.txt_extractor.extract_text(file_path)
+        else:
+            logger.error(f"Unsupported file type: {file_path.suffix}")
+            return ""
+    
+    def extract_batch(self, files: List[Path]) -> Dict[str, str]:
+        """
+        Extract text from multiple files (mixed PDF and TXT)
+        
+        Args:
+            files: List of file paths (PDF and/or TXT)
+            
+        Returns:
+            Dictionary mapping file stems to extracted text
+        """
+        # Separate by file type
+        pdf_files = [f for f in files if f.suffix.lower() == '.pdf']
+        txt_files = [f for f in files if f.suffix.lower() == '.txt']
+        
+        results = {}
+        
+        # Extract PDFs
+        if pdf_files:
+            logger.info(f"Extracting {len(pdf_files)} PDF files...")
+            pdf_results = self.pdf_extractor.extract_batch(pdf_files)
+            results.update(pdf_results)
+        
+        # Extract TXTs
+        if txt_files:
+            logger.info(f"Reading {len(txt_files)} TXT files...")
+            txt_results = self.txt_extractor.extract_batch(txt_files)
+            results.update(txt_results)
+        
+        logger.info(f"Total extracted: {len(results)} files")
+        return results
 
 if __name__ == "__main__":
-    # Test the extractor
+    # Test the extractors
+    print("="*60)
+    print("Testing PDF and TXT Extractors")
+    print("="*60)
+    
+    # Test PDFExtractor
+    print("\n[1] Testing PDFExtractor...")
     from loader import PDFLoader
     
-    # Show current cache stats
-    extractor = PDFExtractor()
-    stats = extractor.get_cache_stats()
-    print(f"Current Cache Stats: ")
+    pdf_extractor = PDFExtractor()
+    stats = pdf_extractor.get_cache_stats()
+    print(f"PDF Cache Stats:")
     print(f"  Cached Files: {stats['cached_files']}")
     print(f"  Total Size (MB): {stats['total_size_mb']}")
-    print(f"  Cache Directory: {stats['cache_dir']}")
-
-    # Test extraction on sample PDFs
-    loader = PDFLoader()
-    pdf_files = loader.get_pdf_files()[:3] # Get first 3 PDFs for testing
-
-    print("\nExtracting text from sample PDFs...")
-    results = extractor.extract_batch(pdf_files)
     
-    print("\nExtraction Results:")
-    for filename, text in results.items():
-        print(f"\n{filename}: {len(text)} characters")
-        print(f"Preview: {text[:200]}...")
+    pdf_loader = PDFLoader()
+    pdf_files = pdf_loader.get_files()[:2]
+    
+    if pdf_files:
+        print(f"\nExtracting {len(pdf_files)} sample PDFs...")
+        pdf_results = pdf_extractor.extract_batch(pdf_files)
+        for filename, text in pdf_results.items():
+            print(f"  {filename}: {len(text)} characters")
+    
+    # Test TXTExtractor
+    print("\n[2] Testing TXTExtractor...")
+    from loader import TXTLoader
+    
+    txt_extractor = TXTExtractor()
+    txt_loader = TXTLoader()
+    txt_files = txt_loader.get_files()[:2]
+    
+    if txt_files:
+        print(f"\nReading {len(txt_files)} sample TXTs...")
+        txt_results = txt_extractor.extract_batch(txt_files)
+        for filename, text in txt_results.items():
+            print(f"  {filename}: {len(text)} characters")
+    else:
+        print("  No TXT files found in data/raw_txts/")
+    
+    # Test UnifiedExtractor
+    print("\n[3] Testing UnifiedExtractor...")
+    unified_extractor = UnifiedExtractor()
+    
+    all_files = pdf_files + txt_files
+    if all_files:
+        print(f"\nExtracting {len(all_files)} mixed files (PDF + TXT)...")
+        unified_results = unified_extractor.extract_batch(all_files)
+        for filename, text in unified_results.items():
+            print(f"  {filename}: {len(text)} characters")

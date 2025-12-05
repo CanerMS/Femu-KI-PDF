@@ -1,7 +1,9 @@
-﻿# PDF Classification System - Supervised Learning
+﻿# PDF + TXT Classification System - Supervised Learning
 
 A system that provides a detection of the pdf documents as "useful" or "not useful" profiting from supervised learning with Random Forest and intelligent text extraction caching.
-
+There are 2 different mods.
+Supervised and Unsupervised learn. 
+The mod can be arranged in main.py. 
 ---
 
 ## **Project Status**
@@ -107,7 +109,7 @@ results/preprocessing_comparison.txt
   - Progress tracking with statistics
   - **NEW:** Preprocessed text caching (`data/preprocessed_texts/`)
   
-- **Advanced Text Preprocessing** NEW
+- **Advanced Text Preprocessing** 
   - Author section removal (contributions, affiliations)
   - Education background filtering
   - Noise keyword elimination
@@ -131,7 +133,7 @@ results/preprocessing_comparison.txt
   - Classification report
   - Feature importance analysis
   - Per-class metrics
-  - **NEW:** Preprocessing comparison reports
+  - Preprocessing comparison reports
 
 ---
 
@@ -140,11 +142,13 @@ results/preprocessing_comparison.txt
 ```
 Femu-KI-PDF/
 ├── data/
-│   ├── raw_pdfs/              # "Not useful" PDFs (290 files)
-│   ├── useful_pdfs/           # "Useful" PDFs (43 files)
-│   ├── extracted_texts/       # Cached raw text extractions (333 files)
-│   ├── preprocessed_texts/    # NEW: Cleaned texts (333 files)
-│   └── labels.csv             # Training labels (333 entries)
+│   ├── raw_pdfs/              # "Not useful" PDFs 
+│   ├── raw_texts/             # "Not useful" Texts
+│   ├── useful_pdfs/           # "Useful" PDFs
+│   ├── useful_texts/          # "Useful" Texts
+│   ├── extracted_texts/       # Cached raw text extractions 
+│   ├── preprocessed_texts/    # Cleaned texts after preprocessing
+│   └── labels.csv             # Training labels 
 ├── src/
 │   ├── project_config.py      # Centralized configuration
 │   ├── loader.py              # PDF loading with label integration
@@ -159,7 +163,7 @@ Femu-KI-PDF/
 │   ├── preprocessing_comparison.txt  # Before/after analysis
 │   └── pdf_classifier.joblib  # Trained model
 ├── logs/
-│   └── label_pdfs.log         # Labeling process logs
+│   └── label_files.log         # Labeling process logs
 ├── main.py                    # Main pipeline orchestrator
 ├── requirements.txt
 ├── .gitignore
@@ -342,80 +346,34 @@ SMOTE_THRESHOLD = 3.0       # Apply SMOTE if imbalance ratio > 3
    - Minimum recommended: 100-150 samples
 
 ### **Immediate Next Steps (Priority Order)**
+- TXTExtrocter, TXTLoader classes are defined,
+- A base class UnifiedLoader implemented#
+- Childclasses integrated and derive from the parent class
+- label_files.py needs also .txt files handling
 
-#### **HIGH PRIORITY: Aggressive Stop Words (1-2 hours)**
+#### **HIGH PRIORITY: label_files.py improvement**
 
-**Problem:** Generic words dominating features
-```python
-Top features: 'age', 'score', 'scan', 'detection', 'optical'
-# These appear in BOTH useful and not_useful PDFs!
-```
+**Idea** The name of label_pdfs.py has converted to label_files.py
+- Another script is needed for .*txt files
+- So that, the automated labeling process works for .txt files as well
 
-**Solution:** Add custom stop words list
 
-In `src/project_config.py`:
-```python
-CUSTOM_STOP_WORDS = [
-    # Generic research terms
-    'study', 'studies', 'result', 'results', 'method', 'methods',
-    'data', 'analysis', 'conclusion', 'background', 'objective',
-    
-    # Generic medical terms  
-    'age', 'gender', 'male', 'female', 'patient', 'patients',
-    'score', 'scores', 'scan', 'scans', 'detection', 'detecting',
-    
-    # Generic descriptors
-    'significant', 'showed', 'used', 'using', 'based', 'compared',
-    'observed', 'measured', 'performed', 'obtained'
-]
-```
-
-In `src/features.py`:
-```python
-from sklearn.feature_extraction.text import ENGLISH_STOP_WORDS
-all_stop_words = list(ENGLISH_STOP_WORDS) + CUSTOM_STOP_WORDS
-
-self.vectorizer = TfidfVectorizer(
-    max_features=max_features,
-    ngram_range=ngram_range,
-    min_df=5,  # Increase from 3
-    stop_words=all_stop_words  # Use combined list
-)
-```
-
-**Expected Impact:** 
-- Useful recall: 36% → 50-60%
-- More specific features will emerge
-
----
-
-#### **MEDIUM PRIORITY: Data Expansion (2-3 weeks)**
+#### **MEDIUM PRIORITY: Data Expansion (2-4 weeks)**
 
 **Target:** Collect 70-120 additional "useful" PDFs
 - Current: 32 samples
 - Target: 100-150 samples
 - Maintain consistent labeling criteria
+- The current number of samples is too low
+- SMOTE works fine, but the closer the number of unuseful and usefule datas are, the better results I assume to get
 
----
 
 #### **LOW PRIORITY: Model Tuning (after data expansion)**
 
+- The parameters can get tuned for better results
 - Increase class weight: `{0: 1, 1: 20}` (from 15)
 - Add trigrams: `NGRAM_RANGE = (1, 3)`
 - Increase features: `MAX_FEATURES = 3000`
-
----
-
-### **Expected Outcomes After Immediate Improvements**
-
-| Metric | Current (v0.3.0) | After Stop Words | Final Target |
-|--------|------------------|------------------|--------------|
-| **Useful Recall** | 36% | 50-60% | 70%+ |
-| **Useful Precision** | 33% | 40-50% | 60%+ |
-| **Useful F1-Score** | 0.35 | 0.45-0.55 | 0.65+ |
-| **Overall Accuracy** | 82% | 85%+ | 92%+ |
-
----
 
 ## **Model Details**
 
@@ -425,8 +383,11 @@ self.vectorizer = TfidfVectorizer(
 - **Max Depth:** 10
 - **Class Weight:** {0: 1, 1: 15} (emphasize useful class)
 - **SMOTE:** Applied when imbalance ratio > 3.0
+- There is also unsupervised mode, nevetheless it won't work properly for this scenario 
+- The supervised approach is more compatible with this kind of problem
+- Otherwisely the machine can't comprehend, what is actually useful
 
-### **Training Process**
+### **What kind of contribute does Smote provide?**
 ```
 Original Training Data:
   - Not useful: 217 samples
@@ -440,6 +401,7 @@ After SMOTE:
 ```
 
 ### **Feature Extraction**
+- These are observable in project_config.py
 - **Method:** TF-IDF (Term Frequency-Inverse Document Frequency)
 - **Features:** 2000 most important terms
 - **N-grams:** Unigrams + Bigrams
@@ -448,6 +410,8 @@ After SMOTE:
 
 ### **Top 10 Features (v0.3.0)**
 ```
+- This is an example that I got as a result 
+- age or algorith etc. I 've forbidden such words using custom_stop_words in project_config.py
 1. age           (0.0348)  # Generic - filtering added
 2. detection     (0.0285)  # Generic
 3. optical       (0.0266)
@@ -458,19 +422,10 @@ After SMOTE:
 8. algorithm     (0.0167)
 9. visible       (0.0159)
 10. targeting    (0.0155)
+
 ```
 
-**Note:** Generic terms indicate need for custom stop words
-
----
-
-## **Troubleshooting**
-
-### **Issue: "imbalanced-learn not installed"**
-```bash
-pip install imbalanced-learn
-```
-
+### **Some Errors That Can Occure**
 ### **Issue: "No PDF files found"**
 - Ensure PDFs are in `data/raw_pdfs/` and `data/useful_pdfs/`
 - Check file extensions (must be `.pdf`)
@@ -486,7 +441,6 @@ pip install imbalanced-learn
 - Subsequent runs use cache (~5 seconds)
 
 ### **Issue: "All text being removed during preprocessing"**
-**FIXED in v0.3.0**
 - Updated regex patterns to be less aggressive
 - Numbers now preserved (important for scientific notation)
 - Only author-specific sections removed
@@ -499,33 +453,11 @@ pip install imbalanced-learn
 
 ---
 
-## **Performance Optimization**
-
-### **Dual Caching System** 
-
-The intelligent caching system now operates at two levels:
-
-**Level 1: Text Extraction Cache**
-```
-First run:  ~180 seconds (extract 333 PDFs)
-Second run: ~5 seconds   (load from cache)
-Location:   data/extracted_texts/
-```
-
-**Level 2: Preprocessing Cache** 
-```
-First run:  ~60 seconds  (preprocess 333 texts)
-Second run: ~3 seconds   (load from cache)
-Location:   data/preprocessed_texts/
-```
-
-**Total Speedup:** 
-- Without cache: ~4 minutes
-- With cache: ~8 seconds
-- **50x faster!** 
-
 **To force complete re-processing:**
+
+- Espeacially important for the following runs with different data
 ```bash
+
 # Windows
 rmdir /s /q data\extracted_texts
 rmdir /s /q data\preprocessed_texts
@@ -534,33 +466,6 @@ rmdir /s /q data\preprocessed_texts
 python main.py
 ```
 
----
-
-## **Contributing**
-
-### **Current Priority Tasks**
-
-1. **Add Custom Stop Words** (Immediate - 1-2 hours)
-   - Implement CUSTOM_STOP_WORDS in project_config.py
-   - Update features.py to use combined stop word list
-   - Test and evaluate impact on recall
-
-2. **Data Collection** (High Priority - 2-3 weeks)
-   - Collect 70-120 additional "useful" PDFs
-   - Document clear labeling criteria
-   - Verify existing labels
-
-3. **Experimentation** (After data expansion)
-   - Test different hyperparameters
-   - Try alternative ML algorithms
-   - Implement cross-validation
-
-4. **Documentation**
-   - Document labeling criteria
-   - Add more usage examples
-   - Create troubleshooting guide
-
----
 
 ## **License**
 
@@ -583,7 +488,7 @@ canerrcc1@gmail.com
 
 ## **Changelog**
 
-### [0.3.0] - 2025-12-02 MAJOR UPDATE
+### [0.3.0] - 2025-12-02
 - **4x improvement in useful PDF detection** (9% → 36% recall)
 - Enhanced text preprocessing with author section removal
 - Added preprocessing cache system (data/preprocessed_texts/)
@@ -604,22 +509,6 @@ canerrcc1@gmail.com
 ### [0.1.0] - 2025-11-XX
 - Initial project setup
 - Basic PDF loading functionality
-
----
-
-## **Important Notes**
-
-1. **Not Production Ready:** Current model has 36% recall on minority class
-   - **Immediate action needed:** Implement custom stop words
-   - **Long term:** Expand dataset to 100+ useful samples
-
-2. **Significant Progress:** 4x improvement in useful detection (v0.2 → v0.3)
-
-3. **Next Milestone:** 50-60% useful recall (achievable with stop words)
-
-4. **Final Target:** 70%+ useful recall (requires data expansion)
-
----
 
 **Status:** **Active Development** - Core improvements implemented, optimization in progress
 

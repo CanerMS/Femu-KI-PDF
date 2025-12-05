@@ -13,6 +13,8 @@ LOGS_DIR = BASE_DIR / "logs" # Logs directory
 # Data directories
 RAW_PDFS_DIR = DATA_DIR / "raw_pdfs" # Directory for raw PDFs
 USEFUL_PDFS_DIR = DATA_DIR / "useful_pdfs" # Directory for useful PDFs
+RAW_TXTS_DIR = DATA_DIR / "raw_texts" # Directory for raw texts
+USEFUL_TXTS_DIR = DATA_DIR / "useful_texts" # Directory for useful texts
 EXTRACTED_TEXTS_DIR = DATA_DIR / "extracted_texts" # Directory for extracted texts
 LABELS_PATH = DATA_DIR / "labels.csv" # Path for labels CSV
 PREPROCESSED_TEXTS_DIR = DATA_DIR / "preprocessed_texts" # Directory for preprocessed texts
@@ -43,7 +45,7 @@ CUSTOM_STOP_WORDS = [ # List of custom stop words to exclude from text analysis
     'used', 'using', 'based', 'compared', 'total',
     'mean', 'average', 'respectively', 'associated',
     'observed', 'measured', 'performed', 'obtained',
-    'means',  # ← YENİ: "means" ekle
+    'means',  'values', 'indicate', 'indicated',
     
     # ════════════════════════════════════════════
     # DEMOGRAPHICS 
@@ -74,8 +76,8 @@ CUSTOM_STOP_WORDS = [ # List of custom stop words to exclude from text analysis
     'optical', 'visible', 'visualization', 'imaging',
     'superior', 'inferior', 'anterior', 'posterior',
     'sample', 'samples', 'sampling', 'specimen',
-    'contrast',  # ← YENİ: imaging terimi
-    'double',    # ← YENİ: "double-blind" gibi generic
+    'contrast',  
+    'double',   
     
     # ════════════════════════════════════════════
     # STATISTICS & NUMBERS 
@@ -123,7 +125,7 @@ CUSTOM_STOP_WORDS = [ # List of custom stop words to exclude from text analysis
     'researcharticle', 'vol',
     'opticsexpress',
     'cid',  # Citation ID
-    'ps',   # Belirsiz kısaltma
+    'ps',  'pdf',   # File format noise
     
     # ════════════════════════════════════════════
     # COMPARISON & OUTCOMES 
@@ -156,16 +158,16 @@ CUSTOM_STOP_WORDS = [ # List of custom stop words to exclude from text analysis
     'important', 'potential', 'possible', 'likely',
     'general', 'specific', 'particular', 'common',
     'primary', 'secondary', 'initial', 'final',
-    'major', 'minor', 'main', 'overall' 'processing',      # Generic processing term
+    'major', 'minor', 'main', 'overall', 'processing',      # Generic processing term
     'shorter',         # Generic descriptor
     'disorder', 'disorders',  # Generic medical
     'enabling',        # Generic capability term
     'associations',    # Generic statistics
     'technology', 'technologies',  # Generic tech
     'la',              # Abbreviation noise (Los Angeles?)
-    'respiratory',     # Generic medical (eğer konuyla ilgili değilse)
+    'respiratory',     # Generic medical term
     'processing', 'severe', 'stronger', 'radiology',
-    'spectra', 'spectral', 'reconstruction', 'view'
+    'spectra', 'spectral', 'reconstruction', 'view',
 
     # ════════════════════════════════════════════
     # Countries 
@@ -296,14 +298,14 @@ CUSTOM_STOP_WORDS = [ # List of custom stop words to exclude from text analysis
     'ho chi minh city', 'hanoi',
     'bangkok', 'phuket', 'chiang mai', 
     'yangon', 'mandalay',
-    'cairo', 'alexandria'
+    'cairo', 'alexandria',
 
     # ════════════════════════════════════════════
     # Months
     # ════════════════════════════════════════════
 
     'january', 'february', 'march', 'april', 'may', 'june',
-    'july', 'august', 'september', 'october', 'november', 'december'
+    'july', 'august', 'september', 'october', 'november', 'december',
 
     # ════════════════════════════════════════════
     # Days

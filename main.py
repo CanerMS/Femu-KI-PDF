@@ -5,6 +5,7 @@ Orchestrates the PDF classification workflow
 import sys
 from pathlib import Path
 import numpy as np
+import pandas as pd
 import logging
 
 from sklearn.metrics import accuracy_score
@@ -12,8 +13,8 @@ from sklearn.metrics import accuracy_score
 # Add src to path
 sys.path.insert(0, str(Path(__file__).parent / 'src'))
 
-from loader import PDFLoader 
-from extractor import PDFExtractor
+from loader import PDFLoader, TXTLoader 
+from extractor import PDFExtractor, TXTExtractor
 from preprocess import TextPreprocessor
 from features import FeatureExtractor
 from model import PDFClassifier
@@ -29,8 +30,13 @@ logger = logging.getLogger(__name__)
 
 def main():
     logger.info("="*60) 
-    logger.info("Starting PDF Classification Pipeline")
+    logger.info("Starting PDF/TXT Classification Pipeline")
     logger.info("="*60)
+
+    # 0. Choose File Type
+
+    FILE_TYPE = 'pdf'  # 'pdf' or 'txt'
+    logger.info(f"File type selected: {FILE_TYPE.upper()}") 
     
     # 1. Load Labels
     logger.info("\n[Step 1] Loading Labels...")
@@ -40,18 +46,32 @@ def main():
         logger.error("Labels file not found. Please create labels.csv before running the pipeline.")
         return
     
-    # 2. Load PDFs
-    logger.info("\n[Step 2] Loading PDFs...")
-    loader = PDFLoader()
+    # 2. Initialize Loader / Extractor based on file type
+    logger.info(f"\n[Step 2] Loading {FILE_TYPE.upper()}...")
 
-    train_files = loader.get_pdfs_by_split('train', labels_df)
-    test_files = loader.get_pdfs_by_split('test', labels_df)
+    if FILE_TYPE == 'pdf':
+        data_loader = PDFLoader(pdf_dir=RAW_PDFS_DIR, useful_dir=USEFUL_PDFS_DIR)
+        extractor = PDFExtractor()
+    elif FILE_TYPE == 'txt':
+        data_loader = TXTLoader(txt_dir=RAW_TXTS_DIR, useful_dir=USEFUL_TXTS_DIR)
+        extractor = TXTExtractor()
+    else:
+        logger.error("Invalid FILE_TYPE specified. Use 'pdf' or 'txt'.")
+        return
+
+    logger.info(f"{FILE_TYPE.upper()} loader initialized")
+    logger.info(f"{FILE_TYPE.upper()} extractor initialized")
+
+    # Get train/test splits
+    train_files = data_loader.get_files_by_split('train', labels_df)
+    test_files = data_loader.get_files_by_split('test', labels_df)
     
-    train_labels = loader.get_labels_for_pdfs(train_files, labels_df)
-    test_labels = loader.get_labels_for_pdfs(test_files, labels_df)
+    # Get labels for train/test sets
+    train_labels = data_loader.get_labels_for_files(train_files, labels_df)
+    test_labels = data_loader.get_labels_for_files(test_files, labels_df)
     
-    logger.info(f"Training: {len(train_files)} PDFs ({sum(train_labels)} useful)")
-    logger.info(f"Testing: {len(test_files)} PDFs ({sum(test_labels)} useful)")
+    logger.info(f"Training: {len(train_files)} {FILE_TYPE.upper()}s ({sum(train_labels)} useful)")
+    logger.info(f"Testing: {len(test_files)} {FILE_TYPE.upper()}s ({sum(test_labels)} useful)")
     
     # Analyze class balance in training set 
     useful_count = sum(train_labels)
@@ -83,12 +103,12 @@ def main():
         logger.info("Model uses class_weight='balanced' to handle this automatically")
     
     # 3-4. Extract and preprocess (same as before)
-    logger.info("\n[Step 3] Extracting text from PDFs...")
-    extractor = PDFExtractor()
+    logger.info(f"\n[Step 3] Extracting text from {FILE_TYPE.upper()}s...")
+
     train_texts_dict = extractor.extract_batch(train_files)
     test_texts_dict = extractor.extract_batch(test_files)
     
-    logger.info("\n[Step 4] Preprocessing text...")
+    logger.info(f"\n[Step 4] Preprocessing text from {FILE_TYPE.upper()}s...")
     preprocessor = TextPreprocessor()
     train_texts_clean = preprocessor.preprocess_batch(
         list(train_texts_dict.values()),
@@ -243,7 +263,7 @@ def main():
     logger.info("PIPELINE COMPLETE!")
     logger.info("="*60)
     
-    classifier.save_model(RESULTS_DIR / 'pdf_classifier.joblib') 
+    classifier.save_model(RESULTS_DIR / f'{FILE_TYPE}_classifier.joblib') 
     
     return results_df
 
