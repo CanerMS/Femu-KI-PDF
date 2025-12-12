@@ -35,7 +35,6 @@ analysis_results_dir = RESULTS_DIR / "feature_analysis" # Directory for feature 
 
 # Custom stop words
 CUSTOM_STOP_WORDS = [ # List of custom stop words to exclude from text analysis
-    # ════════════════════════════════════════════
     # GENERIC RESEARCH TERMS 
     # ════════════════════════════════════════════
     'study', 'studies', 'studied', 'result', 'results',
@@ -47,19 +46,16 @@ CUSTOM_STOP_WORDS = [ # List of custom stop words to exclude from text analysis
     'observed', 'measured', 'performed', 'obtained',
     'means',  'values', 'indicate', 'indicated',
     
-    # ════════════════════════════════════════════
     # DEMOGRAPHICS 
     # ════════════════════════════════════════════
     'age', 'gender', 'male', 'female', 'group', 'groups',
     'control', 'controls', 'case', 'cases', 'patient', 'patients',
     
-    # ════════════════════════════════════════════
     # MEDICAL MEASUREMENTS 
     # ════════════════════════════════════════════
     'score', 'scores', 'scan', 'scans', 'image', 'images',
     'test', 'tests', 'value', 'values', 'level', 'levels',
     
-    # ════════════════════════════════════════════
     # MEDICAL PROCEDURES 
     # ════════════════════════════════════════════
     'diagnosis', 'diagnostic', 'procedure', 'procedures',
@@ -69,7 +65,6 @@ CUSTOM_STOP_WORDS = [ # List of custom stop words to exclude from text analysis
     'surgery', 'surgical', 'operation', 'operated',
     'injection', 'injected', 'administration', 'administered',
     
-    # ════════════════════════════════════════════
     # IMAGING & DETECTION 
     # ════════════════════════════════════════════
     'detection', 'detecting', 'detected', 'detector',
@@ -79,7 +74,6 @@ CUSTOM_STOP_WORDS = [ # List of custom stop words to exclude from text analysis
     'contrast',  
     'double',   
     
-    # ════════════════════════════════════════════
     # STATISTICS & NUMBERS 
     # ════════════════════════════════════════════
     'number', 'numbers', 'percentage', 'percent',
@@ -87,9 +81,8 @@ CUSTOM_STOP_WORDS = [ # List of custom stop words to exclude from text analysis
     'frequency', 'frequencies', 'prevalence',
     'incidence', 'occurrence', 'distribution',
     'range', 'ranges', 'variation', 'variance',
-    'slightly',  # ← YENİ: belirsiz terim
+    'slightly',  # belirsiz terim
     
-    # ════════════════════════════════════════════
     # TIME & LOCATION 
     # ════════════════════════════════════════════
     'time', 'times', 'period', 'periods', 'duration',
@@ -97,7 +90,6 @@ CUSTOM_STOP_WORDS = [ # List of custom stop words to exclude from text analysis
     'baseline', 'follow', 'followup', 'postoperative', 'preoperative',
     'hospital', 'clinic', 'center', 'department',
     
-    # ════════════════════════════════════════════
     # RESEARCH PROCESS 
     # ════════════════════════════════════════════
     'research', 'investigate', 'investigated', 'investigation',
@@ -107,17 +99,15 @@ CUSTOM_STOP_WORDS = [ # List of custom stop words to exclude from text analysis
     'cohort', 'trial', 'trials', 'experiment', 'experimental',
     'approved',  
 
-    # ════════════════════════════════════════════
     # META WORDS 
     # ════════════════════════════════════════════
-    'targeting',     # ← Generic term
+    'targeting',     # Generic term
     'algorithm', 'algorithms',
     'artificial', 'intelligence',
     'features', 'feature',
     'united', 'states',  # Geographic noise
     'longitudinal',
     
-    # ════════════════════════════════════════════
     # JOURNAL/FIGURE NOISE TERMS
     # ════════════════════════════════════════════
     'fig', 'figs',   # Already has, but add variations
@@ -127,7 +117,6 @@ CUSTOM_STOP_WORDS = [ # List of custom stop words to exclude from text analysis
     'cid',  # Citation ID
     'ps',  'pdf',   # File format noise
     
-    # ════════════════════════════════════════════
     # COMPARISON & OUTCOMES 
     # ════════════════════════════════════════════
     'comparison', 'compare', 'difference', 'differences',
@@ -136,14 +125,12 @@ CUSTOM_STOP_WORDS = [ # List of custom stop words to exclude from text analysis
     'improvement', 'improved', 'outcome', 'outcomes',
     'effect', 'effects', 'efficacy', 'effective', 'effectiveness',
     
-    # ════════════════════════════════════════════
     # QUALITY & VALIDITY 
     # ════════════════════════════════════════════
     'accuracy', 'accurate', 'precision', 'precise',
     'sensitivity', 'specificity', 'reliability', 'valid', 'validity',
     'quality', 'standard', 'standards', 'normal',
     
-    # ════════════════════════════════════════════
     # JOURNAL METADATA 
     # ════════════════════════════════════════════
     'abstract', 'introduction', 'materials', 'discussion',
@@ -151,7 +138,6 @@ CUSTOM_STOP_WORDS = [ # List of custom stop words to exclude from text analysis
     'published', 'publication', 'article', 'journal',
     'doi', 'manuscript', 'supplementary', 'appendix',
     
-    # ════════════════════════════════════════════
     # GENERIC DESCRIPTORS 
     # ════════════════════════════════════════════
     'various', 'several', 'multiple', 'different',
@@ -159,37 +145,22 @@ CUSTOM_STOP_WORDS = [ # List of custom stop words to exclude from text analysis
     'general', 'specific', 'particular', 'common',
     'primary', 'secondary', 'initial', 'final',
     'major', 'minor', 'main', 'overall', 'processing',      # Generic processing term
-    'shorter',         # Generic descriptor
-    'disorder', 'disorders',  # Generic medical
-    'enabling',        # Generic capability term
-    'associations',    # Generic statistics
-    'technology', 'technologies',  # Generic tech
-    'la',              # Abbreviation noise (Los Angeles?)
-    'respiratory',     # Generic medical term
+    'shorter',                                              # Generic descriptor
+    'disorder', 'disorders',        # Generic medical
+    'enabling',                     # Generic capability term
+    'associations',                 # Generic statistics
+    'technology', 'technologies',   # Generic tech
+    'la',                           # Abbreviation noise (Los Angeles?)
+    'respiratory',                  # Generic medical term
     'processing', 'severe', 'stronger', 'radiology',
     'spectra', 'spectral', 'reconstruction', 'view',
 
-    # ════════════════════════════════════════════
     # Countries 
     # ════════════════════════════════════════════
-    'china', 'chinese', 'india', 'indian',
-    'japan', 'japanese', 'germany', 'german',
-    'france', 'french', 'brazil', 'brazilian',
-    'canada', 'canadian', 'australia', 'australian',
-    'uk', 'united kingdom', 'britain', 'british',
-    'russia', 'russian', 'spain', 'spanish',
-    'italy', 'italian', 'korea', 'korean',
-    'south korea', 'north korea',
-    'turkey', 'turkish',
-    'mexico', 'mexican',
-    'saudi', 'arabia', 'saudi arabia',
-    'uae', 'united arab emirates',
-    'singapore', 'singaporean',
-    'sweden', 'swedish',
-    'norway', 'norwegian',
-    'denmark', 'danish',
-    'finland', 'finnish',
-    'netherlands', 'dutch',
+    'china', 'chinese', 'india', 'indian', 'japan', 'japanese', 'germany', 'german', 'france', 'french', 'brazil', 'brazilian',
+    'canada', 'canadian', 'australia', 'australian', 'uk', 'united kingdom', 'britain', 'british', 'russia', 'russian', 'spain', 'spanish',
+    'italy', 'italian', 'korea', 'korean', 'south korea', 'north korea', 'turkey', 'turkish', 'mexico', 'mexican', 'saudi', 'arabia', 'saudi arabia',
+    'uae', 'united arab emirates', 'singapore', 'singaporean', 'sweden', 'swedish', 'norway', 'norwegian','denmark', 'danish', 'finland', 'finnish', 'netherlands', 'dutch',
     'belgium', 'belgian',
     'switzerland', 'swiss',
     'austria', 'austrian',
@@ -273,7 +244,6 @@ CUSTOM_STOP_WORDS = [ # List of custom stop words to exclude from text analysis
     'reunion', 'mauritius', 'mauritian',
     'seychelles', 'seychellois',
 
-    # ════════════════════════════════════════════
     # Cities
     # ════════════════════════════════════════════
     'london', 'paris', 'berlin', 'madrid', 'rome',
@@ -300,20 +270,17 @@ CUSTOM_STOP_WORDS = [ # List of custom stop words to exclude from text analysis
     'yangon', 'mandalay',
     'cairo', 'alexandria',
 
-    # ════════════════════════════════════════════
     # Months
     # ════════════════════════════════════════════
 
     'january', 'february', 'march', 'april', 'may', 'june',
     'july', 'august', 'september', 'october', 'november', 'december',
 
-    # ════════════════════════════════════════════
     # Days
     # ════════════════════════════════════════════
     
     'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'
 
-    # ════════════════════════════════════════════
     # Add more as needed
     # ════════════════════════════════════════════
 

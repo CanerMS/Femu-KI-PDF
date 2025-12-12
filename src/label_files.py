@@ -8,9 +8,10 @@ import pandas as pd
 
 sys.path.insert(0, 'src')
 
-from loader import PDFLoader
+from loader import PDFLoader, TXTLoader
+from typing import Literal
 from pathlib import Path
-from project_config import RAW_PDFS_DIR, USEFUL_PDFS_DIR, LABELS_PATH, LOGS_DIR, TEST_SIZE, RANDOM_STATE 
+from project_config import *
 
 if not LOGS_DIR.exists():  # Ensure logs directory exists
     LOGS_DIR.mkdir() # Create logs directory if it doesn't exist
@@ -26,20 +27,28 @@ logging.basicConfig( # Configure logging
 logger = logging.getLogger(__name__) # Get logger instance
 
 
-def create_labels(): 
+def create_labels(file_type: Literal['pdf', 'txt'] = 'pdf'): 
     """
     Create labels for PDFs in RAW_PDFS_DIR (not useful) and USEFUL_PDFS_DIR (useful).
     """
+
+    if file_type == 'pdf': 
+        loader_not_useful = PDFLoader(pdf_dir=RAW_PDFS_DIR)
+        loader_useful = PDFLoader(pdf_dir=USEFUL_PDFS_DIR)
+    elif file_type == 'txt':
+        loader_not_useful = TXTLoader(txt_dir=RAW_TXTS_DIR)
+        loader_useful = TXTLoader(txt_dir=USEFUL_TXTS_DIR)
+    else:
+        raise ValueError(f"Invalid file_type: {file_type}")
+    
     logger.info("=" * 60)
     logger.info("PDF Labeling - Supervised Mode")
     logger.info("=" * 60)
     
-    # Load PDFs from both directories
-    loader_not_useful = PDFLoader(pdf_dir=RAW_PDFS_DIR)  # Load 'not useful' PDFs
-    loader_useful = PDFLoader(pdf_dir=USEFUL_PDFS_DIR)   # Load 'useful' PDFs
     
-    not_useful_files = loader_not_useful.get_pdf_files()  # Get 'not useful' PDFs
-    useful_files = loader_useful.get_pdf_files() # Get 'useful' PDFs
+    
+    not_useful_files = loader_not_useful.get_files()  # Get 'not useful' PDFs
+    useful_files = loader_useful.get_files() # Get 'useful' PDFs
 
     logger.info(f"Found {len(not_useful_files)} 'not useful' PDFs") # Log count of 'not useful' PDFs 
     logger.info(f"Found {len(useful_files)} 'useful' PDFs") # Log count of 'useful' PDFs
@@ -65,7 +74,7 @@ def create_labels():
     train_df, test_df = train_test_split( # Split DataFrame into train and test sets
         df, # DataFrame to split
         test_size=TEST_SIZE, # Proportion of test set
-        stratify=df['label'], # Stratify by label
+        stratify=df['label'], # Stratify by label guarantees proportional representation between splits, for example if 20% of data is useful, both train and test will have 20% useful
         random_state=RANDOM_STATE  # Random state for reproducibility
     )
 
@@ -92,7 +101,7 @@ def create_labels():
             count = len(split_data[split_data['label'] == label]) # Count of each label
             logger.info(f"  {split} - {label}: {count}") # Log count
     
-    logger.info("\nNext step: Run 'python main.py' to train the model") # Log next step message
+    logger.info(f"\nNext step: Run 'python main.py' to train the model with FILE_TYPE='{file_type}'") # Log next step message
     
     return all_labels
 

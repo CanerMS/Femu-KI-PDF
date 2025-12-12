@@ -156,7 +156,7 @@ class PDFExtractor:
             
             # Extract (will use cache if available and valid)
             text = self.extract_text_from_pdf(pdf_path) # Extract text
-            results[pdf_path.name] = text # Store in results dictionary
+            results[pdf_path.stem] = text # Store in results dictionary
             
             # Track caching stats
             if was_cached: # If text was loaded from cache
@@ -238,10 +238,16 @@ class TXTExtractor:
     def extract_batch(self, txt_files: List[Path]) -> Dict[str, str]:
         """Read multiple TXT files"""
         results = {}
-        for txt_path in txt_files:
+        total = len(txt_files)
+
+        for i, txt_path in enumerate(txt_files, 1):
             text = self.extract_text(txt_path)
             if text:
                 results[txt_path.stem] = text
+        
+            if i % 25 == 0 or i == total:
+                logger.info(f"Processed {i}/{total} TXT files.")
+        
         return results
     
 class UnifiedExtractor:

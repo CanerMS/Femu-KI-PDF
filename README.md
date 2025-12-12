@@ -332,18 +332,10 @@ SMOTE_THRESHOLD = 3.0       # Apply SMOTE if imbalance ratio > 3
 
 ### **Known Issues**
 
-1. **Moderate Minority Class Recall (36%)** IMPROVED from 9%
-   - Model detected 4 out of 11 "useful" PDFs in test set
-   - Root cause: Generic features still dominating
-
-2. **Feature Quality Issues**
-   - Current top features: "age", "score", "scan", "detection"
-   - These are **generic medical/research terms**, not specific to "useful" class
-   - Need more aggressive noise filtering
-
-3. **Insufficient Training Data**
+1. **Insufficient Training Data**
    - Only 32 "useful" samples in training set
    - Minimum recommended: 100-150 samples
+   - Solution: I need to collect more and quality data
 
 ### **Immediate Next Steps (Priority Order)**
 - TXTExtrocter, TXTLoader classes are defined,
@@ -405,7 +397,7 @@ After SMOTE:
 - **Method:** TF-IDF (Term Frequency-Inverse Document Frequency)
 - **Features:** 2000 most important terms
 - **N-grams:** Unigrams + Bigrams
-- **Stop Words:** English common words removed
+- **Stop Words:** English common words and words that I think extra noise removed
 - **Min DF:** 3 (term must appear in at least 3 documents)
 
 ### **Top 10 Features (v0.3.0)**
@@ -512,5 +504,5 @@ canerrcc1@gmail.com
 
 **Status:** **Active Development** - Core improvements implemented, optimization in progress
 
-**Last Updated:** 2025-12-02
+**Last Updated:** 2025-12-05
 **Version:** 0.3.0

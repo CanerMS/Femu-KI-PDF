@@ -22,6 +22,7 @@ class AnomalyDetector:
     """
     Anomaly Detection using Isolation Forest
     Isolation Forest isolates anomalies instead of profiling normal data
+    
     """
     def __init__(self, contamination: float = 'auto', random_state: int = 42):
         self.model = IsolationForest(
@@ -213,9 +214,6 @@ class PDFClassifier:
 
             logger.info(f"True Negatives: {cm[0,0]}, False Positives: {cm[0,1]}")
             logger.info(f"False Negatives: {cm[1,0]}, True Positives: {cm[1,1]}")
-
-
-
         return predictions, scores
     
     def save_model(self, path: str):
@@ -226,3 +224,30 @@ class PDFClassifier:
         self.model = joblib.load(path) # Load the trained model from disk
         self.is_trained = True
         logger.info(f"Model loaded from {path}")
+
+    def cross_validate(self, X, y, cv=5):
+        """
+        Perform cross-validation on the dataset
+
+        Args:
+            X: Feature matrix
+            y: Labels
+            cv: Number of folds for cross-validation
+
+        Returns:
+            List of accuracy scores for each fold
+        """
+        from sklearn.model_selection import cross_val_score
+
+        if self.mode != 'supervised':
+            raise ValueError("Cross-validation is only available in supervised mode") # CV only for supervised
+
+        logger.info(f"Performing {cv}-fold cross-validation")
+        
+        scores = cross_val_score(self.model, X, y, cv=cv, scoring='f1_weighted', n_jobs=-1)
+        
+        logger.info(f"\nCross-Validation Results ({cv}-fold):")
+        logger.info(f"  Mean F1: {scores.mean():.3f} (+/- {scores.std() * 2:.3f})")
+        logger.info(f"  Scores: {scores}")
+        
+        return scores

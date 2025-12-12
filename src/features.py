@@ -3,11 +3,13 @@ Feature Extraction Module
 Creates TF-IDF features from text
 """
 from sklearn.feature_extraction.text import TfidfVectorizer, ENGLISH_STOP_WORDS
+from project_config import MAX_FEATURES, NGRAM_RANGE, CUSTOM_STOP_WORDS
+from sklearn.feature_selection import SelectKBest, chi2
+from pathlib import Path
+
 import numpy as np
 import pandas as pd
-from pathlib import Path
 import logging
-from project_config import MAX_FEATURES, NGRAM_RANGE, CUSTOM_STOP_WORDS
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -164,9 +166,9 @@ class FeatureExtractor:
         logger.info("="*60)
         for idx, row in not_useful_features.head(20).iterrows():
             logger.info(f"{idx+1:2d}. {row['feature_name']:25s} | "
-                       f"useful: {row['useful_mean_tfidf']:.4f} | "
-                       f"not_useful: {row['not_useful_mean_tfidf']:.4f} | "
-                       f"diff: {row['difference']:+.4f}")
+                        f"useful: {row['useful_mean_tfidf']:.4f} | "
+                        f"not_useful: {row['not_useful_mean_tfidf']:.4f} | "
+                        f"diff: {row['difference']:+.4f}")
         
         logger.info(f"\nFull lists saved to:")
         logger.info(f"   - {output_dir / 'top_useful_features.csv'}")
@@ -189,3 +191,24 @@ class FeatureExtractor:
         if self.is_fitted:
             return self.vectorizer.get_feature_names_out() # Return feature names if fitted
         return [] # Return empty list if not fitted yet
+    
+    def select_best_features(self, X, y, k=MAX_FEATURES):
+        """
+        Select top K features using Chi-Squared statistical test
+        Args:
+            X: Feature matrix
+            y: Labels array
+            k: Number of top features to select
+        Returns:
+            Reduced feature matrix with top K features
+        """
+        logger.info(f"Selecting top {k} features using Chi-Squared test")
+        selector = SelectKBest(chi2, k=k) # Chi-Squared feature selection
+        X_new = selector.fit_transform(X, y) # Fit and transform to select best features
+
+        selected_indices = selector.get_support(indices=True) # Get indices of selected features
+        self.feature_names = [self.feature_names[i] for i in selected_indices] # Update feature names
+
+        logger.info(f"Selected {X_new.shape[1]} features out of {X.shape[1]}")
+        self._save_feature_names() # Save updated feature names
+        return X_new
