@@ -23,7 +23,7 @@ class UnifiedLoader():
     def __init__(self, 
                 data_dir: Path = RAW_PDFS_DIR, 
                 useful_dir: Path = USEFUL_PDFS_DIR,
-                file_type: Literal['pdf', 'txt'] = 'pdf' # 'pdf' or 'txt' Literal type hint 
+                file_type: Literal['pdf', 'txt'] = 'pdf' #  Type hint: Default is 'pdf'
                 ):
         """
         Initialize Unified Loader
@@ -43,8 +43,8 @@ class UnifiedLoader():
             raise ValueError(f"Data directory not found: {data_dir}")
         
         logger.info(f"Initialized {file_type.upper()} loader: ") # Log initialization message
-        logger.info(f"  Main dir: {self.data_dir}")
-        logger.info(f"  Useful dir: {self.useful_dir}")
+        logger.info(f"Main dir: {self.data_dir}")
+        logger.info(f"Useful dir: {self.useful_dir}")
 
     def get_files(self) -> List[Path]:
         """
@@ -56,25 +56,21 @@ class UnifiedLoader():
         files = list(self.data_dir.glob(f"*{self.extension}")) # Get all files with the specified extension
         logger.info(f"Found {len(files)} {self.file_type.upper()} files in {self.data_dir}")
         return sorted(files) # it sorts the list of files alphabetically
-
+    
+    # for testing purposes 
     def get_file_info(self) -> List[Dict[str, str]]:
-        """
-        Get information about all files (PDF or TXT)
-        Returns:
-        List of dictionaries with file metadata
-        """
-        files = self.get_files() # Get all files
-        file_info = [] # Initialize list to hold file metadata
+        """Get file information (name, size) - ONLY FOR TESTING"""
+        files = self.get_files()
+        info = []
+        
+        for file_path in files:
+            info.append({
+                'filename': file_path.name,
+                'size_kb': file_path.stat().st_size / 1024
+            })
+        
+        return info
 
-        for file_path in files: # Iterate over each file
-            info = {
-                'filename': file_path.name, # filename
-                'path': str(file_path), # Full path as string
-                'size_kb': file_path.stat().st_size / 1024 # Size in kilobytes
-            }
-            file_info.append(info)
-
-        return file_info
 
     def get_files_by_split(self, split: str, labels_df) -> List[Path]:
         """
@@ -89,10 +85,10 @@ class UnifiedLoader():
 
         files = [] # Initialize list to hold file paths
         for filename in split_filenames: # Iterate over each filename
-            file_path = self.data_dir / filename # Construct full path
+            file_path = self.data_dir / filename # Construct full path for every file for example raw_pdfs/filename1.pdf
 
             if file_path.exists(): # If file exists in main directory
-                files.append(file_path) # Add to list
+                files.append(file_path) # Add to list 
             else:
                 # Check in useful directory
                 useful_path = self.useful_dir / filename  # Use useful directory
@@ -111,7 +107,9 @@ class UnifiedLoader():
         Args:
             files: List of Path objects for files
             labels_df: DataFrame containing 'filename' and 'label' columns
-    """
+        Returns:
+            List of numeric labels (0=not_useful, 1=useful)
+        """
     
         label_map = {'not_useful': 0, 'useful': 1} # Map string labels to numeric
         labels = [] # Initialize list to hold labels
@@ -127,79 +125,11 @@ class UnifiedLoader():
                 logger.warning(f"No label found for {file_path.name}, defaulting to 0")
                 labels.append(0)
         return labels
-
-    def split_train_test(self, test_size: float = 0.5, random_seed: int = 42) -> tuple: # returns train and test splits
-        """
-        Split files (PDF or TXT) into train and test sets
-
-        Args:
-            test_size: Proportion of data for testing (default: 0.5 for 50/50 split)
-            random_seed: Random seed for reproducibility
-        Returns:
-            Tuple of (train_files, test_files)
-        """
-        import random
-
-        files = self.get_files() # Get all files
-
-        # without seed, different runs would produce different splits
-        random.seed(random_seed) # Set random seed for reproducibility
-        shuffled = files.copy() # Create a copy to shuffle
-        random.shuffle(shuffled) # Shuffle the list of files
-
-        split_idx = int(len(shuffled) * (1 - test_size)) # Calculate split index
-        train_files = shuffled[:split_idx] # First part for training
-        test_files = shuffled[split_idx:] # Second part for testing
-        logger.info(f"Split: {len(train_files)} training, {len(test_files)} testing")
-        return train_files, test_files # because of the shuffle, the files are randomly assigned to train and test sets
-
-    def get_all_files(self, labels_df) -> List[Path]:
-        """
-        Get all files (PDF or TXT) from both main and useful directories
-
-        Args:
-            labels_df: DataFrame containing 'filename' column
-        Returns:
-            List of Path objects for all files
-        """
-        all_filenames = labels_df['filename'].tolist()
-        files = []
-        
-        for filename in all_filenames:
-            # Check main directory first (e.g., raw_pdfs)
-            file_path = self.data_dir / filename
-            if file_path.exists():
-                files.append(file_path)
-            else:
-                # Check useful directory (e.g., useful_pdfs)
-                useful_path = self.useful_dir / filename
-                if useful_path.exists():
-                    files.append(useful_path)
-                else:
-                    logger.warning(f"File not found: {filename} (checked both {self.data_dir} and {self.useful_dir})")
-        
-        logger.info(f"Loaded {len(files)}/{len(all_filenames)} {self.file_type.upper()}s from labels")
-        return files
     
-    def get_all_labels(self, labels_df) -> List[int]:
-        """
-        Get ALL numeric labels (0/1) from labels DataFrame
-        
-        Args:
-            labels_df: DataFrame with 'label' column
-        
-        Returns:
-            List of numeric labels (0=not_useful, 1=useful)
-        """
-        label_map = {'not_useful': 0, 'useful': 1}
-        labels = [label_map[label] for label in labels_df['label']]
-        
-        logger.info(f"Loaded {len(labels)} labels: {labels.count(0)} not_useful, {labels.count(1)} useful")
-        return labels
         
 
-class PDFLoader(UnifiedLoader):
-    """PDF Loader (backwards compatible)"""
+class PDFLoader(UnifiedLoader): # inherits from UnifiedLoader
+    """PDF Loader"""
     def __init__(self, 
                 pdf_dir: Path = RAW_PDFS_DIR, 
                 useful_dir: Path = USEFUL_PDFS_DIR):
@@ -214,9 +144,9 @@ class PDFLoader(UnifiedLoader):
             data_dir=pdf_dir, 
             useful_dir=useful_dir, 
             file_type='pdf'
-            )
+            ) # change file_type to 'pdf'
         
-class TXTLoader(UnifiedLoader):
+class TXTLoader(UnifiedLoader): # inherits from UnifiedLoader
     """TXT Loader"""
     def __init__(self, 
                 txt_dir: Path = RAW_TXTS_DIR, 
@@ -232,7 +162,7 @@ class TXTLoader(UnifiedLoader):
             data_dir=txt_dir, 
             useful_dir=useful_dir, 
             file_type='txt'
-            )
+            ) # change file_type to 'txt'
 
 
 
@@ -250,9 +180,9 @@ if __name__ == "__main__":
             print(f"  - {info['filename']} ({info['size_kb']:.2f} KB)")
     
     # Test TXT loader
-    print("\n" + "="*50)
+    print("\n" + "="*60)
     print("Testing TXT Loader")
-    print("="*50)
+    print("="*60)
     txt_loader = TXTLoader()
     txt_info = txt_loader.get_file_info()
     print(f"Found {len(txt_info)} TXTs")

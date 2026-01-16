@@ -10,7 +10,6 @@ sys.path.insert(0, 'src')
 
 from loader import PDFLoader, TXTLoader
 from typing import Literal
-from pathlib import Path
 from project_config import *
 
 if not LOGS_DIR.exists():  # Ensure logs directory exists

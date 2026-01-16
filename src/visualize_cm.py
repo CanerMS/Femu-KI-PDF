@@ -10,7 +10,7 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-def plot_confusion_matrix_advanced(cm, class_names, output_path='results/confusion_matrix_advanced.png'):
+def plot_confusion_matrix_advanced(cm, class_names, output_path='results/confusion_matrix_advanced.png', dataset_label='test'):
     """
     Plot confusion matrix with counts and percentages
     
@@ -18,6 +18,7 @@ def plot_confusion_matrix_advanced(cm, class_names, output_path='results/confusi
         cm: Confusion matrix (2x2 numpy array)
         class_names: List of class names ['not_useful', 'useful']
         output_path: Output file path (default: results/confusion_matrix_advanced.png)
+        dataset_label: Label for the dataset (e.g., 'test', 'train') for title and filename
     """
     # Calculate percentages (row-wise normalization)
     cm_percent = cm.astype('float') / cm.sum(axis=1)[:, np.newaxis] * 100
@@ -29,14 +30,14 @@ def plot_confusion_matrix_advanced(cm, class_names, output_path='results/confusi
     sns.heatmap(
         cm,
         annot=False,  # We'll add custom annotations
-        cmap='Blues',
+        cmap='Greens',
         xticklabels=class_names,
         yticklabels=class_names,
         cbar=True,
         cbar_kws={'label': 'Count'},
         square=True,
         linewidths=3,
-        linecolor='white',
+        linecolor='black',
         ax=ax
     )
     
@@ -63,7 +64,7 @@ def plot_confusion_matrix_advanced(cm, class_names, output_path='results/confusi
     
     # Styling: Add titles
     plt.title(
-        'Confusion Matrix\n(Count and Row Percentage)', 
+        f'Confusion Matrix - {dataset_label.upper()}\n(Count and Row Percentage)', 
         fontsize=22, 
         fontweight='bold', 
         pad=20
@@ -85,7 +86,7 @@ def plot_confusion_matrix_advanced(cm, class_names, output_path='results/confusi
     
     # Add metrics box below the matrix
     metrics_text = (
-        f'Overall Metrics:\n'
+        f'Overall Metrics: ({dataset_label.upper()})\n'
         f'Accuracy: {accuracy:.1%} | '
         f'Precision: {precision:.1%} | '
         f'Recall: {recall:.1%} | '
@@ -94,15 +95,15 @@ def plot_confusion_matrix_advanced(cm, class_names, output_path='results/confusi
     )
     
     plt.text(
-        0.5, -0.15,  # Position: center, below matrix
+        0.5, -0.25,  # Position: center, below matrix
         metrics_text,
         ha='center',
         transform=ax.transAxes,
         fontsize=14,
         bbox=dict(
             boxstyle='round,pad=1', 
-            facecolor='lightblue', 
-            edgecolor='navy',
+            facecolor='darkseagreen', 
+            edgecolor='black',
             alpha=0.8,
             linewidth=2
         )
@@ -125,6 +126,7 @@ def plot_confusion_matrix_advanced(cm, class_names, output_path='results/confusi
     
     logger.info(f"Advanced confusion matrix saved to: {output_path}")
     print(f"\nAdvanced confusion matrix visualization saved!")
+    print(f"   Dataset: {dataset_label}")
     print(f"   Location: {output_path}")
     print(f"   Metrics: Acc={accuracy:.1%}, Prec={precision:.1%}, Rec={recall:.1%}, F1={f1:.1%}")
 

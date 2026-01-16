@@ -69,36 +69,11 @@ class FeatureExtractor:
         features = self.vectorizer.fit_transform(texts) # Learning happens here, Learn vocabulary and transform texts to feature matrix
         self.is_fitted = True # Mark as fitted after learning vocabulary from training texts
         self.feature_names = self.vectorizer.get_feature_names_out() # Save feature names after fitting
-        self._save_feature_names()
-        logger.info(f"Created feature matrix: {features.shape}") 
-        return features
+        self._save_feature_names() # Save feature names to CSV
+        logger.info(f"Created feature matrix: {features.shape}") # Log shape of feature matrix 
+        return features 
     
-    # here it only returns the feature matrix by using existing vocabulary
-    def _save_feature_names(self):
-        """
-        Save the feature names (words) extracted by the vectorizer
-        """
-        if self.feature_names is None:
-            logger.warning("Feature names not available. Vectorizer may not be fitted yet.")
-            return
-        
-        features_df = pd.DataFrame({
-            'feature_index': range(len(self.feature_names)),
-            'feature_name': self.feature_names
-        })
-
-
-
-        output_dir = Path('results')
-        output_dir.mkdir(exist_ok=True)
-        output_path = output_dir / 'selected_features.csv'
-
-        features_df.to_csv(output_path, index = False)
-        logger.info(f"{len(self.feature_names)} Saved feature names to {output_path}")
-
-        logger.info("\nFirst 50 selected features: ")
-        for i, name in enumerate(self.feature_names[:50]):
-            logger.info(f"  {i}: {name}")
+    
 
     def get_top_features(self, X, y, top_n=50):
         """
@@ -192,6 +167,9 @@ class FeatureExtractor:
             return self.vectorizer.get_feature_names_out() # Return feature names if fitted
         return [] # Return empty list if not fitted yet
     
+
+    # Select top K features using Chi-Squared test for reducing overfitting and improving model performance
+    # faster training and prediction times on large feature sets by removing less informative features
     def select_best_features(self, X, y, k=MAX_FEATURES):
         """
         Select top K features using Chi-Squared statistical test
@@ -203,12 +181,40 @@ class FeatureExtractor:
             Reduced feature matrix with top K features
         """
         logger.info(f"Selecting top {k} features using Chi-Squared test")
-        selector = SelectKBest(chi2, k=k) # Chi-Squared feature selection
-        X_new = selector.fit_transform(X, y) # Fit and transform to select best features
+        selector = SelectKBest(chi2, k=k)
+        X_new = selector.fit_transform(X, y)
+        
+        # Store selector for later use (test set transformation)
+        self.selector = selector
 
-        selected_indices = selector.get_support(indices=True) # Get indices of selected features
-        self.feature_names = [self.feature_names[i] for i in selected_indices] # Update feature names
+        selected_indices = selector.get_support(indices=True)
+        self.feature_names = [self.feature_names[i] for i in selected_indices]
 
         logger.info(f"Selected {X_new.shape[1]} features out of {X.shape[1]}")
-        self._save_feature_names() # Save updated feature names
+        self._save_feature_names()
         return X_new
+    
+    def _save_feature_names(self):
+        """
+        Save feature names to CSV for inspection
+        Called after fit_transform() and select_best_features()
+        """
+        if self.feature_names is None or len(self.feature_names) == 0:
+            logger.warning("No feature names to save")
+            return
+        
+        # Create results directory if it doesn't exist
+        output_dir = Path('results')
+        output_dir.mkdir(exist_ok=True)
+        
+        # Create DataFrame with feature information
+        features_df = pd.DataFrame({
+            'feature_index': range(len(self.feature_names)),
+            'feature_name': self.feature_names
+        })
+        
+        # Save to CSV
+        output_path = output_dir / 'selected_features.csv'
+        features_df.to_csv(output_path, index=False, encoding='utf-8')
+        
+        logger.info(f"Saved {len(self.feature_names)} feature names to {output_path}")

@@ -20,7 +20,7 @@ def load_labels(labels_path: Path = LABELS_PATH) -> pd.DataFrame:
         logger.error(f"Labels file not found: {labels_path}") 
         return None # Return None if file does not exist
     
-    df = pd.read_csv(labels_path) # Read CSV into DataFrame
+    df = pd.read_csv(labels_path) # Read CSV into DataFrame, upload it as pandas DataFrame
     logger.info(f"Loaded labels from {labels_path}") # Log success message
     return df # Return DataFrame of labels
 

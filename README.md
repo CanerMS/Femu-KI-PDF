@@ -247,7 +247,7 @@ data/
 #### **Step 2: Create Labels**
 
 ```bash
-python src/label_pdfs.py
+python src/label_files.py
 ```
 
 **Output:**
@@ -437,13 +437,29 @@ After SMOTE:
 - Numbers now preserved (important for scientific notation)
 - Only author-specific sections removed
 
-### **Issue: "Model performance is poor"**
-**Partially addressed in v0.3.0**
-- Useful recall improved from 9% → 36%
-- Next step: Add custom stop words (see "Immediate Next Steps")
-- Long term: Expand dataset to 100+ useful samples
-
 ---
+
+## **ML Terms in confusion matrix**
+**Recall**
+- Performance metric in machine learning especially for classification tasks
+- It measures the model's ability to identify all actual positive samples correctly in a dataset
+- Recall = True Positives (TP) / (True Positives (TP) + False Negatives (FN))
+- Focuses on minimizing false negatives
+
+**F1 Score**
+- An important metric for evaluation classification models in ML
+- Combines precision and recall together
+- It is especially useful, when a balance between recall and precision is needed
+- F1 = 2 * (Precision * Recall) / (Precision + Recall)
+- Useful, when one of the class's data number is overweighting 
+
+**Accuracy**
+- The formel used is (TP + TN) / Total Sample Number
+
+**Precision**
+- Measures the correctness of positive predictions
+- The formel used is  TP / (TP + FP) if (TP + FP) > 0 else 0
+
 
 **To force complete re-processing:**
 
@@ -451,11 +467,12 @@ After SMOTE:
 ```bash
 
 # Windows
+src\label_files.py
 rmdir /s /q data\extracted_texts
 rmdir /s /q data\preprocessed_texts
 
 # Then run:
-python main.py
+python main.py or py main.py
 ```
 
 

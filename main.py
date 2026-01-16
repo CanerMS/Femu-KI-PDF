@@ -1,33 +1,33 @@
 ﻿"""
 Main Pipeline
-Orchestrates the PDF classification workflow
+Orchestrates the PDF/TXT classification workflow
 """
+
 import sys
-from pathlib import Path
 import numpy as np
 import pandas as pd
 import logging
+from pathlib import Path
 
-from sklearn.metrics import accuracy_score
-from sklearn.model_selection import train_test_split
 
 # Add src to path
-sys.path.insert(0, str(Path(__file__).parent / 'src'))
+sys.path.insert(0, str(Path(__file__).parent / 'src')) # Ensure src is in path
 
-from loader import PDFLoader, TXTLoader 
-from extractor import PDFExtractor, TXTExtractor
-from preprocess import TextPreprocessor
-from features import FeatureExtractor
-from model import PDFClassifier
-from utils import save_predictions, load_labels
+from sklearn.metrics import accuracy_score # For evaluating model accuracy
+from loader import PDFLoader, TXTLoader  # Loaders for PDF and TXT files
+from extractor import PDFExtractor, TXTExtractor # Extractors for PDF and TXT files
+from preprocess import TextPreprocessor # Text preprocessing utilities
+from features import FeatureExtractor # Feature extraction and selection
+from model import PDFClassifier # Classifier model
+from utils import save_predictions, load_labels # Utility functions
 from project_config import * # Import all necessary configurations
-from imblearn.over_sampling import SMOTE
+from imblearn.over_sampling import SMOTE # For handling class imbalance, helpful if needed
 
 logging.basicConfig(
     level=logging.INFO,
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
 )
-logger = logging.getLogger(__name__)
+logger = logging.getLogger(__name__) # Main logger
 
 def main():
     logger.info("="*60) 
@@ -36,15 +36,19 @@ def main():
 
     # 0. Choose File Type
 
-    FILE_TYPE = 'pdf'  # 'pdf' or 'txt'
-    logger.info(f"File type selected: {FILE_TYPE.upper()}") 
+    """
+    File Type Selection: choose txt, if you are working with text files instead of PDFs
+    """
+
+    FILE_TYPE = 'pdf'  # 'pdf' or 'txt', type with lovercase letters only 
+    logger.info(f"File type selected: {FILE_TYPE.upper()}") # Log selected file type in uppercase
     
     # 1. Load Labels
     logger.info("\n[Step 1] Loading Labels...")
-    labels_df = load_labels(LABELS_PATH) 
+    labels_df = load_labels(LABELS_PATH) # labels.csv path
 
     if labels_df is None:
-        logger.error("Labels file not found. Please create labels.csv before running the pipeline.")
+        logger.error("Labels file not found. Please create labels.csv in the data directory before running the pipeline.")
         return
     
     # 2. Initialize Loader / Extractor based on file type
@@ -204,51 +208,69 @@ def main():
     X_train = feature_extractor.fit_transform(train_texts_clean)
     X_test = feature_extractor.transform(test_texts_clean)
 
-    logger.info("\n[Step 5.2] Analyzing feature importance...")
-    y_train_numeric = np.array(train_labels)
-    feature_extractor.get_top_features(X_train, y_train_numeric, top_n=50)
+    logger.info(f"X_train shape: {X_train.shape}, X_test shape: {X_test.shape}")
 
-     # Apply SMOTE if severe class imbalance detected 
+    # fix workflow
+    y_train = np.array(train_labels)  # convert to numpy array
+    SMOTE_applied = False  # Flag 
+
+ # Apply SMOTE if severe class imbalance detected 
     if imbalance_ratio > SMOTE_THRESHOLD: 
-        logger.info("\n[Step 5.3] Applying SMOTE to balance classes...")
+        logger.info("\n[Step 5.2] Applying SMOTE to balance classes...")
         try:
-            
-            
             k_neighbors = min(5, useful_count - 1)
-            
+        
             if k_neighbors < 1:
                 logger.warning("Not enough minority samples for SMOTE (need at least 2). Skipping.")
             else:
                 smote = SMOTE(random_state=42, k_neighbors=k_neighbors)
-                X_train, train_labels_balanced = smote.fit_resample(X_train, train_labels)
-                
+                X_train_resampled, y_train_resampled = smote.fit_resample(X_train, y_train)
+            
                 logger.info(f"   Before SMOTE: Useful={useful_count}, Not Useful={not_useful_count}")
-                logger.info(f"   After SMOTE: Useful={sum(train_labels_balanced)}, Not Useful={len(train_labels_balanced) - sum(train_labels_balanced)}")
-                logger.info(f"   Total samples: {len(train_labels_balanced)}")
-                
-                train_labels = train_labels_balanced 
+                logger.info(f"   After SMOTE: Useful={sum(y_train_resampled)}, Not Useful={len(y_train_resampled) - sum(y_train_resampled)}")
+                logger.info(f"   Total samples: {len(y_train_resampled)}")
+            
+                # Update training data
+                X_train = X_train_resampled
+                y_train = y_train_resampled
+                SMOTE_applied = True
 
         except ImportError:
             logger.warning("imbalanced-learn not installed. Skipping SMOTE.")
-            logger.info("Install with: pip install imbalanced-learn")
         except ValueError as e: 
             logger.warning(f"SMOTE failed: {e}. Using class_weight='balanced' only.")
+    else:
+        logger.info("\n[Step 5.2] Skipping SMOTE (imbalance ratio below threshold)")
 
-    logger.info("\n[Step 5.4] Feature Selection (Chi-Squared)...")
-    X_train_selected = feature_extractor.select_best_features(X_train, np.array(train_labels), k=1000)
-    X_test_selected = feature_extractor.transform(test_texts_clean)
+    logger.info("\n[Step 5.3] Feature Selection (Chi-Squared)...")
+    original_features = X_train.shape[1] # number of features
+    X_train = feature_extractor.select_best_features(X_train, y_train, k=1000)
 
-    logger.info(f"Reduced features: {X_train.shape[1]} -> {X_train_selected.shape[1]}")
+    if hasattr(feature_extractor, 'selector') and feature_extractor.selector is not None:
+        # Apply selector to filter test set
+        support_mask = feature_extractor.selector.get_support()
+        X_test = X_test[:, support_mask]
+        selected_features = X_train.shape[1]
+        logger.info(f"Applied feature selection to test set using selector")
+    else:
+        # If selector not found, manually reduce to same number of features
+        logger.warning("Feature selector not found. Manually selecting first k features.")
+        X_test = X_test[:, :X_train.shape[1]]
+        selected_features = X_train.shape[1]
 
-    # Use selected features for training
-    X_train = X_train_selected
-    X_test = X_test_selected
+    logger.info(f"Reduced features: {original_features} -> {selected_features}")
+    logger.info(f"Feature reduction: {(1 - selected_features/original_features)*100:.1f}%")
+    logger.info(f"Final shapes - X_train: {X_train.shape}, X_test: {X_test.shape}")
+
+
+    logger.info("\n[Step 5.4] Analyzing feature importance on selected features...")
+    feature_extractor.get_top_features(X_train, y_train, top_n=50)
     
     logger.info("\n[Step 5.5] Initializing Classifier...")
     classifier = PDFClassifier(mode='supervised', random_state=42)
 
     logger.info("\n[Step 5.6] Cross-Validation (5-fold)...")
-    cv_scores = classifier.cross_validate(X_train, np.array(train_labels), cv=5)
+    cv_scores = classifier.cross_validate(X_train, y_train, cv=5)
 
     logger.info(f"\nCV Results:")
     logger.info(f"  Mean F1: {cv_scores.mean():.3f} ± {cv_scores.std():.3f}")
@@ -266,7 +288,7 @@ def main():
     
     # 6. Train classifier (SUPERVISED)
     logger.info("\n[Step 6] Training Supervised Classifier...")
-    classifier.train(X_train, np.array(train_labels))
+    classifier.train(X_train, y_train)
     
     logger.info("\n[Step 6.1] Analyzing Top Features...")
 
@@ -281,11 +303,18 @@ def main():
             logger.info(f"  {i}. '{feature_names[idx]}': {importances[idx]:.4f}")
 
     logger.info("\n[Step 6.2] Evaluating on TRAINING set...")
-    train_predictions, _ = classifier.evaluate(X_train, np.array(train_labels))
-    train_acc = accuracy_score(train_labels, train_predictions)
+    train_predictions, _ = classifier.evaluate(X_train, y_train)
+    train_acc = accuracy_score(y_train, train_predictions)
     logger.info(f"Training Accuracy: {train_acc:.2%}")
 
     logger.info("\n[Step 6.3] Evaluating on TESTING set...")
+    
+
+    if SMOTE_applied:
+        logger.warning("Note: Test set is NOT balanced (original distribution preserved)")
+        logger.info(f"Test set: {sum(test_labels)} useful, {len(test_labels) - sum(test_labels)} not_useful")
+
+    
     test_predictions, test_scores = classifier.evaluate(X_test, np.array(test_labels))
     test_acc = accuracy_score(test_labels, test_predictions)
     logger.info(f"Testing Accuracy: {test_acc:.2%}")
@@ -307,7 +336,7 @@ def main():
     test_filenames = [f.name for f in test_files]
     results_df = save_predictions(test_filenames, test_predictions, test_scores)
     
-    logger.info("\n" + "="*60)
+    logger.info("="*60)
     logger.info("PIPELINE COMPLETE!")
     logger.info("="*60)
     

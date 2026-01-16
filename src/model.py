@@ -18,7 +18,7 @@ import seaborn as sns
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-class AnomalyDetector:
+class AnomalyDetector: # it is not used anymore, but kept for reference
     """
     Anomaly Detection using Isolation Forest
     Isolation Forest isolates anomalies instead of profiling normal data
@@ -84,16 +84,17 @@ class PDFClassifier:
         contamination: Proportion of anomalies for unsupervised mode
         random_state: Seed for reproducibility
         """
+        
         self.mode = mode
         self.random_state = random_state
 
         if mode == 'supervised': # supervised classification
             self.model = RandomForestClassifier( # Using Random Forest for supervised classification
-                n_estimators=100, # Number of trees
-                max_depth=10, # To prevent overfitting
-                min_samples_split=5, # To prevent overfitting
-                min_samples_leaf=2, # To prevent overfitting
-                class_weight={0: 1, 1: 18},  # Adjust class weights to handle imbalance
+                n_estimators=50, # Number of trees
+                max_depth=5, # To prevent overfitting
+                min_samples_split=10, # To prevent overfitting
+                min_samples_leaf=5, # To prevent overfitting
+                class_weight='balanced',  # Adjust class weights to handle imbalance
                 random_state=RANDOM_STATE, # Seed for reproducibility
                 n_jobs=-1 # Use all available cores
             )
@@ -198,18 +199,23 @@ class PDFClassifier:
             logger.info("\nConfusion Matrix:")
             cm = confusion_matrix(y_test, predictions)
             print(cm)
+
+            dataset_label = "test" # For evaluating test set
+
+            # Basic Confusion Matrix Plotting
             plt.figure(figsize=(8,6))
-            sns.heatmap(cm, annot=True, fmt='d', cmap='Blues')
-            plt.title('Confusion Matrix')
+            sns.heatmap(cm, annot=True, fmt='d', cmap='Greens')
+            plt.title(f'Confusion Matrix ({dataset_label.upper()}) Set')
             plt.ylabel('Actual')
             plt.xlabel('Predicted')
-            plt.savefig('results/confusion_matrix.png')
+            plt.savefig(f'results/confusion_matrix_{dataset_label}.png')
+            plt.close() # Close the plot to free memory otherwise it may overlap with next plots
 
-
+            # Advanced Confusion Matrix Plotting
             plot_confusion_matrix_advanced(
                 cm, 
                 class_names, 
-                output_path='results/confusion_matrix_advanced.png'
+                output_path=f'results/confusion_matrix_advanced_{dataset_label}.png'
             )
 
             logger.info(f"True Negatives: {cm[0,0]}, False Positives: {cm[0,1]}")

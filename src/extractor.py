@@ -174,6 +174,7 @@ class PDFExtractor:
        
         return results # Return results dictionary
     
+    
     def clear_cache(self):
         """
         Clear all cached extracted text files
@@ -200,6 +201,7 @@ class PDFExtractor:
             'total_size_mb': round(total_size / (1024 * 1024), 2), # Total size in megabytes
             'cache_dir': str(self.output_dir) # Cache directory path
         }
+    
 
 class TXTExtractor:
     """
@@ -345,9 +347,9 @@ if __name__ == "__main__":
     print("\n[2] Testing TXTExtractor...")
     from loader import TXTLoader
     
-    txt_extractor = TXTExtractor()
-    txt_loader = TXTLoader()
-    txt_files = txt_loader.get_files()[:2]
+    txt_extractor = TXTExtractor() # Initialize TXT extractor
+    txt_loader = TXTLoader()       # Initialize TXT loader
+    txt_files = txt_loader.get_files()[:2]  # Get first 2 TXT files
     
     if txt_files:
         print(f"\nReading {len(txt_files)} sample TXTs...")
