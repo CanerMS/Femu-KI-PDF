@@ -130,7 +130,6 @@ def main():
         filenames=[f.stem for f in train_files]
         )
     
-    
     test_texts_clean = preprocessor.preprocess_batch(
         list(test_texts_dict.values()),
         filenames=[f.stem for f in test_files]

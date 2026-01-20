@@ -1,5 +1,7 @@
 """
 Feature Analysis and Visualization
+For now it focuses on analyzing top features extracted during feature engineering
+and visualizing their importance for each class.
 """
 import pandas as pd
 import matplotlib.pyplot as plt

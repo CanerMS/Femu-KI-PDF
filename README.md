@@ -1,9 +1,8 @@
-﻿# PDF + TXT Classification System - Supervised Learning
+﻿# PDF + TXT Classification Programm - Supervised Learning
 
-A system that provides a detection of the pdf documents as "useful" or "not useful" profiting from supervised learning with Random Forest and intelligent text extraction caching.
-There are 2 different mods.
-Supervised and Unsupervised learn. 
-The mod can be arranged in main.py. 
+A programm that classifies PDF and TXT documents as either "useful" or "not useful" supported by supervised learning with Random Forest and intelligent text extraction caching.
+One can swith in 2 different modes: Supervised and Unsupervised learning. Also, the file type can be arranged in main.py under "# 0. Choose File Type" by typing either "pdf" or "txt". Nevertheless, in this specific case, supervised learning is more suitable. Therefore, I stopped improving unsupervised learning in previous version, but kept it for reference and comparison.  The most difficult challenge in this case is, that some pdfs don't have any semantic similarities between them and including completely different types of words, making it difficult for the model to generalize across documents.
+
 ---
 
 ## **Project Status**
@@ -12,102 +11,33 @@ The mod can be arranged in main.py.
 |----------------------|----------|--------------------------------------|
 | **Pipeline**         | Complete | Fully operational                    |
 | **Text Extraction**  | Complete | 333/333 PDFs processed               |
-| **Preprocessing**    | Enhanced | Author info removal, noise filtering |
+| **Preprocessing**    | Complete | Author info removal, noise filtering |
 | **Model Training**   | Complete | Random Forest trained                |
 | **Caching System**   | Complete | 36x speedup                          |
-| **Overall Accuracy** | 82%      | Not useful: 89%, Useful: 36%         |
+| **Overall Accuracy** | 71.9%    |                                      |
 | **Production Ready** | Progress | Data quality improvement ongoing     |
 
 ---
 
 ## **Current Results**
 
-### **Performance Metrics (Test Set: 84 PDFs)**
-
-```
-Classification Report:
-              precision    recall  f1-score   support
-
-  not_useful       0.90      0.89      0.90        73
-      useful       0.33      0.36      0.35        11
-
-    accuracy                           0.82        84
-   macro avg       0.62      0.63      0.62        84
-weighted avg       0.83      0.82      0.82        84
-```
-
-
-**Key Improvements (v0.3.0):**
-- **4x better "useful" detection** (9% → 36% recall)
-- **Model now learns both classes** (not just memorizing majority)
-- **Better text preprocessing** (author info removal)
-- **Trade-off:** Slight accuracy drop (88% → 82%) but more balanced learning
-
 **Remaining Issues:**
-- Still missing 64% of "useful" PDFs (7/11)
-- Generic features dominating ("age", "score", "scan")
-- Need more aggressive noise filtering
-- New Idea: integrate the script also for the .txt files instead of pdf.files
-- New Base Class implemented and must get integrated to the programm
+- Testing for .txt files
 
-
----
-
-## **Recent Improvements (v0.3.0)**
-
-### **1. Enhanced Text Preprocessing**
-
-**Added intelligent author section removal:**
-```python
-# Removes "Author contributions", education backgrounds, affiliations
-if 'author' in text and 'contribution' in text:
-    parts = re.split(r'\bauthor[s]?\s+contribution[s]?\b', text)
-    text = parts[0]  # Keep only content before author section
-
-# Removed noise keywords
-noise_words = ['education', 'studying', 'diploma', 'degree', 
-               'university', 'institute', 'college', 'school',
-               'received', 'obtained', 'graduated', 'phd', 'bachelor', 'master']
-```
-
-**Impact:**
-- Reduced noise in training data
-- Model focuses on actual scientific content
-- 4x improvement in useful PDF detection
-
-### **2. Progress Tracking**
-
-**Real-time preprocessing logs:**
-```
-INFO:preprocess:[█████░░░░░░░░░░] 150/249 (60.2%) | 40064745
-INFO:preprocess:  Original: 45,914 chars, Cleaned: 28,500 chars, Reduction: 38.0%
-```
-
-### **3. Preprocessing Comparison Reports**
-
-**Automatic before/after analysis:**
-```
-results/preprocessing_comparison.txt
-- Shows original vs cleaned text
-- Tracks removed keywords
-- Displays reduction percentages
-```
-
----
 
 ## **Features**
 
 ### **Implemented**
 - **Supervised Learning Pipeline**
-  - Random Forest classifier (100 estimators)
-  - SMOTE for class imbalance handling (32→217 useful samples)
-  - Class weights for minority class emphasis (1:15 ratio)
+  - Random Forest classifier
+  - SMOTE for class imbalance handling for increasing the number of PDFs artifically, when needed
+  - Workflow optimization
   
 - **Intelligent Text Extraction**
   - Automatic caching system (reduces 3min to 5sec on re-runs)
   - Fallback mechanism: pdfplumber → PyPDF2
   - Progress tracking with statistics
-  - **NEW:** Preprocessed text caching (`data/preprocessed_texts/`)
+  - Preprocessed text caching (`data/preprocessed_texts/`)
   
 - **Advanced Text Preprocessing** 
   - Author section removal (contributions, affiliations)
@@ -194,12 +124,24 @@ python -c "import sklearn, pdfplumber, pandas; print('All dependencies installed
 
 ### **Dependencies**
 ```
-pdfplumber>=0.9.0          # Primary PDF text extraction
-PyPDF2>=3.0.0              # Fallback PDF extraction
-scikit-learn>=1.3.0        # Machine learning
-imbalanced-learn>=0.11.0   # SMOTE for class balancing
-pandas>=2.0.0              # Data manipulation
-numpy>=1.24.0              # Numerical operations
+# PDF Processing
+pdfplumber>=0.9.0
+PyPDF2>=3.0.0
+
+# Machine Learning
+scikit-learn>=1.3.0
+numpy>=1.24.0
+pandas>=2.0.0
+
+# Visualization
+matplotlib>=3.7.0
+seaborn>=0.12.0
+
+# Utilities
+joblib>=1.3.0
+
+# Imbalanced Learning
+imbalanced-learn>=0.11.0
 ```
 
 ---
@@ -242,6 +184,8 @@ Place PDFs in appropriate directories:
 data/
 ├── raw_pdfs/       # Put "not useful" PDFs here
 └── useful_pdfs/    # Put "useful" PDFs here
+├── raw_texts/       # Put "not useful" TXTs here
+└── useful_texts/    # Put "useful" TXTs here
 ```
 
 #### **Step 2: Create Labels**
@@ -252,6 +196,7 @@ python src/label_files.py
 
 **Output:**
 ```
+(As an example)
 Labels saved to data/labels.csv
 Dataset Summary:
   Total: 333 PDFs
@@ -272,17 +217,19 @@ python main.py
 ```
 
 **Pipeline Stages:**
-1. Load labels and PDFs
-2. Extract text (with caching)
+1. Load labels and PDFs or TXTs
+2. Extract text (with caching if it includes already processed PDFs)
 3. **Preprocess and clean text (with progress bars)**
 4. **Save preprocessed texts**
 5. Extract TF-IDF features (2000 features)
-6. Apply SMOTE balancing (32→217)
-7. Train Random Forest classifier
-8. Evaluate on test set
-9. Save model and predictions
+6. Apply SMOTE balancing (if the number of usefull and unusefull files imbalanced)
+7. Train Random Forest classifier (supervised learning)
+8. Evaluate on test set 
+9. Save model, prediction and confusion matrix (png) in \results
 
 **Expected Runtime:**
+- Depends strongly on the number of files 
+- Example: Suppose one has uploaded 100-200 PDFs
 - First run: ~3-4 minutes (text extraction + preprocessing)
 - Subsequent runs: ~30-60 seconds (using caches)
 
@@ -324,6 +271,9 @@ NGRAM_RANGE = (1, 2)        # Unigrams and bigrams
 # Data Split
 TEST_SIZE = 0.25            # 25% for testing
 SMOTE_THRESHOLD = 3.0       # Apply SMOTE if imbalance ratio > 3
+
+# Important to edit CUSTOM_STOP_WORDS based on your CASE!!!
+CUSTOM_STOP_WORDS = [......]
 ```
 
 ---
@@ -332,55 +282,43 @@ SMOTE_THRESHOLD = 3.0       # Apply SMOTE if imbalance ratio > 3
 
 ### **Known Issues**
 
-1. **Insufficient Training Data**
-   - Only 32 "useful" samples in training set
-   - Minimum recommended: 100-150 samples
-   - Solution: I need to collect more and quality data
+**Insufficient Training Data**
+  - I could upload in total 200 PDFs in v0.4.0
+  - Problem: 
+  - 1) As the results were better the model could be overfitting
+  - 2) Lack of data
+  - Solution: 
+  - 1) I need to collect more and quality data
+  - 2) I need to run the modell with totally different data
 
-### **Immediate Next Steps (Priority Order)**
-- TXTExtrocter, TXTLoader classes are defined,
-- A base class UnifiedLoader implemented#
-- Childclasses integrated and derive from the parent class
-- label_files.py needs also .txt files handling
+### **HIGH PRIORITY: (3 days)**
+- Idea: Extracting many articles' summary parts
+- Creating .txt files of the summaries
+- Uploading and processing created .txt files
+- Testing, if TXTloader and TXTExtractor work properly
+- Finding out, if better results are possible with .txt files and summaries
 
-#### **HIGH PRIORITY: label_files.py improvement**
+#### **MEDIUM PRIORITY: Data Expansion (1 month)**
 
-**Idea** The name of label_pdfs.py has converted to label_files.py
-- Another script is needed for .*txt files
-- So that, the automated labeling process works for .txt files as well
-
-
-#### **MEDIUM PRIORITY: Data Expansion (2-4 weeks)**
-
-**Target:** Collect 70-120 additional "useful" PDFs
-- Current: 32 samples
-- Target: 100-150 samples
+**Target:** Collect 1000 additional "useful" and "unuseful" PDFs
+- Current: +100 samples
+- Target: 1000-2000 samples
 - Maintain consistent labeling criteria
-- The current number of samples is too low
+- The current number of samples is too low, hard to comprehend, whether the model works fine
 - SMOTE works fine, but the closer the number of unuseful and usefule datas are, the better results I assume to get
 
-
-#### **LOW PRIORITY: Model Tuning (after data expansion)**
-
+#### **LOW PRIORITY: Model Tuning (1 month - after data expansion)**
+- Important to tune the model after data expansion
+- Thus, the optimal settings can be figured out and documented
 - The parameters can get tuned for better results
-- Increase class weight: `{0: 1, 1: 20}` (from 15)
+- (As an example)
+- Increase-Decrease class weight: `{0: 1, 1: 20}` (from 15)
 - Add trigrams: `NGRAM_RANGE = (1, 3)`
-- Increase features: `MAX_FEATURES = 3000`
-
-## **Model Details**
-
-### **Architecture**
-- **Algorithm:** Random Forest Classifier
-- **Estimators:** 100 trees
-- **Max Depth:** 10
-- **Class Weight:** {0: 1, 1: 15} (emphasize useful class)
-- **SMOTE:** Applied when imbalance ratio > 3.0
-- There is also unsupervised mode, nevetheless it won't work properly for this scenario 
-- The supervised approach is more compatible with this kind of problem
-- Otherwisely the machine can't comprehend, what is actually useful
+- Increase-Decrease features: `MAX_FEATURES = 3000`
 
 ### **What kind of contribute does Smote provide?**
 ```
+Suppose...
 Original Training Data:
   - Not useful: 217 samples
   - Useful: 32 samples
@@ -390,6 +328,9 @@ After SMOTE:
   - Not useful: 217 samples
   - Useful: 217 samples (synthetically balanced)
   - Total: 434 samples
+
+Important: 
+According to my experience, SPOT approach doesn't work as fine as one needs in this specific scenario. The reason behind is, My model based on the words and the number of their appearence. Therefore, I'd recommend the approach of uploading as many as possible PDFs or TXTs (whatever you are working with, inorder to prevent pipeline to use SMOTE approach)
 ```
 
 ### **Feature Extraction**
@@ -400,7 +341,7 @@ After SMOTE:
 - **Stop Words:** English common words and words that I think extra noise removed
 - **Min DF:** 3 (term must appear in at least 3 documents)
 
-### **Top 10 Features (v0.3.0)**
+### **Top 4 Features (v0.3.0)**
 ```
 - This is an example that I got as a result 
 - age or algorith etc. I 've forbidden such words using custom_stop_words in project_config.py
@@ -408,14 +349,29 @@ After SMOTE:
 2. detection     (0.0285)  # Generic
 3. optical       (0.0266)
 4. superior      (0.0243)
-5. sampling      (0.0210)
-6. score         (0.0202)  # Generic - filtering added
-7. scan          (0.0170)  # Generic - filtering added
-8. algorithm     (0.0167)
-9. visible       (0.0159)
-10. targeting    (0.0155)
 
 ```
+### **Top 4 Useful Features (v0.4.0)**
+```
+feature_index,feature_name,useful_mean_tfidf,not_useful_mean_tfidf,difference
+
+890,stimulation,0.05333353823875638,0.01894441336819477,0.034389124870561616
+356,field,0.054022637516202565,0.021323286963875792,0.03269935055232677
+42,antenna,0.0391295588308538,0.006827449314358755,0.032302109516495044
+337,exposure,0.04140112148788596,0.010149379306450464,0.0312517421814355
+
+```
+
+### **Top 4 Unuseful Features (v0.4.0)**
+```
+feature_index,feature_name,useful_mean_tfidf,not_useful_mean_tfidf,difference
+
+616,mri,0.010843031107129517,0.03393329435540108,-0.023090263248271563
+82,beam,0.0009140193554566058,0.0164845234152568,-0.015570504059800193
+820,screen,0.00043567619084909707,0.015347509185121138,-0.014911832994272041
+657,opt,0.0032156956088274474,0.017461207400490775,-0.014245511791663328
+```
+
 
 ### **Some Errors That Can Occure**
 ### **Issue: "No PDF files found"**
@@ -428,9 +384,9 @@ After SMOTE:
 - Check logs in `data/extracted_texts/`
 
 ### **Issue: "Preprocessing too slow"**
-- First run with 333 PDFs: ~60-90 seconds (normal)
+- First run with x number of PDFs: ~60-90 seconds (normal)
 - Check progress bars for status
-- Subsequent runs use cache (~5 seconds)
+- Subsequent runs use cache and takes usually ~5 seconds
 
 ### **Issue: "All text being removed during preprocessing"**
 - Updated regex patterns to be less aggressive
@@ -480,7 +436,7 @@ python main.py or py main.py
 
 ---
 
-## 👥 **Contact**
+## **Contact**
 
 canerrcc1@gmail.com
 
@@ -497,8 +453,19 @@ canerrcc1@gmail.com
 
 ## **Changelog**
 
+### [0.4.0] - 2026-01-20
+- **From scratch 8x improvement in PDF detection** (9% -> 72% recall)
+- Reached 72% recall for the last test appr. (100 usefull and unusefull PDFs)
+- New parent classes added ("Unifiedloader" and "PDFExtractor") for ".txt" detection
+- Thus, PDF and TXT classes inherit mutual features from the base class (loader, extractor)
+- Workflow improved: In previous version workflow caused inconsistent Problems 
+- Removed unnecessary Methods 
+- Better SMOTE integration
+- More stop words for denoising the data  
+
+
 ### [0.3.0] - 2025-12-02
-- **4x improvement in useful PDF detection** (9% → 36% recall)
+- **4x improvement in useful PDF detection** (9% -> 36% recall)
 - Enhanced text preprocessing with author section removal
 - Added preprocessing cache system (data/preprocessed_texts/)
 - Real-time progress bars for all stages
@@ -519,7 +486,7 @@ canerrcc1@gmail.com
 - Initial project setup
 - Basic PDF loading functionality
 
-**Status:** **Active Development** - Core improvements implemented, optimization in progress
+**Status:** **Active Development** - .txt files testing
 
-**Last Updated:** 2025-12-05
-**Version:** 0.3.0
+**Last Updated:** 2025-01-20
+**Version:** 0.4.0

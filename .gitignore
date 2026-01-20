@@ -43,6 +43,7 @@ data/preprocessed_texts/*.txt
 # Results
 results/*.joblib
 results/predictions.csv
+results/*.csv
 results/models/*.joblib
 results/reports/*.txt
 results/selected_features/*.txt
