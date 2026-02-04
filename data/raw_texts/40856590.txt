@@ -1,0 +1,2 @@
+Objective:   This study evaluates an automated fluorescence resonant energy transfer 
+(FRET)–based ADAMTS13 activity assay on the Ceveron S100 instrument for the diagnosis

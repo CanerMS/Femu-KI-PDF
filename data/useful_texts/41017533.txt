@@ -1,0 +1,3 @@
+] OR ”Iron oxide nanoparticle*”[Title/Abstract] OR Magnetite[Title/Abstract] OR maghemite
+[Title/Abstract]) AND (scaﬀold [Title/Abstract]) AND (bone[Title/Abstract] OR
+osteoblast* [Title/Abstract] OR osteocyte* [Title/Abstract] OR osteoclast*

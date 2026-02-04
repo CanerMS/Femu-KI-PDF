@@ -1,0 +1,10 @@
+Spintronic terahertz emitters (STEs) pumped by femtosecond lasers have become a widely used source of
+broadband terahertz radiation. However, the strength of the
+emitted field is limited in part by the optical damage threshold at
+the pump wavelength. Thermal management of STEs can be
+improved by understanding electron temperature relaxation in the
+spintronic metal layer. Here, we present a measurement of electron
+temperature dynamics on a picosecond time scale using opticalpump terahertz-probe spectroscopy. We observe that the optical
+pump induces a change in terahertz transmission through the STE.
+By analyzing the resulting signal with a two-temperature model, we
+extract the dynamic electron temperature of the STE. This

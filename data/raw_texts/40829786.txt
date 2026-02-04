@@ -1,0 +1,8 @@
+Bioelectricity is likely as old as life itself. From the moment the first protocell was enclosed in a lipid bilayer, a membrane potential arose. Thus, one
+can expect that bioelectrical activities influence single-cell and collective
+cell behaviors in processes such as embryo development, tissue repair, and
+even disease. Despite the ubiquity of bioelectrical phenomena, most research has focused on bioelectrical control of neural tissues, and as a result,
+our knowledge of nonneural contexts remains comparatively less understood, scattered, and often misunderstood. Still, there are strong reasons
+for supporting the idea that bioelectricity contributes to diverse morphogenetic contexts. Thus, in this review we provide an overview of the current
+knowledge of how cells generate and perceive bioelectrical inputs, and discuss how cells translate these stimuli into responses that influence tissue
+morphogenesis in physiology and pathology.

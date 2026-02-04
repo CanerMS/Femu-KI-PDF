@@ -1,0 +1,10 @@
+Transspinal stimulation with direct current or at intensities and frequencies that produces intermittent depolarization of 
+motoneurons can be an adjunct treatment strategy for spasticity and recovery of movement in persons with spinal cord 
+injury (SCI). The main objective of this study was to assess changes in neurophysiological biomarkers after multiple ses­
+sions of transspinal direct current stimulation (tsDCS) in people with and without SCI. Nine SCI and 10 healthy control 
+subjects received daily cathodal tsDCS over the Thoracic 10 vertebra while supine with an average stimulation intensity 
+of 2.28 ± 0.02 mA. SCI and healthy control subjects received an average of 15 and 10 stimulation sessions, respectively. 
+Before and 1–2 days post intervention, we assessed changes in soleus H-reflex recruitment input-output curves, homo­
+synaptic depression and postactivation depression. tsDCS did not alter the strength of homosynaptic depression in any 
+subject group but reversed postactivation depression to facilitation in AIS D subjects. tsDCS resulted in depression of 
+reflex excitability in both subject groups. No significant changes in clinically assessed hyperreflexia were observed in

@@ -1,0 +1,6 @@
+Electrical signals play a critical role in neuronal functions and physiological processes. However, accurately characterizing subtle membrane potential changes at the cellular level remains
+challenging. In this study, we investigated the membrane voltage
+responses of undifferentiated SH-SY5Y neuroblastoma cells exposed
+to pulsed electric fields of 5, 10, and 20 V m−1 at 100 Hz using
+conductive atomic force microscopy (CAFM). CAFM allowed for
+nanoscale spatial resolution and precise detection of membrane

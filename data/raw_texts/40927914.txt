@@ -1,0 +1,9 @@
+Optical imaging offers high sensitivity and specificity for noninvasive cancer detection, but conventional
+techniques suffer from limited probe accumulation, tissue
+autofluorescence, and poor depth resolution. Afterglow luminescence overcomes autofluorescence by emitting persistent
+light after excitation, yet its utility in vivo remains hindered by
+weak tumor enrichment and two-dimensional readouts lacking
+spatial context. Here, we report luminescent-magnetic nanoparticles (LM-NPs) coencapsulating luminescent trianthracene
+(TA) molecules and iron oxide cores within the amphiphilic
+polymer pluronic-F127. Under an external magnetic field, LMNPs rapidly accumulate in tumors, amplifying the fluorescenceand light-induced afterglow signals and enhancing the tumor-totissue ratio. To recover three-dimensional tumor features, we introduce afterglow luminescence tomography (ALT), a
+reconstruction framework that fuses LM-NP afterglow data with MRI structural maps in a unified space. By modeling photon

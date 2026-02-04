@@ -74,9 +74,9 @@ class AnomalyDetector: # it is not used anymore, but kept for reference
         self.is_trained = True
         logger.info(f"Model loaded from {path}")
 
-class PDFClassifier:
+class FILEClassifier:
     """
-    PDF Classifier supporting both supervised and unsupervised methods
+    File Classifier supporting both supervised and unsupervised methods
     """
     def __init__(self, mode='supervised', contamination=0.1, random_state= RANDOM_STATE):
         """
@@ -91,9 +91,19 @@ class PDFClassifier:
         if mode == 'supervised': # supervised classification
             self.model = RandomForestClassifier( # Using Random Forest for supervised classification
                 n_estimators=50, # Number of trees
-                max_depth=5, # To prevent overfitting
-                min_samples_split=10, # To prevent overfitting
-                min_samples_leaf=5, # To prevent overfitting
+
+                # controls how deep each tree can grow
+                # To prevent overfitting and control model complexity
+                max_depth=5, 
+                
+                # Controls how easily the tress is allowed to split
+                # To prevent overfitting less sensitive to noise
+                min_samples_split=10,
+                
+                # Minimum samples required at each leaf node
+                # To prevent overfitting
+                min_samples_leaf=5, 
+                
                 class_weight='balanced',  # Adjust class weights to handle imbalance
                 random_state=RANDOM_STATE, # Seed for reproducibility
                 n_jobs=-1 # Use all available cores
@@ -257,3 +267,4 @@ class PDFClassifier:
         logger.info(f"  Scores: {scores}")
         
         return scores
+    

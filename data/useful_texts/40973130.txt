@@ -1,0 +1,19 @@
+Magnetophosphenes are flickering lights perceived when an extremely low frequency
+magnetic field generates a sufficiently strong electric field in the head. Understanding
+how phosphenes are produced is crucial, as they form the basis for international
+safety standards and guidelines for both workers and the general population. However,
+there is still ongoing debate about whether this phenomenon originates in the retina,
+the cortex, or involves both. Investigating magnetophosphenes at various frequencies
+during dark adaptation provides deeper physiological insights into this process. Fortyone participants were exposed to varying levels of magnetic stimulation using a
+custom global transcranial alternative magnetic stimulation system that provided fullhead exposure. Participants were divided into four groups: one light-exposed group
+and three dark-adapted groups, each assigned a different frequency (20, 50 and
+60 Hz). Every 3 min during a 42-min dark adaptation period, participants reported
+their threshold for magnetophosphene perception. Flux density thresholds were then
+compared across groups using repeated measures ANOVAs. The data acquired showed
+a significant (F(15, 270) = 3.637, P < 0.001) increase in the magnetophosphene
+threshold throughout the 42-min darkness adaptation period. An inversed exponential
+decay regression was used to model the time course of the magnetophosphene
+threshold for each frequency. The rising magnetophosphene threshold during dark
+adaptation is likely linked to retinal phototransduction mechanisms, suggesting that
+magnetophosphene perception originates from rod cells in the retina. In addition to
+their significance for establishing new international guidelines and safety standards

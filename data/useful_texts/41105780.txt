@@ -1,0 +1,7 @@
+we demonstrated that ME films can be used as direct neural interfaces without needing any additional electronics on board. By designing the geometry of ME films and input magnetic 
+fields, we established that they can generate enough power to modulate activity of neurons wirelessly in nonresonant frequencies, which 
+is proven through in vitro calcium imaging experiments. In addition, we presented evidence to enlighten the stimulation mechanism. We demonstrated that the stimulation is through involvement 
+of sodium and calcium channels, which indicates the presence of 
+electrical neuromodulation. Future work will be conducted to tackle 
+translational challenges of ME films and explore potential long-­term 
+use of them in vivo.

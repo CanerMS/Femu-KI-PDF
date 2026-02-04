@@ -1,0 +1,7 @@
+The purpose of the study was to determine if sensory electrical stimulation (SES), 
+below motor threshold, would reduce spinal excitability via reciprocal inhibition 
+(RI) and determine if any changes were sex-­related. Eighteen healthy participants (11 males and 7 females) participated in a pre-­post comparison study. The 
+Hoffmann (H-­) reflex was elicited to assess the spinal excitability of Flexor Carpi 
+Radialis (FCR) and the influence of RI from Extensor Carpi Radialis Longus 
+(ECRL) on FCR using a paired conditioning pulse paradigm. A 15-­min bout of 
+SES (4 pulse bursts at 100 Hz) was applied to ECRL, and the H-­reflexes were

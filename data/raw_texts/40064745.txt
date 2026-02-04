@@ -1,0 +1,10 @@
+Several drawbacks of 2D radiography have been addressed by the use of 3D modalities such as CT/CBCT. However, these 
+are associated with significantly increased radiation exposure. Hence, the role of MRI in routine orthodontic planning 
+needs to be further investigated. The objective of the work is to evaluate feasibility of plotting cephalometric landmarks on 
+MRI scans. 40 MRI images were collected randomly and retrospectively irrespective of age, sex, and ethnicity. For plotting purposes, 41 landmarks were found for every anonymized image separately. Two experienced orthodontists completed 
+landmark plotting at two different time intervals. The mean error of landmark plotting, standard deviation, correlation coefficients and t-test were computed to assess the feasibility of landmark plotting on the three axes. The correlation coefficient 
+of 0.9 indicated strong inter-observer reliability for each of the 41 landmarks on the x, y, and z axes. The paired t-test for 
+each landmark revealed negligible differences in the orientation of the volume-rendered images. Out of all the landmarks, 
+Porion and Orbitale had the most localization errors. MRI is a reliable tool for plotting cephalometric landmarks and thus for 
+conducting cephalometric analyses. The landmarks' anatomical placements on the midline, bilateral, and curved structures 
+affect how consistently they are identified. The radiation exposure to the patient for the acquisition of CT/CBCT images can

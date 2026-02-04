@@ -1,0 +1,8 @@
+The Casimir effect, arising from vacuum quantum fluctuations, plays a fundamental role in the
+development of modern quantum electrodynamics. In parallel, the field of condensed matter has
+flourished through the discovery of various materials exhibiting broken symmetries, often
+connected to topology and characterized by magneto-electric coupling. To enhance the
+comprehension of the role of parity symmetry and time-reversal symmetry in determining the
+sign of the Casimir force, we calculate the Casimir forces between magneto-electric materials
+and obtain a phase diagram governing the sign of symmetry-breaking-induced Casimir forces.
+We also investigate how the force phase diagram varies with the separation distances between

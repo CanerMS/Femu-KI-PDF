@@ -1,0 +1,15 @@
+One of the most intricate structures found in bacterial cells are 
+magnetosomes of magnetotactic bacteria. These membrane-bound 
+organelles contain tens-of-nanometre-sized crystals of a magnetic 
+iron mineral that are usually aligned in well-ordered chains and 
+function as sensors for geomagnetic field navigation in their aquatic 
+habitats. Magnetosomes emerged as a model to study bacterial cell 
+biology, organelle biogenesis and biomineralization, but they are also 
+of interest as ‘magnetofossils’ in geoscience and have potential for 
+various biotechnological applications. Recent work has unveiled a vast 
+structural and genetic complexity of magnetosome biosynthesis. In this 
+Review, we summarize current knowledge of magnetosome formation 
+and organization within the cell, with emphasis on two established 
+magnetospirilla model species. We highlight the function, diversity and 
+potential applications of magnetosomes and discuss open questions 
+for future research.

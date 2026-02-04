@@ -4,7 +4,36 @@ Preprocessing Comparison Report
 
 
 ============================================================
-PDF #1: 39140936.pdf
+File #1: 38604218.pdf
+============================================================
+
+Original length: 60677 characters
+Cleaned (preprocessed) length: 1928 characters
+
+Reduction in size: 96.8%
+
+----- Original Text (First 500 chars) -----
+HHS Public Access
+Author manuscript
+Appl Neuropsychol Child. Author manuscript; available in PMC 2025 September 19.
+Published in final edited form as:
+Appl Neuropsychol Child. 2025 ; 14(4): 496–506. doi:10.1080/21622965.2024.2337208.
+The long-term impact of cerebellar tumor resection on executive
+functioning, anxiety, and fear of pain: A mixed methodology pilot
+study
+Claire E. Lunde, BS, BA1,2,3, Madison R. Dudek, BS2,4, Cameron A. Talbert, BS2,4, Christine
+B. Sieberg, PhD, MA1,2,5,6,7, Katie E.
+
+----- Preprocessed Text (First 500 chars) -----
+hhs public access author manuscript appl neuropsychol child author manuscript available in pmc september published in final edited form as appl neuropsychol child doi 10 21622965 2024 the long term impact of cerebellar tumor resection on executive functioning anxiety and fear of pain a mixed methodology pilot study claire e lunde bs ba1 madison r dudek bs2 cameron a talbert bs2 christine b sieberg ma1 katie e silva bs2 christos papadelis phd8 nicole j ullrich md phd10 peter e manley md11 eric a 
+
+
+============================================================
+
+Removed sensitive (noise) keywords: education, university
+
+============================================================
+File #2: 39140936.pdf
 ============================================================
 
 Original length: 50007 characters
@@ -27,12 +56,41 @@ Objective:Thecortico-basalgangliacircuitiscrucialtounderstandinglocomotorbehavio
 ----- Preprocessed Text (First 500 chars) -----
 neuromodulation technologyattheneuralinterface april12 revised july9 accepted july18 spinal cord stimulation modulates rat cortico basal ganglia locomotor circuit fernando da silva fiorin mariane de ara jo e silva msc raquel e de medeiros msc guilherme h viana da silva ba abner cardoso rodrigues edgard morya abstract objective thecortico basalgangliacircuitiscrucialtounderstandinglocomotorbehaviorandmovementdisorders spinalcord stimulationmodulatesthatcircuit whichisapromisingapproachtorestoring
 
+
 ============================================================
 
 Removed sensitive (noise) keywords: education
 
 ============================================================
-PDF #2: 39946274.pdf
+File #3: 39551900.pdf
+============================================================
+
+Original length: 149058 characters
+Cleaned (preprocessed) length: 131874 characters
+
+Reduction in size: 11.5%
+
+----- Original Text (First 500 chars) -----
+European Archives of Psychiatry and Clinical Neuroscience (2025) 275:1739–1785
+https://doi.org/10.1007/s00406-024-01928-3
+ORIGINAL PAPER
+Combination of non‑invasive brain stimulation
+with mindfulness‑based interventions for anxiety and depression
+symptoms: systematic review and meta‑analysis of randomized
+controlled trials
+Anastasia Demina1,2 · Benjamin Petit1 · Vincent Meille1 · Anne Sauvaget3 · Florent Lebon2 · Benoit Trojak1,2
+Received: 4 June 2024 / Accepted: 19 October 2024 / Published onli
+
+----- Preprocessed Text (First 500 chars) -----
+european archives of psychiatry and clinical neuroscience original paper combination of non invasive brain stimulation with mindfulness based interventions for anxiety and depression symptoms systematic review and meta analysis of randomized controlled trials anastasia demina1 benjamin petit1 vincent meille1 anne sauvaget3 florent lebon2 benoit trojak1 june accepted october published online november springer verlag gmbh germany part of springer nature abstract in this article we aimed synthesize
+
+
+============================================================
+
+Removed sensitive (noise) keywords: university, studying
+
+============================================================
+File #4: 39946274.pdf
 ============================================================
 
 Original length: 45007 characters
@@ -56,106 +114,36 @@ BeibeiFeng1,2,3,*,†
 ----- Preprocessed Text (First 500 chars) -----
 postgraduatemedicaljournal advanceaccesspublicationdate13february2025 review effect of non invasive brain stimulation on cancer related pain evidence from meta analyses of randomized controlled trials yaqizhang xiuyunhe1 chengong1 yafeiwang1 longfeiyou1 yangyanglin1 yulingwang1 beibeifeng1 1departmentofrehabilitationmedicine thesixthaffiliatedhospital sunyat senuniversity guangzhou510655 china 2guangdongprovincialclinicalresearchcenterforrehabilitationmedicine thesixthaffiliatedhospital sunyat s
 
+
 ============================================================
 
 No sensitive (noise) keywords removed.
 
 ============================================================
-PDF #3: 40372569.pdf
+File #5: 40106653.pdf
 ============================================================
 
-Original length: 52354 characters
-Cleaned (preprocessed) length: 35007 characters
+Original length: 78574 characters
+Cleaned (preprocessed) length: 47115 characters
 
-Reduction in size: 33.1%
+Reduction in size: 40.0%
 
 ----- Original Text (First 500 chars) -----
-Forensic Science, Medicine and Pathology (2025) 21:1396–1406
-https://doi.org/10.1007/s12024-025-01020-9
-REVIEW
-Injury rates following conducted electrical weapons and other less-
-lethal force modalities in real-life police settings: a comparative
-literature review
-Mark Nielsen1 · Julie Munkholm1 · Jytte Banner1 · Carl Johan Wingren1
-Accepted: 27 April 2025 / Published online: 15 May 2025
-© The Author(s) 2025
-Abstract
-The aim of this study was to rank the rate and risk ratio of subject injury fol
+FULL RESEARCH PAPER
+European Journal of Preventive Cardiology (2025) 32, 1296–1309
+https://doi.org/10.1093/eurjpc/zwaf163 Imaging
+Cumulative blood pressure exposure and
+global and regional cardiac structure and
+function: the MESA study
+Soroush Masrouri1, Peyman Tabnak2, Parag A. Chevli3, Saeid Mirzai3,
+Leandro Slipczuk 4, Sujethra Vasu3, Joao A. C. Lima 5, and
+Michael D. Shapiro 3*
+1Prevention of Metabolic Disorders Research Center, Research Institute for Endocrine Sciences, Shahid Beheshti Univ
 
 ----- Preprocessed Text (First 500 chars) -----
-forensic science medicine and pathology review injury rates following conducted electrical weapons and other less lethal force modalities in real life police settings a comparative literature review mark nielsen1 julie munkholm1 jytte banner1 carl johan wingren1 accepted april published online may the author s abstract the aim of this study was to rank the rate and risk ratio of subject injury following exposure to less lethal force modali ties in real life police interventions the purpose was t
+full research paper european journal of preventive cardiology imaging cumulative blood pressure exposure and global and regional cardiac structure and function the mesa study soroush masrouri1 peyman tabnak2 parag a chevli3 saeid mirzai3 leandro slipczuk sujethra vasu3 joao a c lima and michael d shapiro 1prevention of metabolic disorders research center research for endocrine sciences shahid beheshti of medical sciences no yamen street velenjak tehran iran 2immunology research center tabriz of 
+
 
 ============================================================
 
 Removed sensitive (noise) keywords: university
-
-============================================================
-PDF #4: 40829786.pdf
-============================================================
-
-Original length: 79943 characters
-Cleaned (preprocessed) length: 74433 characters
-
-Reduction in size: 6.9%
-
------ Original Text (First 500 chars) -----
-45:62:31
-5202
-ceD
-21
-,irF
-:nO
-1.51.031.431
-:PI
-)356401-ra(
-nehcaA
-eluhcshcoH
-ehcsinhceT
--
-4626BIW
-.gro.sweiverlaunna.www
-morf
-dedaolnwoD
-CB41_Art07_Barriga ARjats.cls September30,2025 10:12
-Annual Review of Cell and Developmental Biology
-Bioelectricity in Morphogenesis
-Custodio O.Nunes and Elias H.Barriga
-MechanismsofMorphogenesisLab,ClusterofExcellencePhysicsofLife(PoL),TUDresden,
-Dresden,Germany;email:elias.barriga@tu-dresden.de
-Annu.Rev.CellDev.Biol.2025.41:187–208 Keywords
-FirstpublishedasaR
-
------ Preprocessed Text (First 500 chars) -----
-ced irf no 1 51 031 pi ra nehcaa eluhcshcoh ehcsinhcet 4626biw gro sweiverlaunna www morf dedaolnwod cb41 art07 barriga arjats cls september30 annual review of cell and developmental biology bioelectricity in morphogenesis custodio o nunes and elias h barriga mechanismsofmorphogenesislab clusterofexcellencephysicsoflife pol tudresden annu rev celldev biol 2025 keywords firstpublishedasareviewinadvanceon bioelectricity membranepotential ioniccurrents surfacecharge ion august19 channels electrotax
-
-============================================================
-
-No sensitive (noise) keywords removed.
-
-============================================================
-PDF #5: 40967018.pdf
-============================================================
-
-Original length: 58793 characters
-Cleaned (preprocessed) length: 52153 characters
-
-Reduction in size: 11.3%
-
------ Original Text (First 500 chars) -----
-Ecotoxicology and Environmental Safety 303 (2025) 119067
-Contents lists available at ScienceDirect
-Ecotoxicology and Environmental Safety
-journal homepage: www.elsevier.com/locate/ecoenv
-A temporal study on NF-κB-mediated autonomous inflammatory response
-in iPSC-CMs induced by microwave radiation
-Chenjing Zhang, Weilin Deng, Yingxin Wang, Binwei Yao, Ji Dong, Zhanming Liu,
-Hailong Wang, Xinping Xu*, Ruiyun Peng*, Jing Zhang*
-Beijing Institute of Radiation Medicine, Beijing 100850, China
-A R T I 
-
------ Preprocessed Text (First 500 chars) -----
-ecotoxicology and environmental safety contents lists available at sciencedirect ecotoxicology and environmental safety journal homepage www elsevier com locate ecoenv a temporal study on nf b mediated autonomous inflammatory response in ipsc cms induced by microwave radiation chenjing zhang weilin deng yingxin wang binwei yao ji dong zhanming liu hailong wang xinping xu ruiyun peng jing zhang beijing of radiation medicine beijing china a r t i c l e i n f o a b s t r a c t edited by liu the stu
-
-============================================================
-
-No sensitive (noise) keywords removed.

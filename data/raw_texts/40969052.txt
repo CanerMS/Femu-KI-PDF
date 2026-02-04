@@ -1,0 +1,14 @@
+This study examines how the effective dielectric characteristics of the human torso affect the carrier-link-margin (CLM) and data-link-margin (DLM) of a biocompatible
+gelatin-encapsulated implantable medical device (IMD) that consists of a small implantable
+antenna, battery, printed circuit board (PCB), camera, and sensor operating at 2.5 GHz.
+The specific absorption rate (SAR) and the radio frequency (RF) link performances of
+the IMD are tested for ±20% changes in reference to the mean values of the effective
+relative permittivity, Eeff, and the effective conductivity, σeff, of the human body model.
+An artificial neural network (ANN) with two inputs (Eeff, σeff) and five outputs (SAR_1 g,
+SAR_10 g, fractional bandwidth, CLM, and DLM) is trained by 80% of the total scenarios
+and tested by 20% of them in order to provide reliable dependent analyses. The highest
+changes in 1 g SAR value, 10 g SAR value, fractional bandwidth, CLM, and DLM at a
+4 m distance for 100 Kbps are 63%, 41.6%, 17.97%, 26.79%, and 5.89%, respectively, when
+compared to the reference effective electrical properties of the homogeneous human body
+model. This work is the first to accurately depend on the electrical analyses of the human
+body for the link margins of an implantable antenna system. Furthermore, the work’s

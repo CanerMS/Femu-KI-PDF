@@ -1,0 +1,18 @@
+Fibromyalgia (FM) is characterized by widespread musculoskeletal pain and tenderness,
+cognitive dysfunction, fatigue, and insomnia. Electroacupuncture (EA) has documented
+efficacy against FM-associated pain, while cannabinoid receptor 1 (CB1) plays a critical
+role in endogenous analgesia. Herein, we examined whether pain relief initiated by
+EA was linked with differing cerebellar CB1 levels and signaling in an intermittent cold
+stress (ICS) mouse model of FM. FM-like hyperalgesia and recovery were assessed by
+measuring mechanical and thermal nociceptive thresholds. Compared to control mice,
+ICS-induced FM-model mice exhibited a significantly reduced mechanical withdrawal
+threshold (2.3 ± 0.1 g) and shorter thermal withdrawal latency (4.0 ± 0.5 s), indicative of
+mechanical and thermal hyperalgesia. Both conditions were reversed by 2 Hz EA but not
+sham EA. Hyperalgesia was associated with reduced CB1 receptor expression and the
+enhanced activity of multiple nociceptive signaling pathways (PKA, PI3K, Akt, mTOR,
+ERK, and NF-kB) in the mouse cerebellum. The 2 Hz EA treatment reliably reversed these
+abnormalities, while the sham EA treatment did not. Intracerebroventricular injection of the
+CB1 agonist anandamide (AEA) recapitulated the effects of EA on pain thresholds, while the
+analgesic effects of EA were blocked by the CB1 antagonist AM251. Precise chemogenetic
+stimulation at the paraventricular nucleus (PVN) of the hypothalamus reliably induced FM
+pain. Chemogenetic inhibition at the PVN diminished FM through the CB1 pathway in

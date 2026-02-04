@@ -1,0 +1,4 @@
+In this paper, we have assessed the speciﬁc absorption rate (SAR) in fetal brain and lungs during the second trimester of pregnancy
+conditions of body exposure to radiofrequency electromagnetic ﬁeld (RF-EMF). SAR calculations were performed for frontal and
+lateral incidences, with both vertical and horizontal polarization of the incident electromagnetic (EM) waves at frequencies ranging
+from 2.45 to 5 GHz. A realistic pregnant human model with a belly button piercing was implemented for numerical simulation for

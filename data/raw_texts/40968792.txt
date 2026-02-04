@@ -1,0 +1,13 @@
+Millimeter-wave antennas have become more important recently due to the diversity of applications in 5G and upcoming 6G technologies, of which automotive systems
+constitute a significant part. Two crucial indices, detection range and angular resolution,
+are used to distinguish the performance of the automotive antenna. Strong gains and
+narrow beamwidths of highly directive radiation beams afford longer detection range and
+finer spatial selectivity. Although conventionally used, patch antennas suffer from intrinsic
+path losses that are much higher when compared to the waveguide antenna. Designed at
+77 GHz, presented in this article is an 8-element slot array on the narrow side wall of a
+rectangular waveguide, thus being readily extendable to planar arrays by adding others
+alongside while maintaining the element spacing requirement for grating lobe avoidance.
+Comprising tilted Z-shaped slots for higher gain while keeping constrained within the
+narrow wall, adjacent ones separated by half the guided wavelength are inclined with
+reversed tilt angles for cross-polar cancelation. An open-ended external waveguide is
+placed over each slot for polarization purification. Equivalent circuit models of slotted

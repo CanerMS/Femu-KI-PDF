@@ -1,0 +1,13 @@
+the improved PR neuron model incorporating the alternating current induced electric field is as follows (see 
+Equations 11 and 12):
+ 
+(
+)
+(
+)
+(
+)
+(
+)
+(
+)

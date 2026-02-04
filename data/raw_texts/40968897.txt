@@ -1,0 +1,1 @@
+This paper reports a convolutional neural network (CNN)-based damage detection approach for radar-based structural health monitoring of wind turbine blades. Subsequent radar measurements are transformed into an image-type representation for

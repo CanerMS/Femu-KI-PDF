@@ -1,0 +1,12 @@
+Topological insulators (TIs) have been considered as promising candidates for next generation
+of electronic devices due to their topologically protected quantum transport phenomena. In this
+work, a scheme for atomic-scale field effect transistor based on vacancy-induced edge states in
+TIs is promoted. By designing the positions of vacancies, the closed channel between source
+and drain terminals provided by vacancy-induced edge states can have the energy spectra with a
+gap between edge and bulk states. When gate terminal receive the signal, electric field applied
+by gate terminal can shift quasi Fermi energy of the closed channel from edge states into the
+gap, and hence open the channel between source and drain terminals. The energy spectra and
+the effect of electric field are demonstrated using Haldane model and density functional theory
+respectively. This work suggest possible applicational potentials of vacancy-induced edge states
+in TIs for atomic-scale electronics.
+Keywords: topological insulators, vacancies, field effect transistor

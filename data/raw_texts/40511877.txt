@@ -1,0 +1,2 @@
+Objectives: The risk of viral infection to healthcare workers during aerosol-­generating procedures (AGPs) is an area of significant concern within the medical community. In this work, we analyze the flow patterns created by jet ventilation, a type of AGP 
+used in laryngeal surgery, both qualitatively and quantitatively to assess the effects associated with commonly used jet ventilation settings.

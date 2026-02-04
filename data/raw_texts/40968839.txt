@@ -1,0 +1,10 @@
+This article presents an innovative design of a tachometric anemometer for measuring wind velocity and direction, which does not contain electronic components and systems or power supply systems in the measurement area. This device can be used in
+extremely unfavourable environmental operating conditions, in locations exposed to direct
+atmospheric discharges, in conditions requiring restrictive and intrinsic safety, in special
+military applications, and in measurements in the presence of extreme electromagnetic
+fields. An innovative optical–mechanical transducer is used in the anemometer. This transducer generates a light pulse signal, the frequency of which is a function of the flow velocity,
+and the duty cycle is a function of the wind direction. This signal is transmitted via optical
+fibre from the sensor assembly to the measuring station, located outside the measurement
+area. The design of the device is simple, durable, and resistant to environmental conditions.
+Keywords: wind velocity and direction; tachometric anemometer; optical–mechanical
+converter; fibre-optic data transmission

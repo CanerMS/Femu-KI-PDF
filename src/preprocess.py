@@ -63,7 +63,7 @@ class TextPreprocessor:
         ]
     
         for word in noise_words:
-            text = re.sub(rf'\b{word}\b', '', text, flags=re.IGNORECASE)
+            text = re.sub(rf'\b{word}\b', '', text, flags=re.IGNORECASE) # Remove noise words
 
         text = re.sub(r'\b\d+[a-z]\b', '', text, flags=re.IGNORECASE)  # 2b, 3a, 5g
         text = re.sub(r'\bfig\s*\d+\b', '', text, flags=re.IGNORECASE)  # fig 1, fig2

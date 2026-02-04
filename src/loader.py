@@ -187,6 +187,6 @@ if __name__ == "__main__":
     txt_info = txt_loader.get_file_info()
     print(f"Found {len(txt_info)} TXTs")
     if txt_info:
-        print("\nFirst 3 TXTs:")
+        print("\nFirst 3 TXTs:") 
         for info in txt_info[:3]:
             print(f"  - {info['filename']} ({info['size_kb']:.2f} KB)")

@@ -1,0 +1,15 @@
+plot and corresponding feature importance percentages reveal significant heterogeneity in the associations 
+between various HSE features and population health. Among these, 
+the top six most influential features— NMIB:23.52%, UR:12.18%, 
+MPPR:11.71, RAPC:7.93%, PD:6.93%, and UGPR:6.92%—contribute 
+substantially more than others, indicating their central role in 
+reflecting health level.
+In the SHAP summary plot, NMIB displays a counterintuitive 
+distribution: higher NMIB is predominantly associated with negative 
+SHAP values, whereas lower NMIB corresponds more frequently with 
+positive SHAP values. This pattern is consistently observed across the 
+other five models, as shown in Figure 6, providing further support for 
+our finding. From the perspective of health demand, the number of 
+hospital beds reflects the health status and healthcare needs of local 
+populations. Regions with a high NMIB often experience greater 
+disease burdens, higher prevalence of chronic illnesses, or more

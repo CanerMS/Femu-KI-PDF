@@ -1,0 +1,5 @@
+The World Health Organization (WHO) commissioned 12 systematic reviews (SR) and meta-analyses (MA) on health 
+effects of exposure to radiofrequency electromagnetic fields (RF-EMF). The health outcomes selected for those 
+reviews (cancer, electromagnetic hypersensitivity, cognitive impairment, birth outcomes, male fertility, oxidative 
+stress, and heat-related effects) were based on a WHO-conducted international survey. The SR of the studies of 
+cancer in laboratory animal studies was the only one that did not include a MA, because those authors considered

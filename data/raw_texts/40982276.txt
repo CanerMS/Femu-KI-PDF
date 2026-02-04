@@ -1,0 +1,10 @@
+IMPORTANCE Adverse childhood experiences (ACEs) are common and account for more than 25%
+of psychiatric disorders in youths, but the underlying neurobiological mechanisms associated with
+risk and resilience among children exposed to ACEs are poorly understood.
+OBJECTIVES To examine associations between ACEs and transdiagnostic psychopathology during
+the transition to adolescence and to test whether these associations are modified by whole-brain
+functional connectivity.
+DESIGN, SETTING, AND PARTICIPANTS This cohort study used data from the longitudinal
+Adolescent Brain Cognitive Development (ABCD) Study’s baseline through 2-year follow-up
+assessments. A total of 6813 children aged 9 to 11 years at baseline were recruited from 21 US
+sites between June 1, 2016, and October 31, 2018. Data were analyzed from September 2023 to

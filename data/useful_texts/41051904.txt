@@ -1,0 +1,11 @@
+Electric fields modulate the structure and mechanical properties of biological membranes, influencing diverse cellular processes. While the effects
+of vertical electric fields (EVert) across the membranes have been extensively
+studied, the influence of horizontal (in-plane) electric fields (EHorz) remains
+poorly understood. Here, using molecular dynamics (MD) simulations and
+bright-field imaging of planar lipid bilayers (PLBs), fundamental components of
+biological membranes, we investigate how EHorz and EVert affect lipid bilayer
+properties. Simulations revealed that EHorz induces greater structural changes
+than EVert, such as membrane area reduction and increases in lipid tail ordering,
+even at high cholesterol concentrations. Consistently, bright-field imaging
+shows that the DC horizontal membrane voltage (VHorz) causes membrane area
+contraction, whereas the vertical voltage (VVert) has no effect under the tested

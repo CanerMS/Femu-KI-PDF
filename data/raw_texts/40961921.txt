@@ -1,0 +1,10 @@
+Ataxia-telangiectasia (A-T) is a hereditary neurodegenerative disorder caused by mutations in the ATM 
+(ataxia-telangiectasia mutated) gene. Although existing rodent models reproduce some of the multi-systemic 
+features of A-T, they notably fail to recapitulate the severe neurological manifestations, particularly the profound cerebellar atrophy and associated ataxia. To address this limitation, we have generated ATM-deficient 
+rhesus macaques using CRISPR-Cas9. These macaques exhibit hallmark features of A-T, including growth 
+retardation, lymphopenia, elevated a-fetoprotein levels, oculocutaneous telangiectasias, heightened sensitivity to ionizing radiation, and most critically, cerebellar atrophy, Purkinje cell loss, and early-stage cerebellar 
+neurodegeneration leading to significant motor impairments. Single-nucleus transcriptomic profiling of the 
+cerebellum revealed pronounced gene expression changes associated with ATM deficiency, particularly in 
+molecular layer interneurons (MLIs), which are implicated in Purkinje cell loss. This non-human primate model 
+provides deeper insights into the pathogenesis of A-T and represents a promising and valuable platform for 
+developing therapeutic strategies.

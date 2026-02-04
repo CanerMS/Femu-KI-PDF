@@ -1,0 +1,6 @@
+Purpose: The IEC 60601-2-33 standard provides consensus-based safety provisions for MRI equipment. Protection of patients
+against cardiac stimulation (CS) is based on limiting the maximum E-field induced by MRI gradient coils. In practice, this is
+achieved by imposing a conservative dB/dt threshold on any gradient waveform. The dB/dt-over-E-field conversion ratio currently
+used in IEC 60601-2-33 was derived in a homogeneous ellipsoid exposed to a uniform B-field and is 10 (T/s)*(V/m)−1. This limit is
+becoming increasingly restrictive in high performance clinical systems. We therefore evaluate dB/dt-over-E-field ratios in realistic
+body models and coils using state-of-the-art electromagnetic simulations.

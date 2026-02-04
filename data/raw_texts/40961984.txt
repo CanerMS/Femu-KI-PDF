@@ -1,0 +1,3 @@
+Objective. This study aims to propose and validate a novel electrically controlled field-free line
+(FFL) magnetic particle imaging (MPI) system to address several aspects of existing electronically
+rotated FFL-MPI designs, including limitations in gradient enhancement, structural complexity of

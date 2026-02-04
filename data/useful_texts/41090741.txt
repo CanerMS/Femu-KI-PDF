@@ -1,0 +1,9 @@
+Scleral tissue is a connective tissue made up of dense, intertwined collagen fibers that plays
+a vital part in preserving both the integrity of vision and the shape of the eyeball. Numerous
+studies have been conducted on the impact of terahertz radiation on biological systems.
+Terahertz radiation can affect cell morphology and function by mediating modifications in
+protein conformation and gene expression, according to recent research. Though terahertz
+waves found in the environment directly expose scleral tissue, little is known about how
+terahertz radiation affects scleral fibroblasts biologically. In this work, we investigated
+how 0.1 THz radiation affected the global expression levels of proteins and the viability of
+human fetal scleral fibroblasts (HFSFs). A total of 79.44% of the differentially expressed

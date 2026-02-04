@@ -1,0 +1,6 @@
+Aortic diseases, including aneurysmal and occlusive pathologies of the thoracic and abdominal aorta, represent a significant 
+source of cardiovascular morbidity and mortality. This narrative review explores the role of modern and emerging imaging 
+modalities in the management of aortic disease and highlights the pivotal roles of computed tomography angiography (CTA), 
+magnetic resonance imaging (MRI), and contrast-enhanced ultrasound (CEUS).
+CTA remains the cornerstone for evaluating aneurysms, dissections, and traumatic injuries, offering high spatial reso­
+lution, rapid acquisition, and detailed anatomical assessment. MRI, particularly with advanced sequences such as 4D flow,

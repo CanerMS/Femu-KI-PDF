@@ -1,0 +1,7 @@
+There are complex problems related to diagnostic imaging of the pregnant patient Cross sectional imaging with computed 
+tomography (CT) tends to be avoided to due to the risk radiation poses to the fetus and magnetic resonance imaging (MRI) 
+may be limited due to avoidance of gadolinium contrast.
+While ultrasound (US) is the primary test for imaging in pregnancy, there is limited awareness of contrast-enhanced 
+US (CEUS) as a safe and accurate option for providing similar vascular information to that which is usually provided with 
+contrast-enhanced CT and MRI. Microbubble contrast agents do not cross the placental barrier and have been shown in 
+animal studies to pose no harm to the fetus at doses far above the human dose.

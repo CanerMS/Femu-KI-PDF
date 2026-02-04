@@ -1,0 +1,5 @@
+This article introduces a microwave sensor tailored for skin hydration monitoring. The design enables wireless operation by separating the sensing component from the
+reader, making it ideal for wearable devices like wristbands. The sensor consists of a
+semi-lumped LC resonator coupled to an inductive coil reader, where the capacitive part
+of the sensing tag is in contact with the skin. The variations in the skin hydration level
+alter the dielectric properties of the skin, which, in turn, modify the resonances of the LC

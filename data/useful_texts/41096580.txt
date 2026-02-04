@@ -1,0 +1,13 @@
+Peripheral nerve injuries (PNIs) present significant clinical challenges, often leading to
+severe motor, sensory, and autonomic dysfunction, with profound impacts on patient
+quality of life and considerable healthcare costs. This review synthesizes current knowledge
+on the therapeutic potential of Pulsed Electromagnetic Fields (PEMF) and Low-Intensity
+Pulsed Ultrasound (LIPUS) as non-invasive modalities for promoting peripheral nerve
+regeneration. We explore their cellular and molecular mechanisms of action, discuss
+optimal treatment parameters, and present evidence from preclinical and clinical studies,
+including their synergistic effects with other therapies and emerging applications beyond
+neurological repair. Clinical studies have shown that PEMF therapy can significantly
+reduce neuropathic pain and improve functions, whereas LIPUS demonstrates the ability
+to enhance nerve conduction.
+Keywords: pulsed electromagnetic field (PEMF); low-intensity pulsed ultrasound (LIPUS);
+peripheral nerve regeneration; nerve injury; Schwann cells; neuropathy

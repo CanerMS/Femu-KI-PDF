@@ -1,0 +1,6 @@
+The widespread deployment of 5G wireless networks alongside existing GSM technologies has increased the need to assess
+potential biological effects of co‐exposure to multiple radiofrequency electromagnetic fields (RF‐EMF). This study evaluates the
+in‐vitro impact of simultaneous exposure to 5G‐modulated 3.5 GHz and GSM‐modulated 1.8 GHz signals on neuronal electrical
+activity, mitochondrial reactive oxygen species (ROS) production, and cellular stress protein responses in neurons and skin
+fibroblasts. Primary cortical neurons and human immortalized skin fibroblasts were exposed to RF‐EMF at specific absorption
+rates (SAR) of 1 or 4 W/kg for 15 min or 24 h, respectively. Neuronal activity was analyzed using multi‐electrode arrays (MEAs),

@@ -1,0 +1,6 @@
+Ventricular arrhythmias (VAs) are common and clinically important complications in patients supported by left ventricular assist devices (LVADs), occurring in up to 50% of cases
+within the first year after implantation. Despite the hemodynamic support provided by
+LVADs, VAs are linked to increased morbidity and mortality, primarily through recurrent
+implantable cardioverter defibrillator (ICD) shocks and right ventricular failure. The underlying mechanisms of VAs in this population are multifactorial, involving structural
+myocardial remodeling, device-related factors, and pre-existing arrhythmic substrates.
+Catheter ablation has become a valuable treatment option when antiarrhythmic drug therapy and device reprogramming are inadequate, though procedural timing (pre-, intra-,

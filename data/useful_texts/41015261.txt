@@ -1,0 +1,8 @@
+Accurate and individualized human head models are becoming increasingly important 
+for electromagnetic (EM) simulations. These simulations depend on precise anatomical 
+representations to realistically model electric and magnetic field distributions, particularly when 
+evaluating Specific Absorption Rate (SAR) within safety guidelines. State of the art simulations 
+use the Virtual Population due to limited public resources and the impracticality of manually 
+annotating patient data at scale. This paper introduces Personalized Head-based Automatic 
+Simulation for EM properties (PHASE), an automated open-source toolbox that generates high*Corresponding author. yuankai.huo@vanderbilt.edu (Y. Huo). 
+CRediT authorship contribution statement

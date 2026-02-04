@@ -1,0 +1,11 @@
+Gastrointestinal (GI) tract diseases are among the most common diseases in the world, resulting in more than 8 million deaths. The majority of these deaths occur
+due to cancer or tumors. Early detection of these tumors can greatly lower the mortality
+rate. In this work, an implantable multiple-input-multiple-output (MIMO) antenna sensor
+is constructed for GI tract devices to detect the tumor. The implantable MIMO antenna
+sensor has two embedded antennas, each operating at 915 MHz. Both elements of the
+system are placed 0.6 mm apart from each other (edge-to-edge). The volume consumed
+by this design is measured to be 7 × 7 × 0.25 = 12.25 mm3. It occupies a very small
+volume due to miniaturization achieved using meandered resonating structures and a
+high-permittivity substrate. It maintains stable radiation performance (gain = −26.2 dBi at
+resonance). The antenna units are decoupled by maintaining a proper gap between them
+and adding a slot on the bottom side. An isolation level greater than 28.7 dB is achieved

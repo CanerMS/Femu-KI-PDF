@@ -1,0 +1,13 @@
+This paper presents a novel dual-band flexible antenna, uniquely designed and extended to array as well as MIMO configurations for the Sub-6 GHz band. The
+single-element monopole antenna features a modified rectangular radiator with two Lstrips and a reduced ground plane, enabling a compact dual-band response. The proposed four-element, two-port MIMO configuration is extended from the 1 × 2 array
+antenna, achieving an overall dimension of 57 × 50 × 0.1 mm3, making it exceptionally
+compact and flexible compared to existing rigid and bulkier designs. Operating in the
+3.6–3.8 GHz and 5.65–5.95 GHz bands, the antenna delivers a high gain of 5.2 dBi and
+7.7 dBi, outperforming many designs in terms of gain while maintaining the superior
+isolation of >22 dB utilizing a defected ground structure (DGS). The design satisfies key
+MIMO diversity metrics (ECC < 0.05, DG > 9.99) and demonstrates low SAR values
+(0.0702/0.25 W/kg at 3.75 GHz and 0.175/0.507 W/kg at 5.9 GHz), making it highly suitable for wearable and on-body communication, unlike many rigid counterparts. Fabricated
+on a flexible polyimide substrate, the antenna addresses challenges such as size, bandwidth,
+isolation, and safety in MIMO antenna design. The performance, validated through fabrication and measurement, establishes the proposed antenna as a superior alternative to
+existing MIMO designs for compact, high-performance Sub-6 GHz 5G applications.
+Keywords: Sub-6 GHz; antenna array; MIMO; CMA; SAR; flexible

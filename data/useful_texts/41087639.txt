@@ -1,0 +1,6 @@
+Electrical injuries often result in severe consequences, posing significant challenges for post-injury treatment. However, there 
+is currently a lack of large-scale and in-depth retrospective studies on the prognosis of electrical injuries. This study was 
+conducted to analyze in depth the clinical prognosis associated with high-voltage and low-voltage electrical injuries. This 
+retrospective study incorporated patients who had suffered from electrical injuries and were admitted to the Burn Department 
+of the First Affiliated Hospital of Army Medical University within the past two decades. Patients were categorized into a 
+high-voltage group (n = 772) and a low-voltage group (n = 654) based on voltage levels. Propensity score matching (PSM)

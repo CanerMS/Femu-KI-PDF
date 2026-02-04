@@ -1,0 +1,3 @@
+the CRISPR/Cas12a/SERS biosensing platform enables mRNA detection without pre­ amplification. This biosensing platform can detect target molecules at the fM level, achieving ultra-sensitive 
+detection. In addition, the satellite structure exhibits long-term stability, providing a theoretical basis for the 
+practical application of this biosensing platform.

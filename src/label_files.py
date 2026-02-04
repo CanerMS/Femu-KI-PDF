@@ -16,7 +16,7 @@ if not LOGS_DIR.exists():  # Ensure logs directory exists
     LOGS_DIR.mkdir() # Create logs directory if it doesn't exist
 
 logging.basicConfig( # Configure logging
-    filename=LOGS_DIR / 'label_pdfs.log', # Log file path 
+    filename=LOGS_DIR / 'label_files.log', # Log file path 
     filemode='a', # Append mode
     level=logging.INFO, # Log level 
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', # Log format
@@ -28,7 +28,8 @@ logger = logging.getLogger(__name__) # Get logger instance
 
 def create_labels(file_type: Literal['pdf', 'txt'] = 'pdf'): 
     """
-    Create labels for PDFs in RAW_PDFS_DIR (not useful) and USEFUL_PDFS_DIR (useful).
+    Create labels for {file_type.upper()}s in RAW_PDFS_DIR or RAW_TXTS_DIR (not useful) and USEFUL_PDFS_DIR 
+    or USEFUL_TXTS_DIR (useful).
     """
 
     if file_type == 'pdf': 
@@ -41,29 +42,26 @@ def create_labels(file_type: Literal['pdf', 'txt'] = 'pdf'):
         raise ValueError(f"Invalid file_type: {file_type}")
     
     logger.info("=" * 60)
-    logger.info("PDF Labeling - Supervised Mode")
+    logger.info(f"{file_type.upper()} Labeling - Supervised Mode")
     logger.info("=" * 60)
-    
-    
-    
-    not_useful_files = loader_not_useful.get_files()  # Get 'not useful' PDFs
-    useful_files = loader_useful.get_files() # Get 'useful' PDFs
+    not_useful_files = loader_not_useful.get_files()  # Get 'not useful' files
+    useful_files = loader_useful.get_files() # Get 'useful' files
 
-    logger.info(f"Found {len(not_useful_files)} 'not useful' PDFs") # Log count of 'not useful' PDFs 
-    logger.info(f"Found {len(useful_files)} 'useful' PDFs") # Log count of 'useful' PDFs
+    logger.info(f"Found {len(not_useful_files)} 'not useful' {file_type.upper()}") # Log count of 'not useful' files
+    logger.info(f"Found {len(useful_files)} 'useful' {file_type.upper()}") # Log count of 'useful' files
             
-    if len(useful_files) == 0: # Check if there are any 'useful' PDFs
-        logger.warning("No 'useful' PDF files found in data/useful_pdfs/. Please add PDFs and rerun.") # Log warning
+    if len(useful_files) == 0: # Check if there are any 'useful' files
+        logger.warning(f"No 'useful' {file_type.upper()} files found in data/useful_pdfs/ or data/useful_txts/. Please add {file_type.upper()}s and rerun.") # Log warning
         logger.info("Exiting labeling process.") # Log exit message
         return
 
-    # Combine all PDFs and labels
-    all_pdfs = not_useful_files + useful_files # Combine lists of PDFs
+    # Combine all files and labels
+    all_files = not_useful_files + useful_files # Combine lists of files
     all_labels_list = ['not_useful'] * len(not_useful_files) + ['useful'] * len(useful_files) # Create corresponding labels
 
     # Create DataFrame
     df = pd.DataFrame({ # Create DataFrame with filenames and labels
-        'filename': [f.name for f in all_pdfs], # Extract filenames
+        'filename': [f.name for f in all_files], # Extract filenames
         'label': all_labels_list # Corresponding labels
     })
 
@@ -90,7 +88,7 @@ def create_labels(file_type: Literal['pdf', 'txt'] = 'pdf'):
     logger.info("=" * 60) # Separator
     logger.info(f"Labels saved to {LABELS_PATH} successfully.") # Log success message
     logger.info(f"\nDataset Summary:") # Log dataset summary
-    logger.info(f"  Total: {len(all_labels)} PDFs") # Log total count
+    logger.info(f"  Total: {len(all_labels)} {file_type.upper()}s") # Log total count
     logger.info(f"  Training: {len(train_df)} ({len(train_df)/len(all_labels)*100:.1f}%)")  # Log training count
     logger.info(f"  Testing: {len(test_df)} ({len(test_df)/len(all_labels)*100:.1f}%)") # Log testing count
     logger.info(f"\nClass Distribution:") # Log class distribution

@@ -18,10 +18,11 @@ from loader import PDFLoader, TXTLoader  # Loaders for PDF and TXT files
 from extractor import PDFExtractor, TXTExtractor # Extractors for PDF and TXT files
 from preprocess import TextPreprocessor # Text preprocessing utilities
 from features import FeatureExtractor # Feature extraction and selection
-from model import PDFClassifier # Classifier model
+from model import FILEClassifier # Classifier model
 from utils import save_predictions, load_labels # Utility functions
 from project_config import * # Import all necessary configurations
 from imblearn.over_sampling import SMOTE # For handling class imbalance, helpful if needed
+from semantic import SemanticFeatureExtractor
 
 logging.basicConfig(
     level=logging.INFO,
@@ -29,18 +30,21 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__) # Main logger
 
-def main():
-    logger.info("="*60) 
-    logger.info("Starting PDF/TXT Classification Pipeline")
-    logger.info("="*60)
 
+def main():
+    
     # 0. Choose File Type
 
     """
     File Type Selection: choose txt, if you are working with text files instead of PDFs
     """
 
-    FILE_TYPE = 'pdf'  # 'pdf' or 'txt', type with lovercase letters only 
+    FILE_TYPE = 'pdf'  # 'pdf' or 'txt', type with lowercase letters only 
+
+    logger.info("="*60) 
+    logger.info(f"Starting {FILE_TYPE.upper()} Classification Pipeline")
+    logger.info("="*60)
+
     logger.info(f"File type selected: {FILE_TYPE.upper()}") # Log selected file type in uppercase
     
     # 1. Load Labels
@@ -88,12 +92,12 @@ def main():
         return
 
     if useful_count == 0:
-        logger.error("No useful PDFs in training set!")
-        logger.error("Please run: py src\\label_pdfs.py")
+        logger.error(f"No useful {FILE_TYPE.upper()} in training set!")
+        logger.error("Please run: py src\\label_files.py")
         return
 
     if not_useful_count == 0:
-        logger.error("No 'not useful' PDFs in training set!")
+        logger.error(f"No 'not useful' {FILE_TYPE.upper()} in training set!")
         return
 
     # Calculate imbalance ratio to decide on handling strategy
@@ -119,19 +123,46 @@ def main():
     logger.info(f"Extracted text from {len(train_texts_dict)} training {FILE_TYPE.upper()}s")
     logger.info(f"Extracted text from {len(test_texts_dict)} testing {FILE_TYPE.upper()}s")  
     
+    # Filter out files with empty extracted text
+    valid_train_files = []
+    valid_train_labels = []
+    for file_path, label in zip(train_files, train_labels):
+        if file_path.stem in train_texts_dict and train_texts_dict[file_path.stem].strip():
+            valid_train_files.append(file_path)
+            valid_train_labels.append(label)
+        else:
+            logger.warning(f"Skipping {file_path.name} - empty or failed extraction")
+    
+    valid_test_files = []
+    valid_test_labels = []
+    for file_path, label in zip(test_files, test_labels):
+        if file_path.stem in test_texts_dict and test_texts_dict[file_path.stem].strip():
+            valid_test_files.append(file_path)
+            valid_test_labels.append(label)
+        else:
+            logger.warning(f"Skipping {file_path.name} - empty or failed extraction")
+    
+    # Update variables
+    train_files = valid_train_files
+    train_labels = valid_train_labels
+    test_files = valid_test_files
+    test_labels = valid_test_labels
+    
+    logger.info(f"Valid training samples: {len(train_files)} (skipped {len(train_texts_dict) - len(train_files)})")
+    logger.info(f"Valid testing samples: {len(test_files)} (skipped {len(test_texts_dict) - len(test_files)})")
     
     # 4 Preprocess texts
     logger.info(f"\n[Step 4] Preprocessing text from {FILE_TYPE.upper()}s...")
 
     preprocessor = TextPreprocessor()
 
-    train_texts_clean = preprocessor.preprocess_batch(
-        list(train_texts_dict.values()),
+    train_texts_clean = preprocessor.preprocess_batch( # preprocess train texts
+        [train_texts_dict[f.stem] for f in train_files],  # Use only valid files
         filenames=[f.stem for f in train_files]
         )
     
-    test_texts_clean = preprocessor.preprocess_batch(
-        list(test_texts_dict.values()),
+    test_texts_clean = preprocessor.preprocess_batch( # preprocess test texts
+        [test_texts_dict[f.stem] for f in test_files],  # Use only valid files
         filenames=[f.stem for f in test_files]
         )
     
@@ -161,27 +192,26 @@ def main():
     report_path = RESULTS_DIR / 'preprocessing_report.txt'
     report_path.parent.mkdir(parents=True, exist_ok=True)
 
-    with open(report_path, 'w', encoding='utf-8') as report_file:
-        report_file.write("="*60 + "\n")
-        report_file.write("Preprocessing Comparison Report\n")
+    with open(report_path, 'w', encoding='utf-8') as report_file: # Open report file
+        report_file.write("="*60 + "\n") # Header 
+        report_file.write("Preprocessing Comparison Report\n") # Title
         report_file.write("="*60 + "\n\n")
 
-        for i, (file_id, raw_text, clean_text) in enumerate(zip(
-            train_files[:5],
-            list(train_texts_dict.values())[:5],
-            train_texts_clean[:5]
+        for i, (file_id, raw_text, clean_text) in enumerate(zip( 
+            train_files[:5], # Only first 5 samples
+            list(train_texts_dict.values())[:5], # Only first 5 samples
+            train_texts_clean[:5] # Only first 5 samples
         ), 1): # 1 is for starting index
-            report_file.write(f"\n{'='*60}\n")
-            report_file.write(f"PDF #{i}: {file_id.stem}.pdf\n")
+            report_file.write(f"\n{'='*60}\n") # Section separator
+            report_file.write(f"File #{i}: {file_id.stem}{file_id.suffix}\n") # Write filename with extension
             report_file.write(f"{'='*60}\n\n")
-
-            report_file.write(f"Original length: {len(raw_text)} characters\n")
-            report_file.write(f"Cleaned (preprocessed) length: {len(clean_text)} characters\n\n")
-            report_file.write(f"Reduction in size: {(1 - len(clean_text)/len(raw_text))*100:.1f}%\n\n")
+            report_file.write(f"Original length: {len(raw_text)} characters\n") # Original text length
+            report_file.write(f"Cleaned (preprocessed) length: {len(clean_text)} characters\n\n") # Cleaned text length
+            report_file.write(f"Reduction in size: {(1 - len(clean_text)/len(raw_text))*100:.1f}%\n\n") # Reduction percentage
             report_file.write("----- Original Text (First 500 chars) -----\n")
             report_file.write(raw_text[:500] + "\n\n")
             report_file.write("----- Preprocessed Text (First 500 chars) -----\n")
-            report_file.write(clean_text[:500] + "\n")
+            report_file.write(clean_text[:500] + "\n\n")
             report_file.write("\n" + ("="*60) + "\n\n")
             # Removed keywords
             removed_words = []
@@ -208,6 +238,8 @@ def main():
     X_test = feature_extractor.transform(test_texts_clean)
 
     logger.info(f"X_train shape: {X_train.shape}, X_test shape: {X_test.shape}")
+
+    # TODO: Integrate semantic understanding in this part
 
     # fix workflow
     y_train = np.array(train_labels)  # convert to numpy array
@@ -266,18 +298,18 @@ def main():
     feature_extractor.get_top_features(X_train, y_train, top_n=50)
     
     logger.info("\n[Step 5.5] Initializing Classifier...")
-    classifier = PDFClassifier(mode='supervised', random_state=42)
+    classifier = FILEClassifier(mode='supervised', random_state=42)
 
     logger.info("\n[Step 5.6] Cross-Validation (5-fold)...")
-    cv_scores = classifier.cross_validate(X_train, y_train, cv=5)
+    cv_scores = classifier.cross_validate(X_train, y_train, cv=5) # 5-fold CV means splitting the data into 5 parts and training/testing 5 times
 
     logger.info(f"\nCV Results:")
     logger.info(f"  Mean F1: {cv_scores.mean():.3f} ± {cv_scores.std():.3f}")
     logger.info(f"  Scores: {cv_scores}")
 
-    # Decision based on CV
-    if cv_scores.mean() < 0.5:
-        logger.warning("POOR CV PERFORMANCE! Consider:")
+    # Decision based on CV (cross-validation) results
+    if cv_scores.mean() < 0.5: # Threshold for acceptable performance
+        logger.warning("POOR PERFORMANCE! Consider:") 
         logger.warning("1. Collect more useful samples")
         logger.warning("2. Check data quality")
         logger.warning("3. Tune hyperparameters")
@@ -334,10 +366,10 @@ def main():
     logger.info("\n[Step 7] Saving results...")
     test_filenames = [f.name for f in test_files]
     results_df = save_predictions(test_filenames, test_predictions, test_scores)
+    results_df_path = RESULTS_DIR / f'{FILE_TYPE}_test_results.csv'
+    results_df.to_csv(results_df_path, index=False)
+    logger.info(f"Test results saved to {results_df_path}")
     
-    logger.info("="*60)
-    logger.info("PIPELINE COMPLETE!")
-    logger.info("="*60)
     
     classifier.save_model(RESULTS_DIR / f'{FILE_TYPE}_classifier.joblib') 
     

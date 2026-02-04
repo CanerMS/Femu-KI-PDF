@@ -1,0 +1,3 @@
+Alzheimer’s disease (AD) is a devastating neurodegenerative disorder, with no effective treatment currently 
+available. Recently, non-pharmacological therapy, especially gamma frequency stimulation has shown promising 
+therapeutic effects in Alzheimer’s disease (AD) mouse models. Electric field (EF) is a non-invasive biophysical

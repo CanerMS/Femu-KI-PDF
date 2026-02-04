@@ -1,0 +1,13 @@
+continuous advancements are essential to enhance the detection and monitoring of chemical hazards agents, ensuring rapid and accurate identification to mitigate potential threats. Effective sensing 
+technologies must meet key criteria, including high detection sensitivity, minimal signal loss, efficient power 
+utilization, compact design, and fast response time.
+This work presents a PCF-based sensor specifically designed for the precise detection of highly toxic nerve 
+agents such as Sarin, Soman, and Tabun. The proposed sensor is designed, simulated, and extensively evaluated, 
+demonstrating exceptional optical performance in the terahertz (THz) range. The performance assessment of 
+photonic crystal fiber (PCF) sensors relies on key metrics that define their efficiency and reliability39. Relative 
+sensitivity (RS) measures the sensor’s ability to detect small environmental variations, expressed as a shift in 
+resonance wavelength per unit change40. Numerical aperture (NA) determines light-gathering efficiency, 
+influencing coupling performance11. Confinement loss (LC) evaluates light leakage from the core, affecting 
+signal strength and accuracy11. Effective material loss (EML) accounts for intrinsic absorption and scattering41. 
+Birefringence (B) quantifies refractive index differences in orthogonal polarization modes, while effective area 
+(Aeff) impacts light distribution, nonlinearity, and overall sensor functionality11.

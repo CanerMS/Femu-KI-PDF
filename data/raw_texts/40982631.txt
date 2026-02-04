@@ -1,0 +1,17 @@
+Spinal cord injury leads to neuronal necrosis. Owing to the limitations of neural stem cells (NSCs) in the adult
+body, spinal cord injury is difficult to repair. Seeding NSCs onto
+conductive materials can promote their differentiation under the
+influence of electrical stimulation, which may help in treating a
+spinal cord injury. However, owing to the need for external
+wiring and power sources, these clinical treatments are difficult to
+implement. In this study, biodegradable MXene materials are
+proposed for in situ wireless magnetoelectric signal generation on
+MXene films under a rotating magnetic field to stimulate the
+neuronal differentiation of NSCs. In vitro experiments demonstrated that the electrical signals generated on the surface of
+MXenes can promote the differentiation of NSCs into neurons
+and enhance neuronal maturation, leading to the production of electrophysiological signals. Furthermore, implanting “living
+materials” assembled with NSCs into a spinal cord injury model, driven by a magnetic field, can achieve rapid spinal cord
+injury repair within 28 days. This magnetoelectric stimulation, coupled with transplanted stem cells/conductive biomaterial
+complex systems, should be easily adaptable to spinal cord injury regeneration applications and offer immense potential for
+clinical trials.
+KEYWORDS: wireless magnetoelectric stimulation, spinal cord injury, neuronal differentiation, MXene film, neural stem cell therapy

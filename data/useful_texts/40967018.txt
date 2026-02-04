@@ -1,0 +1,23 @@
+the central role of inflammation in the pathophysio­ logical processes of the cardiovascular system is well-established. 
+However, within the field of electromagnetic biology, research on 
+radiation-induced myocardial inflammatory responses remains scarce, 
+particularly concerning biological data derived from human models. 
+Against this backdrop and considering the limitations of existing studies, 
+this research proposes a core hypothesis: The non-thermal effects of 
+microwave radiation may activate specific key inflammatory signaling 
+pathways, driving the sequential release of particular inflammatory 
+factors, thereby initiating subclinical inflammatory responses and 
+functional damage in cardiomyocytes. To test this, the study establishes 
+a rigorously temperature-controlled microwave radiation model that 
+simulates real-world exposure conditions while eliminating thermal ef­
+fects. Through comprehensive assessment of iPSC-CMs viability, ultra­
+structure, calcium signaling, and electrophysiological function, coupled 
+with the integration of Olink high-sensitivity proteomics to systemati­
+cally analyze inflammatory factor expression profiles and trace up­
+stream regulatory pathways, this research aims to delineate the 
+temporal evolution of the inflammatory response. The ultimate goal is to 
+elucidate novel mechanisms underlying microwave radiation-induced 
+myocardial damage, thereby providing a new scientific foundation for 
+the precise assessment of associated health risks and the development of 
+targeted protective strategies based on the dynamic regulation of 
+inflammation.

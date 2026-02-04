@@ -1,0 +1,6 @@
+The potential health risks of DC charging piles to human health were investigated by
+quantifying the internal electromagnetic exposure level. In this study, the transformer in
+the DC/DC circuit of a DC charging pile was selected as the radiation source, and two
+realistic human models (adult and child) were used as exposure subjects. A simulation
+model, including the vehicle body, charging pile, and transformer, was established using
+COMSOL(COMSOL Multiphysics 6.2) Multiphysics software to calculate the magnetic

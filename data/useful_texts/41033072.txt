@@ -1,0 +1,19 @@
+92 increasing TTFields treatment efficacy by targeting G2 cell cycle checkpoint, 
+Cancer Res. 80 (2020) 92, https://doi.org/10.1158/1538-7445.AM2020-92.
+[52] P. Slangen, O.v. Tellingen, M.d. Gooijer, G. Borst, Synergistic effect by targeting 
+TTFields induced cell cycle effects, 10 (2022)10.14791/btrt.2022.10.F-1249.
+[53] T. Voloshin, R.S. Schneiderman, A. Volodin, R.R. Shamir, N. Kaynan, E. Zeevi, et 
+al., Tumor Treating Fields (TTFields) hinder cancer cell motility through regulation 
+of microtubule and acting dynamics, Cancers 12 (10) (2020), https://doi.org/ 
+10.3390/cancers12103016.
+[54] A.F. Kessler, G.E. Fr¨ombling, F. Gross, M. Hahn, W. Dzokou, R. Ernestus, et al., 
+Effects of tumor treating fields (TTFields) on glioblastoma cells are augmented by 
+mitotic checkpoint inhibition, Cell Death. Discov. 4 (2018) 12, https://doi.org/ 
+10.1038/s41420-018-0079-9.
+[55] R.S. Schneiderman, E. Shmueli, E.D. Kirson, Y. Palti, TTFields alone and in 
+combination with chemotherapeutic agents effectively reduce the viability of MDR 
+cell sub-lines that over-express ABC transporters, BMC. Cancer 10 (2010) 229, 
+https://doi.org/10.1186/1471-2407-10-229.
+[56] E.D. Kirson, R.S. Schneiderman, V. Dbalý, F. Tovarys, J. Vymazal, A. Itzhaki, et al., 
+Chemotherapeutic treatment efficacy and sensitivity are increased by adjuvant 
+alternating electric fields (TTFields), BMC. Med. Phys. 9 (2009) 1, https://doi.org/

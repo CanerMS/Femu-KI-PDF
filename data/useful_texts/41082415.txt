@@ -1,0 +1,5 @@
+— In this article, the design of a non-invasive wearable antenna-based fat intra-body communication (Fat-IBC) system is
+presented for biomedical applications. The Fat-IBC system is used
+for uninterrupted communication between various wearable, implanted, and semi-implanted devices, facilitating the exchange of
+data and information within body area networks (BAN). Herein, to
+eliminate the design complexity, a simple planar-loop antenna is

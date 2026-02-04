@@ -1,0 +1,8 @@
+This work presents a novel dual-polarized antenna array tailored for Internet of Things (IoT) applications, specifically designed to operate in the millimeter-wave (mmwave) spectrum within the frequency range of 30–60 GHz. Leveraging printed ridge gap
+waveguide (PRGW) technology, the antenna ensures robust performance by eliminating
+parasitic radiation from the feed network, thus significantly enhancing the reliability and efficiency required by IoT communication systems, particularly for smart cities, autonomous
+vehicles, and high-speed sensor networks. The proposed antenna achieves superior radiation characteristics through a cross-shaped magneto-electric (ME) dipole backed by an
+artificial magnetic conductor (AMC) cavity and electromagnetic bandgap (EBG) structures.
+These features suppress surface waves, reduce edge diffraction, and minimize back-lobe
+emissions, enabling stable, high-quality IoT connectivity. The antenna demonstrates a wide
+impedance bandwidth of 24% centered at 30 GHz and exceptional isolation exceeding

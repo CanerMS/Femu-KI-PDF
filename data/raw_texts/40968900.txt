@@ -1,0 +1,6 @@
+This paper presents a novel design of a compact dual-band dual-mode wearable antenna. The antenna is fed through a single coaxial feed probe, which excites TM01
+and TM11 modes at 2.45 GHz and 5.8 GHz, respectively. These modes exhibit distinct
+radiation characteristics. The omnidirectional TM01 mode at 2.45 GHz is suitable for onbody communication, while the directional TM11 mode at 5.8 GHz is more appropriate
+for off-body communication. The antenna prototype was fabricated and measured. The
+measured performance is consistent with the simulations. Additionally, further simulations
+and measurements were conducted to verify the interactions between the proposed antenna

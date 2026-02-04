@@ -64,7 +64,6 @@ CUSTOM_STOP_WORDS = [ # List of custom stop words to exclude from text analysis
     'sample', 'samples', 'sampling', 'specimen',
     'contrast',  
     'double',   
-    
     # STATISTICS & NUMBERS 
     'number', 'numbers', 'percentage', 'percent',
     'ratio', 'ratios', 'rate', 'rates',
@@ -72,21 +71,18 @@ CUSTOM_STOP_WORDS = [ # List of custom stop words to exclude from text analysis
     'incidence', 'occurrence', 'distribution',
     'range', 'ranges', 'variation', 'variance',
     'slightly',  
-    
     # TIME & LOCATION 
     'time', 'times', 'period', 'periods', 'duration',
     'day', 'days', 'week', 'weeks', 'month', 'months', 'year', 'years',
     'baseline', 'follow', 'followup', 'postoperative', 'preoperative',
     'hospital', 'clinic', 'center', 'department',
-    
     # RESEARCH PROCESS 
     'research', 'investigate', 'investigated', 'investigation',
     'aim', 'aims', 'purpose', 'hypothesis',
     'design', 'designed', 'protocol', 'criteria',
     'retrospective', 'prospective', 'randomized', 'controlled',
     'cohort', 'trial', 'trials', 'experiment', 'experimental',
-    'approved',  
-
+    'approved', 
     # META WORDS 
     'targeting',     # Generic term
     'algorithm', 'algorithms',
@@ -94,7 +90,6 @@ CUSTOM_STOP_WORDS = [ # List of custom stop words to exclude from text analysis
     'features', 'feature',
     'united', 'states',  # Geographic noise
     'longitudinal',
-    
     # JOURNAL/FIGURE NOISE TERMS
     'fig', 'figs',   # Already has, but add variations
     'crossref', 'pubmed',  # Journal metadata
@@ -102,25 +97,21 @@ CUSTOM_STOP_WORDS = [ # List of custom stop words to exclude from text analysis
     'opticsexpress',
     'cid',  # Citation ID
     'ps',  'pdf',   # File format noise
-    
     # COMPARISON & OUTCOMES 
     'comparison', 'compare', 'difference', 'differences',
     'similar', 'similarly', 'higher', 'lower',
     'increase', 'increased', 'decrease', 'decreased',
     'improvement', 'improved', 'outcome', 'outcomes',
     'effect', 'effects', 'efficacy', 'effective', 'effectiveness',
-    
     # QUALITY & VALIDITY 
     'accuracy', 'accurate', 'precision', 'precise',
     'sensitivity', 'specificity', 'reliability', 'valid', 'validity',
     'quality', 'standard', 'standards', 'normal',
-    
     # JOURNAL METADATA 
     'abstract', 'introduction', 'materials', 'discussion',
     'reference', 'references', 'figure', 'figures', 'table', 'tables',
     'published', 'publication', 'article', 'journal',
     'doi', 'manuscript', 'supplementary', 'appendix',
-    
     # GENERIC DESCRIPTORS 
     'various', 'several', 'multiple', 'different',
     'important', 'potential', 'possible', 'likely',
@@ -136,14 +127,12 @@ CUSTOM_STOP_WORDS = [ # List of custom stop words to exclude from text analysis
     'respiratory',                  # Generic medical term
     'processing', 'severe', 'stronger', 'radiology',
     'spectra', 'spectral', 'reconstruction', 'view',
-
     # Countries 
     'china', 'chinese', 'india', 'indian', 'japan', 'japanese', 'germany', 'german', 'france', 'french', 'brazil', 'brazilian',
     'canada', 'canadian', 'australia', 'australian', 'uk', 'united kingdom', 'britain', 'british', 'russia', 'russian', 'spain', 'spanish',
     'italy', 'italian', 'korea', 'korean', 'south korea', 'north korea', 'turkey', 'turkish', 'mexico', 'mexican', 'saudi', 'arabia', 'saudi arabia',
     'uae', 'united arab emirates', 'singapore', 'singaporean', 'sweden', 'swedish', 'norway', 'norwegian','denmark', 'danish', 'finland', 'finnish', 'netherlands', 'dutch','belgium', 'belgian','switzerland', 'swiss', 'austria', 'austrian','poland', 'polish','greece', 'greek','portugal', 'portuguese','ireland', 'irish',
-    'new zealand', 'zealandic','egypt', 'egyptian','south africa', 'african','argentina', 'argentinian',
-    'chile', 'chilean',
+    'new zealand', 'zealandic','egypt', 'egyptian','south africa', 'african','argentina', 'argentinian', 'chile', 'chilean',
     'colombia', 'colombian',
     'venezuela', 'venezuelan',
     'peru', 'peruvian',
@@ -214,7 +203,6 @@ CUSTOM_STOP_WORDS = [ # List of custom stop words to exclude from text analysis
     'madagascar', 'malagasy',
     'reunion', 'mauritius', 'mauritian',
     'seychelles', 'seychellois',
-
     # Cities
     'london', 'paris', 'berlin', 'madrid', 'rome',
     'vienna', 'prague', 'budapest', 'warsaw', 'aachen', 'ac',
@@ -247,7 +235,6 @@ CUSTOM_STOP_WORDS = [ # List of custom stop words to exclude from text analysis
     'http://', 'https://', 
     'www.', '.com', '.org', '.net', '.edu', '.gov', '.html', '.htm',
     'click', 'link', 'website', 'page', 'site', 'online', 
-    
     # Names
     'john', 'michael', 'david', 'james', 'robert',
     'mary', 'linda', 'patricia', 'barbara', 'elizabeth',
@@ -267,14 +254,11 @@ CUSTOM_STOP_WORDS = [ # List of custom stop words to exclude from text analysis
     'melissa', 'debra', 'stephanie', 'rebecca', '   sharon',
     'laura', 'cynthia', 'karen', 'helen', 'sarah',
     'nancy', 'betty', 'lisa',
-
     # Months
     'january', 'february', 'march', 'april', 'may', 'june',
     'july', 'august', 'september', 'october', 'november', 'december',
-
     # Days
     'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'
-
     # Add more as needed (consider observing the preprocessed texts for frequent but non-informative words)
     'hence', 'thus', 'therefore', 'furthermore', 'moreover',
     'additionally', 'indeed', 'however', 'nevertheless', 'nonetheless',

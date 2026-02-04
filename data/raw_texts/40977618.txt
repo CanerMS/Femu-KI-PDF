@@ -1,0 +1,8 @@
+Purpose: MRI systems are traditionally engineered to produce close to idealized performance, enabling a simplified pulse sequence design philosophy. An
+example of this is control of eddy currents produced by gradient fields; usually
+these are compensated by pre-emphasizing demanded waveforms. This process
+typically happens invisibly to the pulse sequence designer, allowing them to
+assume achieved gradient waveforms will be as desired. Although convenient,
+this requires system specifications exposed to the end user to be substantially
+down-rated, as pre-emphasis adds an extra overhead to the waveforms. This
+strategy is undesirable for lower performance or resource-limited hardware.

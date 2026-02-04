@@ -1,0 +1,9 @@
+The increasing expansion of energy infrastructure and anthropogenic transforma­
+tion of the environment have introduced electromagnetic fields (EMFs) into aquatic 
+ecosystems. While studies on the impact of EMFs on aquatic organisms are growing, 
+their effects on fish embryonic development remain poorly understood. This study 
+investigated the influence of electromagnetic exposure dominated by the magnetic 
+(B) component, measured at 11.15 (± 2.24) μT and 50 Hz, on the heart rate of vimba 
+bream (Vimba vimba) embryos, a species of conservation significance in aquacul­
+ture. The electric (E) component was not measured, and its potential contribution 
+cannot be excluded. Fertilized V. vimba eggs were incubated under control conditions

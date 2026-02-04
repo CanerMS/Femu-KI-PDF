@@ -1,0 +1,8 @@
+the response of organisms to electromagnetic ra­ diation encompasses not only oxidative stress but also metabolic 
+changes. Unfortunately, although there are more research on the bio­
+logical effects caused by microwave bands above 6 GHz in the 5 G bands 
+(Karipidis et al., 2021), the scientific basis of the 3.5 GHz band below 
+6 GHz is only a few studies (Altman et al., 2016; Bektas et al., 2022; 
+Joushomme et al., 2023; Wang et al., 2022, 2021; Yang et al., 2022; 
+Zubair et al., 2020). It reveals the potential impact of several stress 
+response routes.

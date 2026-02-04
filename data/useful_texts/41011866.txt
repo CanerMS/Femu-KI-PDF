@@ -1,0 +1,7 @@
+A novel dual-band dual-mode wearable button antenna for wireless body area network
+(WBAN) applications is proposed in this paper. The antenna ingeniously integrates a
+monopole structure and an optimized planar inverted-F antenna (PIFA) configuration in a
+shared radiator, enabling dual-mode operation with a compact size. In the low-frequency
+band, the monopole structure generates an omnidirectional radiation pattern, facilitating
+efficient on-body communication. Meanwhile, the PIFA structure in the high-frequency
+band exhibits directed radiation, optimizing off-body communication. To enhance bandwidth, a parasitic structure is incorporated into the design. Both numerical simulations

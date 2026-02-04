@@ -1,0 +1,9 @@
+Conﬁning light in an on-chip photonic cavity with strong light-matter interactions is pivotal for numerous applications
+in optical and quantum sciences. Recently, topological valley photonics has introduced new schemes for light
+conﬁnement with topological protection, enabling robust on-chip light manipulation. Here, we present a topological
+edge state cavity that conﬁnes light within a topological bandgap while robustly guiding it to circulate around the
+cavity via topological edge states. We demonstrate a giant enhancement in the intrinsic quality factor by three orders
+of magnitude, while simultaneously increasing the free spectral range from 5.1 to 7.1 GHz through tailoring the
+radiation leakage and group index of topological valley edge state. Our work provides a novel and robust on-chip
+cavity platform for a wide range of applications, including high-capacity communications, nonlinear optics, atomic
+clocks, and quantum photonics.

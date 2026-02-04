@@ -1,0 +1,24 @@
+Spanning frogs, fish, and humans, direct-current (DC) bioelectric cues play 
+critical roles beyond neuro-muscular function, such as modulating morphogenesis, 
+immune response, and healing through electrotaxis—electrically directed cell migration. 
+Harnessing this potential requires new tools. However, standardized, accessible, and 
+reproducible infrastructure capable of DC stimulation remains a challenge. We present 
+SCHEPHERD: a universal, electrobioreactor integrating 8 stimulation channels and 
+modular inserts to enable most electrotaxis assays in one device (cells, monolayers, 
+and 3D spheroids), while enabling powerful, new capabilities. SCHEPHERD revealed 
+through parameter sweeps that DC fields act like a ‘steering wheel and gas pedal’ for 
+cell migration. We then used live confocal imaging to observe electrically reprogrammed 
+F-actin dynamics. Finally, our multi-polar inserts generated complex spatial electrical 
+patterns that reorganize engineered tissue dynamics. By significantly improving 
+accessibility through modularity and an open-source, graphically programmed 
+stimulator, we hope SCHEPHERD can help broaden the community studying these 
+important DC bioelectric phenomena. 
+ 
+.
+CC-BY-NC 4.0 International license
+available under a
+(which was not certified by peer review) is the author/funder, who has granted bioRxiv a license to display the preprint in perpetuity. It is made 
+The copyright holder for this preprint
+this version posted September 16, 2025. 
+; 
+https://doi.org/10.1101/2025.09.16.674226

@@ -1,0 +1,9 @@
+Recent advances in Artificial Intelligence (AI)-driven wireless communication are driving the adoption of Sixth Generation (6G) technologies in crucial environments such as
+hospitals. Visible Light Communication (VLC) leverages existing lighting infrastructure
+to deliver high data rates while mitigating electromagnetic interference (EMI); however,
+patient movement induces fluctuating signal strength and dynamic channel conditions. In
+this paper, we present a novel integration of site-specific ray tracing and machine learning
+(ML) for VLC-enabled Medical Body Sensor Networks (MBSNs) channel modeling in distinct hospital settings. First, we introduce a Q-learning-based adaptive modulation scheme
+that meets target symbol error rates (SERs) in real time without prior environmental information. Second, we develop a Long Short-Term Memory (LSTM)-based estimator for path
+loss and Root Mean Square (RMS) delay spread under dynamic hospital conditions. To our
+knowledge, this is the first study combining ray-traced channel impulse response modeling

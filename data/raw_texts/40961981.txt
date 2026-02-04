@@ -1,0 +1,13 @@
+Few-layer CrPS4 is a two-dimensional (2D) magnetic material with excellent stability in
+ambient environment, which attracted significant interest in recent research. Here, via
+first-principles calculations, we show that 2D CrPS4 hosts a variety of intriguing anomalous
+Hall transport phenomena, owing to its layer-dependent magnetism and symmetry character.
+Monolayer CrPS4 can display a sizable linear anomalous Hall effect, while its nonlinear
+anomalous Hall response is forbidden. In contrast, bilayer CrPS4 can produce pronounced
+intrinsic nonlinear anomalous Hall response from Berry-connection polarizability, in the
+absence of linear anomalous Hall effect. We clarify that the large peaks in these responses
+originate from gapped Dirac points in the band structure. Furthermore, we show that bilayer
+CrPS4 also hosts a layer Hall effect, where the charge Hall current in the two layers are equal in
+magnitude but flow in opposite directions. This effect can be detected as an anomalous Hall
+signal induced by an applied gate field. Finally, even-layer CrPS4 also exhibits pronounced
+in-plane anomalous Hall effect, where the Hall signal is linearly proportional to the applied

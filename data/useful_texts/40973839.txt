@@ -1,0 +1,15 @@
+Human-induced mortality poses a significant threat to many species worldwide, with Asian elephants in India being notably impacted. In recent years, electrocution-related elephant deaths have increased, 
+particularly in the Northern District Landscape of West 
+Bengal. A major contributor is the proliferation of illegal and hazardous electric fencing near protected forest 
+areas. In many cases, farmers install electrified fences—
+often unauthorized—to prevent crop damage from 
+elephant incursions. Unfortunately, these measures frequently result in fatal outcomes, escalating tensions and 
+provoking retaliatory actions. This study assesses the 
+spatio-temporal extent of elephant electrocution incidents across a forested region of approximately 12,000 
+­km2. A total of 63 elephant deaths were documented 
+using official records from the Forest and Wildlife 
+Directorate. Each location was assessed for temporal 
+factors such as year, month, and time of occurrence. 
+Advanced geospatial techniques—including remote 
+sensing and GIS—were utilized, with kernel density 
+estimation applied to generate a detailed risk map. The

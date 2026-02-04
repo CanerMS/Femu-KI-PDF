@@ -1,0 +1,9 @@
+Gastroesophageal reflux disease (GERD) is a widespread condition that requires reliable and non-invasive diagnostic methods to minimize patient discomfort. This study presents a radiofrequency spectrophotometry sensor specifically designed to detect
+esophageal liquid flow and ionicity in real time without disrupting the patient’s daily life.
+The sensor operates by measuring dielectric properties and ionic conductivity through
+the thoracic plexus, eliminating the need for invasive probes or prolonged monitoring.
+A study conducted on 49 participants demonstrated the sensor’s ability to differentiate
+between various liquid media and identify beta dispersion relaxation as a biomarker for
+esophageal tissue damage, a key indicator of GERD progression. Additionally, alpha
+dispersion conductivity effectively distinguished reflux episodes, proving the sensor’s high
+sensitivity. Unlike traditional diagnostic techniques such as endoscopy or pH monitoring, this radiofrequency spectrophotometry sensor enables continuous, real-time reflux

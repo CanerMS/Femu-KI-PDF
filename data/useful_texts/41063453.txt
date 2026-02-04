@@ -1,0 +1,2 @@
+Purpose: This study investigates the impact of lower limb amputation on radiofrequency (RF)-induced heating of active and
+passive implantable medical devices (AIMDs and PIMDs) in a 1.5 T MRI environment.

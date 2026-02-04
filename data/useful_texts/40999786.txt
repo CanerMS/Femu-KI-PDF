@@ -1,0 +1,6 @@
+Electromagnetic (EM) safety guidelines are designed to protect the general public and workers from the risks posed by exposure
+to EM sources of all types, with the exception of medical EM sources. However, it has never been systematically evaluated
+whether individuals with conductive implants are also protected by these guidelines or whether the local field enhancement due
+to presence of the implant may pose an unacceptable risk under certain realistic exposure conditions. To address this important
+knowledge and regulatory gap, we first evaluated the upper bound of the local enhancement of bare and insulated generic
+implants of 0.5 λ (approximately equal to resonant) and 0.1 λ lengths, but restricted the maximum length to 2 m, as a function

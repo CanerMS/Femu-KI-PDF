@@ -1,0 +1,9 @@
+Pathological synaptic plasticity, manifested as ischemic long-term potentiation, drives neuronal hyperexcitability following 
+oxygen-glucose deprivation. While ischemic long-term potentiation (iLTP) is mediated by excessive GluN2B-containing 
+N-methyl-D-aspartate receptors (NMDARs) activity, the molecular mechanisms sustaining this aberrant plasticity remain 
+poorly understood. FK506-binding protein 51 (FKBP51), a stress-related modulator of plasticity, has emerged as a poten­
+tial regulator; however, its role in iLTP has not yet been explored. Cathodal direct current stimulation (cDCS), known to 
+suppress pathological hyperexcitability, may offer therapeutic modulation of this process. In this study, we demonstrated 
+that oxygen-glucose deprivation (OGD) induces iLTP alongside FKBP51 upregulation and GluN2B surface accumulation. 
+Genetic deletion of FKBP51 or its pharmacological inhibition (SAFit2, 0.5 µM) normalized synaptic strength and GluN2B 
+expression, establishing FKBP51’s critical role in maintaining iLTP. Notably, cDCS intervention replicated these protec­

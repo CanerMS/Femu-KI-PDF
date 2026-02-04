@@ -1,0 +1,10 @@
+Following the global progressive deployment of 5G networks, considerable attention
+has focused on assessing their potential impact on human health. This study aims
+to investigate autonomous nervous system changes by exploring skin temperature
+and electrodermal activity (EDA) among 44 healthy young individuals of both sexes
+during and after exposure to 3.5 GHz antenna-emitted signals, with an electrical field
+intensity ranging from 1 to 2 V/m. The study employed a randomized, cross-over design
+with triple-blinding, encompassing both ‘real’ and ‘sham’ exposure sessions, separated
+by a maximum interval of 1 week. Each session comprised baseline, exposure and
+postexposure phases, resulting in the acquisition of seven runs. Each run initiated with
+a 150 s segment of EDA recordings stimulated by 10 repeated beeps. Subsequently,

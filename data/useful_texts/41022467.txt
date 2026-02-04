@@ -1,0 +1,4 @@
+This study aimed to investigate the effect of alpha-lipoic acid (ALA) on liver damage caused by extremely lowfrequency magnetic ﬁelds (ELF-MFs) in rats. Thirty-two male rats were arbitrarily assigned into four groups:
+Group 1 (control group), Group 2 (ELF-MF exposure group), Group 3 (ELF-MF exposure + ALA administration), and Group 4 (sham group). Groups 2 and 3 were exposed to ELF-MF at 2 mT intensity emitted by two
+Helmholtz coils for 4 hours/day throughout 30 days. Group 3 received ALA intraperitoneally (100 mg/kg/day)
+1 hour prior to each exposure for 30 days. Group 4 was placed inside the coils, but the generator was turned off.

@@ -1,0 +1,24 @@
+for articles that related to FIGO 2018 cervical cancer staging, treatment planning, 
+or imaging follow-up and that mentioned at least one imaging 
+modality (CT, MRI, or FDG PET/CT), yielding 62 articles. The project 
+lead reviewed these articles’ full text, identifying an initial list of 131 
+unique imaging terms. The members of the steering and contributing committees independently reviewed these terms, recording 
+whether or not they thought that each term should be included in 
+the lexicon. The committee members had unanimous agreement 
+that 96 terms should be included in the lexicon and that 18 terms 
+should be excluded. The remaining 17 terms did not achieve initial unanimous agreement for inclusion or exclusion. The steering 
+ 
+ The cervical cancer reporting lexicon provides 
+standardized consensus-based terms and definitions 
+pertaining to the initial staging, follow-up, and treatment 
+planning of cervical cancer.
+ 
+ This lexicon represents a multidisciplinary and 
+multiinstitutional collaboration involving participants 
+from the SAR UOC DFP, the ESUR Female Pelvic Imaging 
+Working Group, and the ASAR.
+ 
+ The lexicon aims to promote consistent reporting of 
+cervical cancer imaging, improve communication among 
+multidisciplinary care team members, and enable 
+meaningful comparisons across research investigations.

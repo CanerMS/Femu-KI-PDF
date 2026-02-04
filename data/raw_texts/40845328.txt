@@ -1,0 +1,37 @@
+Acetonitrile is widely used in pharmaceutical and industrial processes, but it is a volatile, flammable, and toxic gas.
+The rapid detection of trace acetonitrile gas is crucial for industrial
+production, environmental monitoring, and public safety. This
+study presents a novel high-performance acetonitrile terahertz
+(THz) gas sensing system based on a flexible, low-loss Ag/PP THz
+hollow waveguide (HWG). The mathematical model of the
+established sensing system calculates that the designed sensor
+exhibits a high effective path length rate (0.9942), which can
+achieve high gas sensing performance. Based on the molecular
+rotational transition theory, the frequency positions of typical
+absorption peaks of acetonitrile were calculated, which were
+consistent with THz-TDS measurements. According to the strong
+selective absorption of acetonitrile at 275.6 GHz and the Lambert−Beer law, the concentration of acetonitrile was measured by the
+HWG-based THz gas sensor, where HWG serves as both the gas chamber and the transmission channel of THz waves. The effects of
+the length and bending angle of HWG on sensitivity, response/recovery time, and LOD were investigated systematically. Both the
+30 cm-long straight HWG and 75 cm-long curved (90°) HWG sensor could detect 10 ppb acetonitrile gas samples in 10 kinds of
+mixed gases, with response/recovery times of 2.6/2.7 and 3.0/3.1 s, respectively. Meanwhile, the developed sensor demonstrated
+excellent reversibility and reasonable reliability (RSD < 0.5%) in six test cycles. The as-built acetonitrile sensor exhibits high
+selectivity, rapid response/recovery times, low LOD, and easy operability, opening up new avenues for the development of highperformance THz gas sensors.
+KEYWORDS: acetonitrile, Ag/PP terahertz hollow waveguide, terahertz wave, molecular rotational spectroscopy, gas sensing
+A
+cetonitrile (CH3CN) has been widely applied in
+numerous pharmaceutical and industrial processes
+because of its excellent solvent properties and versatility.1
+However, its flammability and toxicity pose serious risks to
+human health and the environment.2 Therefore, accurately and
+quickly detecting acetonitrile is very important. For instance,
+the level of acetonitrile in the environment is a key indicator
+for early warning of forest fires.3,4 As a toxic gas, acetonitrile
+can damage the human central nervous system, blood, and
+liver, potentially leading to cancer and respiratory diseases.2,5−8
+Additionally, since acetonitrile can act as a simulant for cyanide
+chemical warfare agents, detecting it at low concentrations is
+crucial for battlefield operations and homeland security.9−16
+According to the toxicology of warfare agents (WAs), the
+immediately dangerous to life and health (IDLH) level of
+acetonitrile is 50 ppm, meaning that exposure to this level for

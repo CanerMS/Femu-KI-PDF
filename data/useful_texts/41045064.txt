@@ -1,0 +1,5 @@
+Compliance testing of wireless devices with absorbed power density (APD) limits requires body models that conservatively
+reproduce the absorption characteristics of human skin. Previous studies indicate that impedance‐matching effects are
+caused by the stratum corneum (SC) layer. The objective of this study is to develop a single macroscopic dielectric model
+reproducing absorption of electromagnetic fields by the skin up to 110 GHz. The reflection coefficient of the skin of human
+volunteers was measured at frequencies of 15 to 43 GHz with open waveguide probes, complementing previous data from

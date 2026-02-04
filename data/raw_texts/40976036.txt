@@ -1,0 +1,23 @@
+from the Childhood Cancer Survivor Study. J Clin Oncol 2009;27:2328–38. https://doi. 
+org/10.1200/JCO.2008.21.1425.
+[16] Batista V, Meyer J, Kügele M, Al-Hallaq H. Clinical paradigms and challenges in 
+surface guided radiation therapy: where do we go from here? Radiother Oncol 
+2020;153:34–42. https://doi.org/10.1016/j.radonc.2020.09.041.
+[17] Naidoo W, Leech M. Feasibility of surface guided radiotherapy for patient 
+positioning in breast radiotherapy versus conventional tattoo-based setups- a 
+systematic review. Tech Innov Patient Support Radiat Oncol 2022;22:39–49. 
+https://doi.org/10.1016/j.tipsro.2022.03.001.
+[18] Li G. Advances and potential of optical surface imaging in radiotherapy. Phys 
+Med Biol 2022;67. https://doi.org/10.1088/1361-6560/ac838f.
+[19] Hoisak JDP, Pawlicki T. The role of optical surface imaging systems in radiation 
+therapy. Semin Radiat Oncol 2018;28:185–93. https://doi.org/10.1016/j. 
+semradonc.2018.02.003.
+[20] Al-Hallaq HA, Cervi˜no L, Gutierrez AN, Havnen-Smith A, Higgins SA, Kügele M, 
+et al. AAPM task group report 302: Surface-guided radiotherapy. Med Phys 2022; 
+49:e82–. https://doi.org/10.1002/mp.15532.
+[21] Freislederer P, Batista V, ¨Ollers M, Buschmann M, Steiner E, Kügele M, et al. 
+ESTRO-ACROP guideline on surface guided radiation therapy. Radiother Oncol 
+2022;173:188–96. https://doi.org/10.1016/j.radonc.2022.05.026.
+[22] Willoughby T, Lehmann J, Bencomo JA, Jani SK, Santanam L, Sethi A, et al. 
+Quality assurance for nonradiographic radiotherapy localization and positioning 
+systems: report of Task Group 147. Med Phys 2012;39:1728–47. https://doi.org/

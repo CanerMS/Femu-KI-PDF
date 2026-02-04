@@ -1,0 +1,6 @@
+a synergistic platform combining nanozyme-mediated dual-modal signaling (colorimetric/photothermal) 
+with dual-recognition (aptamer/CRISPR) promises to overcome sensi­
+tivity, specificity, multi-target, and field applicability bottlenecks, 
+advancing AMR monitoring towards intelligence and integration.
+Efficient degradation of residual antibiotics like AZM is pivotal for 
+halting AMR propagation [29]. Current AZM-targeted technologies face

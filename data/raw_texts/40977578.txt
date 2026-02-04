@@ -1,0 +1,3 @@
+Recent studies indicate that air pollutants not only increase the risk of cardiovascular and respiratory diseases but also have a 
+negative impact on the developing brain. Exposure to airborne particulate matter (PM) and nitrogen dioxide (NO2) may lead to 
+disruption of neural development by interfering with critical maturation processes. In this study, we assessed the impact of prenatal and early life PM10 and NO2 exposure on diffusion Magnetic Resonance Imaging (dMRI) structural measures: fractional

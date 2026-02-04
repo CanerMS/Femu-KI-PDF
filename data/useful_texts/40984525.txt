@@ -1,0 +1,10 @@
+We propose a superheterodyne microwave electric field measurement scheme based on Rydberg atoms that utilizes a planar dipole antenna as the local oscillator source. By
+designing a two-dimensional asymmetric dipole antenna, broadband microwave near-field
+radiation is achieved in the region of 1.7 GHz-9 GHz with return loss less than −10 dB, and
+the feasibility of using a planar antenna as the local oscillator source has been verified through
+simulations and experiments. In the experiments, high-sensitivity electric field measurements
+are performed by using near-field radiation from the planar antenna as local oscillator field for
+three resonant frequencies, 3.999 GHz, 5.048 GHz, and 7.981 GHz, with an optimal sensitivity
+of 3.16 µV/cm/Hz1/2. Comparative experiments with a horn antenna as the local oscillator
+source show that the planar antenna can achieve equivalent measurement sensitivity. Continuousfrequency electric field measurements are also investigated with a planar antenna in the frequency
+range of 2.5 GHz-9 GHz, and a minimum detectable field strength ranging from 3.16 µV/cm

@@ -1,0 +1,2 @@
+Objective: Estimate the association between occupational exposures to extremely low-frequency 
+magnetic fields (ELF-MF) and postmenopausal breast cancer.

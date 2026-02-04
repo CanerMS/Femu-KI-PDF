@@ -1,0 +1,12 @@
+Electroacupuncture (EA) has shown analgesic potential for neuropathic pain, yet its underlying molecular mechanisms remain incompletely understood. This study aimed to
+investigate whether EA relieves neuropathic pain by modulating CCL2/CCR2 signaling
+and microglial activation in the spinal cord. Neuropathic pain was induced in rats by
+L5 spinal nerve ligation. EA was administered at acupoints ST36 and GB34 (1 mA, 2 Hz,
+30 min) daily from postoperative days 3 to 7. Rats were assigned to anesthetized control
+(ANE), non-acupoint stimulation (NAP), and acupoint stimulation (ACU) groups. Pain
+behavior was evaluated using paw withdrawal threshold and latency. Western blot and
+immunofluorescence were used to assess CCL2, CCR2, Iba1, IL-1β, and TNF-α expression
+in the L4–L6 spinal cord. EA significantly attenuated mechanical allodynia and thermal
+hyperalgesia in the ACU group, accompanied by reductions in CCL2, CCR2, microglial
+marker Iba1, and pro-inflammatory cytokines. Most importantly, intrathecal administration
+of recombinant CCL2 completely abolished EA’s analgesic effects, establishing the causal

@@ -1,0 +1,12 @@
+Heterogeneous parahydrogen-induced polarization (PHIP) offers a pathway to generate pure hyperpolarized
+molecular agents devoid of toxic catalysts. While conventional
+hydrogenative PHIP relies on hydrogenation with parahydrogen
+(p-H2) and breaking the equivalence of the p-H2-derived protons
+in the hydrogenation product, spontaneous net polarization is
+sometimes observed in symmetric systems. In this study, we
+explore a previously unreported case of net PHIP polarization in
+symmetric products of heterogeneous hydrogenation reactions in
+both gas and liquid phases. In particular, the effect was observed for
+ethylene and orthohydrogen (o-H2) produced in the heterogeneous hydrogenation reactions of acetylene and dimethyl
+acetylenedicarboxylate (DMAD), respectively, over an immobilized
+iridium-based catalyst complex. This polarized signal is amplified significantly under continuous-wave radiofrequency irradiation. By

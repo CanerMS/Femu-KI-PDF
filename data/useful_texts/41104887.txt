@@ -1,0 +1,9 @@
+Occupational noise and extremely low‐frequency electromagnetic fields (ELF‐EMF) are common in power plants and represent
+important risk factors that may contribute to oxidative stress. This study examined how simultaneous exposure to these hazards
+affects oxidative stress biomarkers in workers under real‐world conditions. Participants were assigned to one of four exposure
+groups: Control (C), Noise (N), ELF‐EMF (E), or a combined Noise and ELF‐EMF group (NE). Occupational noise and ELF‐
+EMF exposures were measured according to ISO 9612 and IEEE Std C95.3.1, respectively. To assess oxidative stress, venous
+blood samples were collected from all participants, and plasma levels of malondialdehyde (MDA), glutathione (GSH), superoxide dismutase (SOD), and total antioxidant capacity (TAC) were analyzed using validated biochemical assays. The NE group
+showed the highest MDA levels, indicating elevated lipid peroxidation compared with controls (p < 0.001). GSH concentrations
+were lower in NE relative to controls (p < 0.001). SOD activity was significantly reduced in both the N and NE groups compared
+with the control group (p < 0.005). TAC was lowest in the NE group, showing a significant decrease compared with both the

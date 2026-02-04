@@ -1,0 +1,15 @@
+Design file 
+name
+File type
+Open-source license
+Location of the file
+PCB design 
+.brd 
+.sch 
+.pdf 
+.csv 
+.zip
+GNU General Public 
+License v3.0 
+https://doi.org/10.5281/zenodo.14627406
+https://github.com/paria-samimi/dream-machine-eeg/tree/main/Board%

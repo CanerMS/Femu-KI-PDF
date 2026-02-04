@@ -1,0 +1,4 @@
+Induction hobs generate strong alternating magnetic fields to heat pots by inducing eddy currents. These fields are the strongest close to
+the bottom of the cookware, but stray fields at large distances can still be substantial. In general, these are higher than the reference
+levels defined by international electromagnetic exposure safety guidelines (ICNIRP 1998; ICNIRP 2010; IEEE 2019). That the reference
+levels are exceeded does not imply that the basic restrictions are also violated. In this study, we assess the exposures caused by the latest

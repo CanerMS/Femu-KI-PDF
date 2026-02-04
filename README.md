@@ -22,7 +22,7 @@ One can swith in 2 different modes: Supervised and Unsupervised learning. Also, 
 ## **Current Results**
 
 **Remaining Issues:**
-- Testing for .txt files
+- More data needed
 
 
 ## **Features**
@@ -87,7 +87,7 @@ Femu-KI-PDF/
 │   ├── features.py            # TF-IDF feature extraction
 │   ├── model.py               # Random Forest classifier
 │   ├── utils.py               # Helper functions
-│   └── label_pdfs.py          # Automated labeling system
+│   └── label_files.py          # Automated labeling system
 ├── results/
 │   ├── predictions.csv        # Test set predictions
 │   ├── preprocessing_comparison.txt  # Before/after analysis
@@ -188,9 +188,11 @@ data/
 └── useful_texts/    # Put "useful" TXTs here
 ```
 
-#### **Step 2: Create Labels**
+#### **Step 2: Choose File Type and Create Labels**
 
 ```bash
+main.py FILE_TYPE = 'pdf' # switching into txt is also possible
+
 python src/label_files.py
 ```
 
@@ -222,7 +224,7 @@ python main.py
 3. **Preprocess and clean text (with progress bars)**
 4. **Save preprocessed texts**
 5. Extract TF-IDF features (2000 features)
-6. Apply SMOTE balancing (if the number of usefull and unusefull files imbalanced)
+6. Apply SMOTE balancing (if needed)
 7. Train Random Forest classifier (supervised learning)
 8. Evaluate on test set 
 9. Save model, prediction and confusion matrix (png) in \results
@@ -266,7 +268,7 @@ RANDOM_STATE = 42           # Reproducibility seed
 
 # Feature Extraction
 MAX_FEATURES = 2000         # Maximum TF-IDF features
-NGRAM_RANGE = (1, 2)        # Unigrams and bigrams
+NGRAM_RANGE = (1, 2, 3)        # Unigrams and bigrams
 
 # Data Split
 TEST_SIZE = 0.25            # 25% for testing
@@ -283,19 +285,20 @@ CUSTOM_STOP_WORDS = [......]
 ### **Known Issues**
 
 **Insufficient Training Data**
-  - I could upload in total 200 PDFs in v0.4.0
+  - I could upload in total only 200 PDFs in v0.4.0
   - Problem: 
   - 1) As the results were better the model could be overfitting
   - 2) Lack of data
+
   - Solution: 
-  - 1) I need to collect more and quality data
+  - 1) I need to collect more and high quality data to figure out
   - 2) I need to run the modell with totally different data
 
 ### **HIGH PRIORITY: (3 days)**
 - Idea: Extracting many articles' summary parts
-- Creating .txt files of the summaries
-- Uploading and processing created .txt files
-- Testing, if TXTloader and TXTExtractor work properly
+- Creating .txt files of the summaries 
+- Uploading and processing created .txt files ()
+- Testing, if TXTloader and TXTExtractor work properly (works)
 - Finding out, if better results are possible with .txt files and summaries
 
 #### **MEDIUM PRIORITY: Data Expansion (1 month)**
@@ -448,10 +451,18 @@ canerrcc1@gmail.com
 - [imbalanced-learn SMOTE](https://imbalanced-learn.org/stable/references/generated/imblearn.over_sampling.SMOTE.html)
 - [pdfplumber Documentation](https://github.com/jsvine/pdfplumber)
 - [TF-IDF Vectorization](https://scikit-learn.org/stable/modules/generated/sklearn.feature_extraction.text.TfidfVectorizer.html)
-
+- [semantic-transformer Documentation](https://sbert.net/)
 ---
 
 ## **Changelog**
+
+### [0.4.1] - 2026-01-21
+- Logging based on "FILE_TYPE" instead of PDF (tunable at the beginning of main.py)
+- Removed a problem due to the mismatching numbers of train/test files
+- Tested workflow for .txt files, it works properly 
+- 66% accuracy for the text files based on article summaries 
+- Needed collecting more and high quality data for better test
+
 
 ### [0.4.0] - 2026-01-20
 - **From scratch 8x improvement in PDF detection** (9% -> 72% recall)
@@ -484,9 +495,10 @@ canerrcc1@gmail.com
 
 ### [0.1.0] - 2025-11-XX
 - Initial project setup
+- Unsupervised learning
 - Basic PDF loading functionality
 
-**Status:** **Active Development** - .txt files testing
+**Status:** **Active Development** - collecting more data and testing
 
-**Last Updated:** 2025-01-20
-**Version:** 0.4.0
+**Last Updated:** 2025-01-21
+**Version:** 0.4.1
