@@ -14,7 +14,7 @@ One can swith in 2 different modes: Supervised and Unsupervised learning. Also, 
 | **Preprocessing**    | Complete | Author info removal, noise filtering |
 | **Model Training**   | Complete | Random Forest trained                |
 | **Caching System**   | Complete | 36x speedup                          |
-| **Overall Accuracy** | 71.9%    |                                      |
+| **Overall Accuracy** | 90%      |                                      |
 | **Production Ready** | Progress | Data quality improvement ongoing     |
 
 ---
@@ -298,29 +298,12 @@ CUSTOM_STOP_WORDS = [......]
   - 2) I need to run the modell with totally different data
 
 ### **HIGH PRIORITY: (3 days)**
-- Idea: Extracting many articles' summary parts
-- Creating .txt files of the summaries 
-- Uploading and processing created .txt files ()
-- Testing, if TXTloader and TXTExtractor work properly (works)
-- Finding out, if better results are possible with .txt files and summaries
-
-#### **MEDIUM PRIORITY: Data Expansion (1 month)**
-
-**Target:** Collect 1000 additional "useful" and "unuseful" PDFs
-- Current: +100 samples
-- Target: 1000-2000 samples
-- Maintain consistent labeling criteria
-- The current number of samples is too low, hard to comprehend, whether the model works fine
-- SMOTE works fine, but the closer the number of unuseful and usefule datas are, the better results I assume to get
+- Idea: Semantic understanding integration
+- Instead of word by word understanding, switching to sentence by sentence understanding.
 
 #### **LOW PRIORITY: Model Tuning (1 month - after data expansion)**
-- Important to tune the model after data expansion
-- Thus, the optimal settings can be figured out and documented
-- The parameters can get tuned for better results
-- (As an example)
-- Increase-Decrease class weight: `{0: 1, 1: 20}` (from 15)
-- Add trigrams: `NGRAM_RANGE = (1, 3)`
-- Increase-Decrease features: `MAX_FEATURES = 3000`
+- Hyper parameters tuning
+- Tried, but doesn't effect sufficient
 
 ### **What kind of contribute does Smote provide?**
 ```
