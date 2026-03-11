@@ -6,11 +6,17 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 import numpy as np
 from pathlib import Path
+from project_config import *
+from datetime import datetime
+
 import logging
 
 logger = logging.getLogger(__name__)
 
-def plot_confusion_matrix_advanced(cm, class_names, output_path='results/confusion_matrix_advanced.png', dataset_label='test'):
+# Timestamp for unique file naming
+timestamp = datetime.now().strftime("%d%m%Y_%H%M%S")
+
+def plot_confusion_matrix_advanced(cm, class_names, output_path=RESULTS_DIR / f'cm_{MODEL_TYPE}_{timestamp}.png', dataset_label='test', model='Unknown'):
     """
     Plot confusion matrix with counts and percentages
     
@@ -19,10 +25,25 @@ def plot_confusion_matrix_advanced(cm, class_names, output_path='results/confusi
         class_names: List of class names ['not_useful', 'useful']
         output_path: Output file path (default: results/confusion_matrix_advanced.png)
         dataset_label: Label for the dataset (e.g., 'test', 'train') for title and filename
+        model: Label for the model (e.g., 'random_forest', 'svm') for title and filename
     """
+    
+
     # Calculate percentages (row-wise normalization)
     cm_percent = cm.astype('float') / cm.sum(axis=1)[:, np.newaxis] * 100
+
     
+    # Get current date and time
+    now = datetime.now()
+    date_str = now.strftime("%d.%m.%Y")
+    time_str = now.strftime("%H:%M")
+
+   
+    
+    
+    # Model display name 
+    model_display = MODEL_TYPE.upper().replace('_', ' ') if MODEL_TYPE != 'Unknown' else 'Unknown Model'
+
     # Create figure with larger size for better readability
     fig, ax = plt.subplots(figsize=(12, 10))
     
@@ -91,7 +112,9 @@ def plot_confusion_matrix_advanced(cm, class_names, output_path='results/confusi
         f'Precision: {precision:.1%} | '
         f'Recall: {recall:.1%} | '
         f'F1-Score: {f1:.1%}\n'
-        f'Total Samples: {total:,}'
+        f'Total Samples: {total:,} | '
+        f'Model: {model_display} | ' 
+        f'Date: {date_str} Time: {time_str}'
     )
     
     plt.text(
@@ -127,6 +150,8 @@ def plot_confusion_matrix_advanced(cm, class_names, output_path='results/confusi
     logger.info(f"Advanced confusion matrix saved to: {output_path}")
     print(f"\nAdvanced confusion matrix visualization saved!")
     print(f"   Dataset: {dataset_label}")
+    print(f"   Model: {model_display}")
+    print(f"   Date/Time: {date_str} {time_str}")
     print(f"   Location: {output_path}")
     print(f"   Metrics: Acc={accuracy:.1%}, Prec={precision:.1%}, Rec={recall:.1%}, F1={f1:.1%}")
 

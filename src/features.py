@@ -151,7 +151,6 @@ class FeatureExtractor:
         
         return useful_features, not_useful_features
 
-
     def transform(self, texts: list): # transforms new texts to numerical features using existing vocabulary
         if not self.is_fitted: # Check if vectorizer is fitted
             raise ValueError("Vectorizer not fitted yet") # Can't transform if not fitted

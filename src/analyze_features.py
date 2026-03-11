@@ -7,10 +7,9 @@ import pandas as pd
 import matplotlib.pyplot as plt
 from pathlib import Path
 from project_config import RESULTS_DIR
-results_dir = RESULTS_DIR
 
 def analyze_features(): # Analyzes and visualizes top features from feature extraction
-    results_dir = Path(results_dir) # Directory where results are stored
+    results_dir = Path(RESULTS_DIR) # Directory where results are stored
     
     # Read selected features
     features_df = pd.read_csv(results_dir / 'selected_features.csv') # Read selected features CSV

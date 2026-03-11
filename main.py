@@ -7,6 +7,7 @@ import sys
 import numpy as np
 import pandas as pd
 import logging
+import joblib
 from pathlib import Path
 
 
@@ -18,11 +19,12 @@ from loader import PDFLoader, TXTLoader  # Loaders for PDF and TXT files
 from extractor import PDFExtractor, TXTExtractor # Extractors for PDF and TXT files
 from preprocess import TextPreprocessor # Text preprocessing utilities
 from features import FeatureExtractor # Feature extraction and selection
-from model import FILEClassifier # Classifier model
 from utils import save_predictions, load_labels # Utility functions
 from project_config import * # Import all necessary configurations
 from imblearn.over_sampling import SMOTE # For handling class imbalance, helpful if needed
-from semantic import SemanticFeatureExtractor
+from semantic import SemanticFeatureExtractor # TODO: Integrate semantic understanding in feature extraction
+from model import create_classifier
+
 
 logging.basicConfig(
     level=logging.INFO,
@@ -37,12 +39,24 @@ def main():
 
     """
     File Type Selection: choose txt, if you are working with text files instead of PDFs
+    Model Type is now configured in project_config.py (MODEL_TYPE variable)
+    It is expandable to more models in the future, currently supports 'random_forest', 'logistic_regression', and 'svm'
+    Workflow steps:
+    0. Remove previous extracted and preprocessed data to avoid confusion
+    1. Load labels from labels.csv
+    2. Initialize appropriate loader and extractor based on file type
+    3. Extract text from files 
+    4. Preprocess text (cleaning, normalization)
+    5. Extract features (TF-IDF) and handle class imbalance if needed
+    6. Train classifier (supervised) and evaluate on train/test sets
+    7. Save results and trained model
     """
 
-    FILE_TYPE = 'pdf'  # 'pdf' or 'txt', type with lowercase letters only 
+    FILE_TYPE = 'txt'  # 'pdf' or 'txt', type with lowercase letters only 
 
     logger.info("="*60) 
     logger.info(f"Starting {FILE_TYPE.upper()} Classification Pipeline")
+    logger.info(f"Model Type (from config): {MODEL_TYPE.upper()}")
     logger.info("="*60)
 
     logger.info(f"File type selected: {FILE_TYPE.upper()}") # Log selected file type in uppercase
@@ -298,7 +312,9 @@ def main():
     feature_extractor.get_top_features(X_train, y_train, top_n=50)
     
     logger.info("\n[Step 5.5] Initializing Classifier...")
-    classifier = FILEClassifier(mode='supervised', random_state=42)
+    
+    # No need to pass model_type, it reads from config automatically
+    classifier = create_classifier(mode='supervised', random_state=42)
 
     logger.info("\n[Step 5.6] Cross-Validation (5-fold)...")
     cv_scores = classifier.cross_validate(X_train, y_train, cv=5) # 5-fold CV means splitting the data into 5 parts and training/testing 5 times
@@ -321,17 +337,35 @@ def main():
     logger.info("\n[Step 6] Training Supervised Classifier...")
     classifier.train(X_train, y_train)
     
+    
+
     logger.info("\n[Step 6.1] Analyzing Top Features...")
 
-    if classifier.mode == 'supervised':
+    if hasattr(classifier.model, 'feature_importances_'):  # Random Forest
         feature_names = feature_extractor.get_feature_names()
         importances = classifier.model.feature_importances_
-        # Get top 10 features
         indices = np.argsort(importances)[::-1][:10]
-        
-        logger.info("\nTop 10 Most Important Features:")
+    
+        logger.info("\nTop 10 Most Important Features (by importance):")
         for i, idx in enumerate(indices, 1):
             logger.info(f"  {i}. '{feature_names[idx]}': {importances[idx]:.4f}")
+
+    elif hasattr(classifier.model, 'coef_'):  # Logistic Regression & SVM
+        feature_names = feature_extractor.get_feature_names()
+        coef = classifier.model.coef_
+    
+    # FIX: Convert sparse matrix to dense array
+        if hasattr(coef, "toarray"):
+            coef = coef.toarray()
+        coef = np.asarray(coef).ravel()  # Flatten to 1D array
+    
+        indices = np.argsort(np.abs(coef))[::-1][:10]
+    
+        logger.info("\nTop 10 Most Important Features (by coefficient magnitude):")
+        for i, idx in enumerate(indices, 1):
+            logger.info(f"  {i}. '{feature_names[idx]}': {coef[idx]:+.4f}")
+    else:
+        logger.warning("Model does not support feature importance analysis")
 
     logger.info("\n[Step 6.2] Evaluating on TRAINING set...")
     train_predictions, _ = classifier.evaluate(X_train, y_train)
@@ -366,12 +400,13 @@ def main():
     logger.info("\n[Step 7] Saving results...")
     test_filenames = [f.name for f in test_files]
     results_df = save_predictions(test_filenames, test_predictions, test_scores)
-    results_df_path = RESULTS_DIR / f'{FILE_TYPE}_test_results.csv'
+    results_df_path = RESULTS_DIR / f'{FILE_TYPE}_{MODEL_TYPE}_test_results.csv'
     results_df.to_csv(results_df_path, index=False)
     logger.info(f"Test results saved to {results_df_path}")
     
-    
-    classifier.save_model(RESULTS_DIR / f'{FILE_TYPE}_classifier.joblib') 
+    # 8. Save trained model
+    classifier.save_model(RESULTS_DIR / f'{FILE_TYPE}_{MODEL_TYPE}_classifier.joblib')
+
     
     return results_df
 

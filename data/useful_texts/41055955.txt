@@ -1,4 +1,0 @@
-Experimental studies have shown that external electromagnetic fields can offer a means to modify molecular structure and reactivity. In this work,
-we derive and implement analytical molecular gradients at the Hartree−Fock level
-for both static and quantized electromagnetic fields to explore the field effects on
-equilibrium geometries. We investigate the equilibrium geometries and fieldinduced orientations of representative molecules: water, the water dimer, and

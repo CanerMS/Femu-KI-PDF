@@ -4,6 +4,11 @@ Centralized configuration for the PDF classifier
 """
 from pathlib import Path
 
+# Model selection
+AVAILABLE_MODELS = ['random_forest', 'logistic_regression', 'svm'] # add more models here as needed
+MODEL_TYPE = 'logistic_regression'  # Options: 'random_forest', 'svm', 'logistic_regression'
+
+
 # Base directories
 BASE_DIR = Path(__file__).parent.parent # Project root directory
 DATA_DIR = BASE_DIR / "data" # Data directory

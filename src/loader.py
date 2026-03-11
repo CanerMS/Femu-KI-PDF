@@ -23,7 +23,7 @@ class UnifiedLoader():
     def __init__(self, 
                 data_dir: Path = RAW_PDFS_DIR, 
                 useful_dir: Path = USEFUL_PDFS_DIR,
-                file_type: Literal['pdf', 'txt'] = 'pdf' #  Type hint: Default is 'pdf'
+                file_type: Literal['pdf', 'txt'] = 'txt' #  Type hint: Default is 'pdf'
                 ):
         """
         Initialize Unified Loader

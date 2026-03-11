@@ -32,8 +32,10 @@ wheels/
 
 # Data files
 data/raw_pdfs/*.pdf
+data/raw_texts/*.txt
 data/extracted_texts/*.txt
 data/useful_pdfs/*.pdf
+data/useful_texts/*.txt
 data/processed_data/*.csv
 data/features/*.joblib
 data/labels.csv

@@ -252,6 +252,8 @@ INFO:__main__:Saved 249 preprocessed texts to: data\preprocessed_texts
 Edit `src/project_config.py` to customize:
 
 ```python
+
+...
 # Directories
 RAW_PDFS_DIR = Path("data/raw_pdfs")
 USEFUL_PDFS_DIR = Path("data/useful_pdfs")
@@ -276,6 +278,7 @@ SMOTE_THRESHOLD = 3.0       # Apply SMOTE if imbalance ratio > 3
 
 # Important to edit CUSTOM_STOP_WORDS based on your CASE!!!
 CUSTOM_STOP_WORDS = [......]
+...
 ```
 
 ---
@@ -456,13 +459,21 @@ canerrcc1@gmail.com
 
 ## **Changelog**
 
+### [0.5.0] - 2026-03-11
+- %90 Fallback for the first time ever for the both classes,
+- Semantic understanding initialized, needs to get integrated,
+- New Model-Types such SVM and Logistic Regression integrated,
+- Logistic Regression gives more balanced results,
+- Random Forest Classifier works better in unuseful class,
+- Tested with 60330 Text files (Logistic Regression),
+- Bugs fixed
+
 ### [0.4.1] - 2026-01-21
 - Logging based on "FILE_TYPE" instead of PDF (tunable at the beginning of main.py)
 - Removed a problem due to the mismatching numbers of train/test files
 - Tested workflow for .txt files, it works properly 
 - 66% accuracy for the text files based on article summaries 
 - Needed collecting more and high quality data for better test
-
 
 ### [0.4.0] - 2026-01-20
 - **From scratch 8x improvement in PDF detection** (9% -> 72% recall)
@@ -473,7 +484,6 @@ canerrcc1@gmail.com
 - Removed unnecessary Methods 
 - Better SMOTE integration
 - More stop words for denoising the data  
-
 
 ### [0.3.0] - 2025-12-02
 - **4x improvement in useful PDF detection** (9% -> 36% recall)
@@ -498,7 +508,9 @@ canerrcc1@gmail.com
 - Unsupervised learning
 - Basic PDF loading functionality
 
-**Status:** **Active Development** - collecting more data and testing
+**Status:** **Active Development** 
+- Semantic understanding integration
+- More and cleaner data
 
-**Last Updated:** 2025-01-21
-**Version:** 0.4.1
+**Last Updated:** 2025-03-11
+**Version:** 0.5.0

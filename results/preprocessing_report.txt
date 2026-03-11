@@ -4,115 +4,20 @@ Preprocessing Comparison Report
 
 
 ============================================================
-File #1: 38604218.pdf
+File #1: 00006.txt
 ============================================================
 
-Original length: 60677 characters
-Cleaned (preprocessed) length: 1928 characters
+Original length: 1035 characters
+Cleaned (preprocessed) length: 1023 characters
 
-Reduction in size: 96.8%
+Reduction in size: 1.2%
 
 ----- Original Text (First 500 chars) -----
-HHS Public Access
-Author manuscript
-Appl Neuropsychol Child. Author manuscript; available in PMC 2025 September 19.
-Published in final edited form as:
-Appl Neuropsychol Child. 2025 ; 14(4): 496–506. doi:10.1080/21622965.2024.2337208.
-The long-term impact of cerebellar tumor resection on executive
-functioning, anxiety, and fear of pain: A mixed methodology pilot
-study
-Claire E. Lunde, BS, BA1,2,3, Madison R. Dudek, BS2,4, Cameron A. Talbert, BS2,4, Christine
-B. Sieberg, PhD, MA1,2,5,6,7, Katie E.
+Biological effects of oscillating electric fields: role of voltage-sensitive ion channels
+An alternating component of potential across the membrane of an excitable cell may change the membrane conductance by interacting with the voltage-sensing charged groups of the protein macromolecules that form voltage-sensitive ion channels. Because the probability than a voltage sensor is in a given state is a highly nonlinear function of the applied electric field, the average occupancy of a particular st
 
 ----- Preprocessed Text (First 500 chars) -----
-hhs public access author manuscript appl neuropsychol child author manuscript available in pmc september published in final edited form as appl neuropsychol child doi 10 21622965 2024 the long term impact of cerebellar tumor resection on executive functioning anxiety and fear of pain a mixed methodology pilot study claire e lunde bs ba1 madison r dudek bs2 cameron a talbert bs2 christine b sieberg ma1 katie e silva bs2 christos papadelis phd8 nicole j ullrich md phd10 peter e manley md11 eric a 
-
-
-============================================================
-
-Removed sensitive (noise) keywords: education, university
-
-============================================================
-File #2: 39140936.pdf
-============================================================
-
-Original length: 50007 characters
-Cleaned (preprocessed) length: 44613 characters
-
-Reduction in size: 10.8%
-
------ Original Text (First 500 chars) -----
-Neuromodulation: TechnologyattheNeuralInterface
-Received:April12,2024 Revised:July9,2024 Accepted:July18,2024
-https://doi.org/10.1016/j.neurom.2024.07.004
-Spinal Cord Stimulation Modulates Rat
-Cortico-Basal Ganglia Locomotor Circuit
-Fernando da Silva Fiorin, PhD ; Mariane de Araújo e Silva, MSc;
-Raquel E. de Medeiros, MSc; Guilherme H. Viana da Silva, BA;
-Abner Cardoso Rodrigues, PhD; Edgard Morya, PhD
-ABSTRACT
-Objective:Thecortico-basalgangliacircuitiscrucialtounderstandinglocomotorbehaviorandm
-
------ Preprocessed Text (First 500 chars) -----
-neuromodulation technologyattheneuralinterface april12 revised july9 accepted july18 spinal cord stimulation modulates rat cortico basal ganglia locomotor circuit fernando da silva fiorin mariane de ara jo e silva msc raquel e de medeiros msc guilherme h viana da silva ba abner cardoso rodrigues edgard morya abstract objective thecortico basalgangliacircuitiscrucialtounderstandinglocomotorbehaviorandmovementdisorders spinalcord stimulationmodulatesthatcircuit whichisapromisingapproachtorestoring
-
-
-============================================================
-
-Removed sensitive (noise) keywords: education
-
-============================================================
-File #3: 39551900.pdf
-============================================================
-
-Original length: 149058 characters
-Cleaned (preprocessed) length: 131874 characters
-
-Reduction in size: 11.5%
-
------ Original Text (First 500 chars) -----
-European Archives of Psychiatry and Clinical Neuroscience (2025) 275:1739–1785
-https://doi.org/10.1007/s00406-024-01928-3
-ORIGINAL PAPER
-Combination of non‑invasive brain stimulation
-with mindfulness‑based interventions for anxiety and depression
-symptoms: systematic review and meta‑analysis of randomized
-controlled trials
-Anastasia Demina1,2 · Benjamin Petit1 · Vincent Meille1 · Anne Sauvaget3 · Florent Lebon2 · Benoit Trojak1,2
-Received: 4 June 2024 / Accepted: 19 October 2024 / Published onli
-
------ Preprocessed Text (First 500 chars) -----
-european archives of psychiatry and clinical neuroscience original paper combination of non invasive brain stimulation with mindfulness based interventions for anxiety and depression symptoms systematic review and meta analysis of randomized controlled trials anastasia demina1 benjamin petit1 vincent meille1 anne sauvaget3 florent lebon2 benoit trojak1 june accepted october published online november springer verlag gmbh germany part of springer nature abstract in this article we aimed synthesize
-
-
-============================================================
-
-Removed sensitive (noise) keywords: university, studying
-
-============================================================
-File #4: 39946274.pdf
-============================================================
-
-Original length: 45007 characters
-Cleaned (preprocessed) length: 28660 characters
-
-Reduction in size: 36.3%
-
------ Original Text (First 500 chars) -----
-PostgraduateMedicalJournal,2025,101,1200,949–959
-https://doi.org/10.1093/postmj/qgaf027
-Advanceaccesspublicationdate13February2025
-Review
-Effect of non-invasive brain stimulation on
-cancer-related pain: evidence from meta-analyses
-of randomized controlled trials
-YaqiZhang 1,2,3,XiuyunHe1,4,ChenGong1,2,3,YafeiWang1,2,3,LongfeiYou1,2,3,YangyangLin1,2,3,†,YulingWang1,2,3,†,
-BeibeiFeng1,2,3,*,†
-1DepartmentofRehabilitationMedicine,TheSixthAffiliatedHospital,SunYat-senUniversity,Guangzhou510655,China
-
-
------ Preprocessed Text (First 500 chars) -----
-postgraduatemedicaljournal advanceaccesspublicationdate13february2025 review effect of non invasive brain stimulation on cancer related pain evidence from meta analyses of randomized controlled trials yaqizhang xiuyunhe1 chengong1 yafeiwang1 longfeiyou1 yangyanglin1 yulingwang1 beibeifeng1 1departmentofrehabilitationmedicine thesixthaffiliatedhospital sunyat senuniversity guangzhou510655 china 2guangdongprovincialclinicalresearchcenterforrehabilitationmedicine thesixthaffiliatedhospital sunyat s
+biological effects of oscillating electric fields role of voltage sensitive ion channels an alternating component of potential across the membrane of an excitable cell may change the membrane conductance by interacting with the voltage sensing charged groups of the protein macromolecules that form voltage sensitive ion channels because the probability than a voltage sensor is in a given state is a highly nonlinear function of the applied electric field the average occupancy of a particular state
 
 
 ============================================================
@@ -120,30 +25,86 @@ postgraduatemedicaljournal advanceaccesspublicationdate13february2025 review eff
 No sensitive (noise) keywords removed.
 
 ============================================================
-File #5: 40106653.pdf
+File #2: 00008.txt
 ============================================================
 
-Original length: 78574 characters
-Cleaned (preprocessed) length: 47115 characters
+Original length: 1536 characters
+Cleaned (preprocessed) length: 1509 characters
 
-Reduction in size: 40.0%
+Reduction in size: 1.8%
 
 ----- Original Text (First 500 chars) -----
-FULL RESEARCH PAPER
-European Journal of Preventive Cardiology (2025) 32, 1296–1309
-https://doi.org/10.1093/eurjpc/zwaf163 Imaging
-Cumulative blood pressure exposure and
-global and regional cardiac structure and
-function: the MESA study
-Soroush Masrouri1, Peyman Tabnak2, Parag A. Chevli3, Saeid Mirzai3,
-Leandro Slipczuk 4, Sujethra Vasu3, Joao A. C. Lima 5, and
-Michael D. Shapiro 3*
-1Prevention of Metabolic Disorders Research Center, Research Institute for Endocrine Sciences, Shahid Beheshti Univ
+Reversal of the bicycle drawing direction in Parkinson's disease by AC pulsed electromagnetic fields
+The Draw-a-Bicycle Test is employed in neuropsychological testing of cognitive skills since the bicycle design is widely known and also because of its complex structure. The Draw-a-Bicycle Test has been administered routinely to patients with Parkinson's disease (PD) and other neurodegenerative disorders to evaluate the effect of transcranial applications of AC pulsed electromagnetic fields (EMFs
 
 ----- Preprocessed Text (First 500 chars) -----
-full research paper european journal of preventive cardiology imaging cumulative blood pressure exposure and global and regional cardiac structure and function the mesa study soroush masrouri1 peyman tabnak2 parag a chevli3 saeid mirzai3 leandro slipczuk sujethra vasu3 joao a c lima and michael d shapiro 1prevention of metabolic disorders research center research for endocrine sciences shahid beheshti of medical sciences no yamen street velenjak tehran iran 2immunology research center tabriz of 
+reversal of the bicycle drawing direction in parkinson s disease by ac pulsed electromagnetic fields the draw a bicycle test is employed in neuropsychological testing of cognitive skills since the bicycle design is widely known and also because of its complex structure the draw a bicycle test has been administered routinely to patients with parkinson s disease pd and other neurodegenerative disorders to evaluate the effect of transcranial applications of ac pulsed electromagnetic fields emfs in 
 
 
 ============================================================
 
-Removed sensitive (noise) keywords: university
+No sensitive (noise) keywords removed.
+
+============================================================
+File #3: 00010.txt
+============================================================
+
+Original length: 382 characters
+Cleaned (preprocessed) length: 372 characters
+
+Reduction in size: 2.6%
+
+----- Original Text (First 500 chars) -----
+Effect of weak magnetic fields on growth of cells in tissue culture
+Normal Chinese hamster V79 cells were grown in vitro for more than one year in a magnetic field of 10(-7) tesla to test recently hypothesized effects of weak magnetic fields on biological systems. No significant difference was observed between growth rate in such fields and that in the ambient geomagnetic field.
+
+
+----- Preprocessed Text (First 500 chars) -----
+effect of weak magnetic fields on growth of cells in tissue culture normal chinese hamster v79 cells were grown in vitro for more than one year in a magnetic field of tesla to test recently hypothesized effects of weak magnetic fields on biological systems no significant difference was observed between growth rate in such fields and that in the ambient geomagnetic field
+
+
+============================================================
+
+No sensitive (noise) keywords removed.
+
+============================================================
+File #4: 00011.txt
+============================================================
+
+Original length: 1619 characters
+Cleaned (preprocessed) length: 1591 characters
+
+Reduction in size: 1.7%
+
+----- Original Text (First 500 chars) -----
+Statistical review of the henhouse experiments: the effects of a pulsed magnetic field on chick embryos
+This paper analyzes data from a study conducted by the United States Office of Naval Research on the effects of pulsed magnetic fields on chick embryos. The experiment involved incubation of eggs under carefully controlled conditions in six different laboratories. The original analysis included inappropriate statistical methodology for analyzing the experimental results. Since the conclusions 
+
+----- Preprocessed Text (First 500 chars) -----
+statistical review of the henhouse experiments the effects of a pulsed magnetic field on chick embryos this paper analyzes data from a study conducted by the united states office of naval research on the effects of pulsed magnetic fields on chick embryos the experiment involved incubation of eggs under carefully controlled conditions in six different laboratories the original analysis included inappropriate statistical methodology for analyzing the experimental results since the conclusions from
+
+
+============================================================
+
+No sensitive (noise) keywords removed.
+
+============================================================
+File #5: 00016.txt
+============================================================
+
+Original length: 738 characters
+Cleaned (preprocessed) length: 720 characters
+
+Reduction in size: 2.4%
+
+----- Original Text (First 500 chars) -----
+2D plasmon excitation and nonthermal effects of microwaves on biological membranes
+There are several experimental reports that have demonstrated a remarkable increase in conduction of ions along the interface between water and a polar-lipid monolayer as contrasted with that in a bulk-water phase. A simple model was developed for the collective ionic modes of a charged spherical membrane that takes the increase into account. Starting from the hydrodynamic equations for surface ions inside and out
+
+----- Preprocessed Text (First 500 chars) -----
+plasmon excitation and nonthermal effects of microwaves on biological membranes there are several experimental reports that have demonstrated a remarkable increase in conduction of ions along the interface between water and a polar lipid monolayer as contrasted with that in a bulk water phase a simple model was developed for the collective ionic modes of a charged spherical membrane that takes the increase into account starting from the hydrodynamic equations for surface ions inside and outside 
+
+
+============================================================
+
+No sensitive (noise) keywords removed.

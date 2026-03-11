@@ -20,13 +20,13 @@ logging.basicConfig( # Configure logging
     filemode='a', # Append mode
     level=logging.INFO, # Log level 
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', # Log format
-    datefmt='%Y-%m-%d %H:%M:%S' # Date format
+    datefmt='%d-%m-%Y %H:%M:%S' # Date format
 )
 
 logger = logging.getLogger(__name__) # Get logger instance
 
 
-def create_labels(file_type: Literal['pdf', 'txt'] = 'pdf'): 
+def create_labels(file_type: Literal['pdf', 'txt'] = 'txt'): # Create labels for PDF or TXT files based on their presence in useful or not useful directories
     """
     Create labels for {file_type.upper()}s in RAW_PDFS_DIR or RAW_TXTS_DIR (not useful) and USEFUL_PDFS_DIR 
     or USEFUL_TXTS_DIR (useful).
@@ -92,11 +92,11 @@ def create_labels(file_type: Literal['pdf', 'txt'] = 'pdf'):
     logger.info(f"  Training: {len(train_df)} ({len(train_df)/len(all_labels)*100:.1f}%)")  # Log training count
     logger.info(f"  Testing: {len(test_df)} ({len(test_df)/len(all_labels)*100:.1f}%)") # Log testing count
     logger.info(f"\nClass Distribution:") # Log class distribution
-    for split in ['train', 'test']: # Log distribution per split
-        split_data = all_labels[all_labels['split'] == split] # Filter data for the split
-        for label in ['not_useful', 'useful']: # Log count per label
+    for split in ['train', 'test']:       # Log distribution per split
+        split_data = all_labels[all_labels['split'] == split]     # Filter data for the split
+        for label in ['not_useful', 'useful']:                    # Log count per label
             count = len(split_data[split_data['label'] == label]) # Count of each label
-            logger.info(f"  {split} - {label}: {count}") # Log count
+            logger.info(f"  {split} - {label}: {count}")          # Log count
     
     logger.info(f"\nNext step: Run 'python main.py' to train the model with FILE_TYPE='{file_type}'") # Log next step message
     

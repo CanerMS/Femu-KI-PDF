@@ -2,12 +2,6 @@
 Anomaly Detection Model Module
 Uses Isolation Forest for detecting useful PDFs
 """
-from matplotlib import cm
-from sklearn.ensemble import IsolationForest
-from sklearn.ensemble import RandomForestClassifier
-from sklearn.metrics import classification_report, confusion_matrix, accuracy_score
-from project_config import *
-from visualize_cm import plot_confusion_matrix_advanced  # Advanced visualization
 
 import joblib
 import numpy as np
@@ -15,8 +9,58 @@ import logging
 import matplotlib.pyplot as plt
 import seaborn as sns
 
+from matplotlib import cm
+from sklearn.ensemble import IsolationForest, RandomForestClassifier
+from sklearn.metrics import classification_report, confusion_matrix, accuracy_score
+from sklearn.model_selection import cross_val_score
+from sklearn.svm import SVC
+from sklearn.linear_model import LogisticRegression
+from project_config import *
+from visualize_cm import plot_confusion_matrix_advanced, timestamp  # Advanced visualization
+
+
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
+
+# Factory function to create classifier based on model_type
+def create_classifier(model_type=None, mode='supervised', random_state=RANDOM_STATE):
+    """
+    Factory function to create classifier based on model_type
+    
+    Args:
+        model_type: 'random_forest', 'logistic_regression', or 'svm' 
+                   If None, uses MODEL_TYPE from project_config
+        mode: 'supervised' or 'unsupervised' (only for random_forest)
+        random_state: Random state for reproducibility
+        
+    Returns:
+        Classifier instance
+    """
+    # If model_type not provided, use from config
+    if model_type is None:
+        model_type = MODEL_TYPE
+        logger.info(f"Using MODEL_TYPE from config: {model_type}")
+    
+    
+    if model_type not in AVAILABLE_MODELS:
+        raise ValueError(
+            f"Unknown model_type: '{model_type}'. "
+            f"Available options: {', '.join(AVAILABLE_MODELS)}"
+        )
+    
+    logger.info(f"Creating {model_type} classifier in {mode} mode")
+    
+    if model_type == 'random_forest':
+        return FILEClassifier(mode=mode, random_state=random_state)
+    elif model_type == 'logistic_regression':
+        if mode != 'supervised':
+            logger.warning("Logistic Regression only supports supervised mode. Ignoring mode parameter.")
+        return LogisticRegressionClassifier(random_state=random_state)
+    elif model_type == 'svm':
+        if mode != 'supervised':
+            logger.warning("SVM only supports supervised mode. Ignoring mode parameter.")
+        return SVMClassifier(random_state=random_state)
+    # If new models are added in the future, they can be included here
 
 class AnomalyDetector: # it is not used anymore, but kept for reference
     """
@@ -90,15 +134,15 @@ class FILEClassifier:
 
         if mode == 'supervised': # supervised classification
             self.model = RandomForestClassifier( # Using Random Forest for supervised classification
-                n_estimators=50, # Number of trees
+                n_estimators=N_ESTIMATORS, # Number of trees
 
                 # controls how deep each tree can grow
                 # To prevent overfitting and control model complexity
-                max_depth=5, 
+                max_depth=MAX_DEPTH, 
                 
                 # Controls how easily the tress is allowed to split
                 # To prevent overfitting less sensitive to noise
-                min_samples_split=10,
+                min_samples_split=MIN_SAMPLES_SPLIT,
                 
                 # Minimum samples required at each leaf node
                 # To prevent overfitting
@@ -218,14 +262,14 @@ class FILEClassifier:
             plt.title(f'Confusion Matrix ({dataset_label.upper()}) Set')
             plt.ylabel('Actual')
             plt.xlabel('Predicted')
-            plt.savefig(f'results/confusion_matrix_{dataset_label}.png')
+            plt.savefig(RESULTS_DIR / f'cm_{MODEL_TYPE}_{timestamp}.png')
             plt.close() # Close the plot to free memory otherwise it may overlap with next plots
 
             # Advanced Confusion Matrix Plotting
             plot_confusion_matrix_advanced(
                 cm, 
                 class_names, 
-                output_path=f'results/confusion_matrix_advanced_{dataset_label}.png'
+                output_path=f'results/cm_advanced_{MODEL_TYPE}_{timestamp}.png'
             )
 
             logger.info(f"True Negatives: {cm[0,0]}, False Positives: {cm[0,1]}")
@@ -267,4 +311,184 @@ class FILEClassifier:
         logger.info(f"  Scores: {scores}")
         
         return scores
+
+class LogisticRegressionClassifier:
+    """
+    Logistic Regression classifier for text classification
+    """
+    def __init__(self, random_state=RANDOM_STATE, max_iter=1000): 
+        from sklearn.linear_model import LogisticRegression
+        
+        self.model = LogisticRegression(
+            random_state=random_state,
+            max_iter=max_iter,
+            class_weight='balanced',  # Handle class imbalance
+            solver='saga'            # Good for small to medium datasets
+        )
+        self.is_trained = False
+        self.feature_names = None
+        self.mode = 'supervised'
     
+    def train(self, X_train, y_train):
+        logger.info(f"Training Logistic Regression on {X_train.shape[0]} samples")
+        self.model.fit(X_train, y_train)
+        self.is_trained = True
+        logger.info("Training complete")
+    
+    def predict(self, X):
+        if not self.is_trained:
+            raise ValueError("Model not trained yet")
+        return self.model.predict(X)
+    
+    def predict_proba(self, X):
+        if not self.is_trained:
+            raise ValueError("Model not trained yet")
+        return self.model.predict_proba(X)
+    
+    def get_top_features(self, feature_names, top_n=10):
+        """Get most important features based on coefficients"""
+        coef = self.model.coef_[0]
+        top_indices = np.argsort(np.abs(coef))[-top_n:][::-1]
+        
+        logger.info("\nTop Features (by coefficient magnitude):")
+        for idx in top_indices:
+            logger.info(f"  {feature_names[idx]}: {coef[idx]:+.4f}")
+        
+        return top_indices
+    
+    def predict_scores(self, X):
+        """Get probability scores for positive class"""
+        if not self.is_trained:
+            raise ValueError("Model not trained yet")
+        return self.predict_proba(X)[:, 1]
+    
+    def evaluate(self, X_test, y_test):
+        predictions = self.predict(X_test)
+        scores = self.predict_scores(X_test)
+        
+        logger.info("\nLogistic Regression - Classification Report:")
+        class_names = ['not_useful', 'useful']
+        print(classification_report(y_test, predictions, target_names=class_names))
+        
+        cm = confusion_matrix(y_test, predictions)
+        logger.info("\nConfusion Matrix:")
+        print(cm)
+        
+        # Plot confusion matrix
+        plt.figure(figsize=(8,6))
+        sns.heatmap(cm, annot=True, fmt='d', cmap='Oranges')
+        plt.title('Confusion Matrix (TEST Set) - Logistic Regression')
+        plt.ylabel('Actual')
+        plt.xlabel('Predicted')
+        plt.savefig('results/confusion_matrix_test_logistic.png')
+        plt.close()
+        
+        plot_confusion_matrix_advanced(
+            cm, 
+            class_names, 
+            output_path=RESULTS_DIR / f'cm_{MODEL_TYPE}_{timestamp}.png'
+        )
+        
+        logger.info(f"True Negatives: {cm[0,0]}, False Positives: {cm[0,1]}")
+        logger.info(f"False Negatives: {cm[1,0]}, True Positives: {cm[1,1]}")
+        
+        return predictions, scores
+    
+    def save_model(self, path: str):
+        joblib.dump(self.model, path)
+        logger.info(f"Model saved to {path}")
+    
+    def load_model(self, path: str):
+        self.model = joblib.load(path)
+        self.is_trained = True
+        logger.info(f"Model loaded from {path}")
+    
+    def cross_validate(self, X, y, cv=5):
+        from sklearn.model_selection import cross_val_score
+        logger.info(f"Performing {cv}-fold cross-validation...")
+        scores = cross_val_score(self.model, X, y, cv=cv, scoring='f1_weighted')
+        return scores
+
+
+    
+class SVMClassifier:
+    """
+    Support Vector Machine classifier for text classification
+    """
+    def __init__(self, random_state=RANDOM_STATE):
+        from sklearn.svm import SVC
+        
+        self.model = SVC(
+            kernel='linear',
+            random_state=random_state,
+            class_weight='balanced',
+            probability=True  # Enable probability estimates
+        )
+        self.is_trained = False
+        self.mode = 'supervised'
+    
+    def train(self, X_train, y_train):
+        logger.info(f"Training SVM on {X_train.shape[0]} samples")
+        self.model.fit(X_train, y_train)
+        self.is_trained = True
+        logger.info("Training complete")
+    
+    def predict(self, X):
+        if not self.is_trained:
+            raise ValueError("Model not trained yet")
+        return self.model.predict(X)
+    
+    def predict_proba(self, X):
+        if not self.is_trained:
+            raise ValueError("Model not trained yet")
+        return self.model.predict_proba(X)
+    
+    def predict_scores(self, X):
+        if not self.is_trained:
+            raise ValueError("Model not trained yet")
+        proba = self.model.predict_proba(X)
+        return proba[:, 1]
+    
+    def evaluate(self, X_test, y_test):
+        predictions = self.predict(X_test)
+        scores = self.predict_scores(X_test)
+        
+        logger.info("\nSVM - Classification Report:")
+        class_names = ['not_useful', 'useful']
+        print(classification_report(y_test, predictions, target_names=class_names))
+        
+        cm = confusion_matrix(y_test, predictions)
+        logger.info("\nConfusion Matrix:")
+        print(cm)
+        
+        # Plot confusion matrix
+        plt.figure(figsize=(8,6))
+        sns.heatmap(cm, annot=True, fmt='d', cmap='Blues')
+        plt.title('Confusion Matrix (TEST Set) - SVM')
+        plt.ylabel('Actual')
+        plt.xlabel('Predicted')
+        plt.savefig('results/confusion_matrix_test_svm.png')
+        plt.close()
+        
+        plot_confusion_matrix_advanced(
+            cm, 
+            class_names, 
+            output_path='results/confusion_matrix_advanced_test_svm.png'
+        )
+        
+        return predictions, scores
+    
+    def save_model(self, path: str):
+        joblib.dump(self.model, path)
+        logger.info(f"Model saved to {path}")
+    
+    def load_model(self, path: str):
+        self.model = joblib.load(path)
+        self.is_trained = True
+        logger.info(f"Model loaded from {path}")
+
+    def cross_validate(self, X, y, cv=5):
+        from sklearn.model_selection import cross_val_score
+        logger.info(f"Performing {cv}-fold cross-validation...")
+        scores = cross_val_score(self.model, X, y, cv=cv, scoring='f1_weighted')
+        return scores

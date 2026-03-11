@@ -1,6 +1,0 @@
-table spotlighting MAPK pathway inhibitors in optic pathway glioma (OPG) treatment. Fueled by frequent BRAF alterations, it details 
-therapies like selumetinib, tovorafenib, and dabrafenib plus trametinib, 
-packing trial data on efficacy, safety, and patient outcomes—a musthave for clinicians and researchers.
-The table serves as a valuable tool for understanding the current 
-landscape of targeted therapies in OPGs, particularly in the context of 
-delaying or avoiding more toxic treatments like radiation or alkylating
