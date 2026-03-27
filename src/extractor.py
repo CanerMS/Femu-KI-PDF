@@ -5,7 +5,6 @@ Extracts text content from PDF files
 from pathlib import Path # Import Path for file path manipulations
 from typing import Dict, List # Import Dict and List for type hinting
 import logging # Import logging for logging messages
-from project_config import EXTRACTED_TEXTS_DIR # Import configuration for extracted texts directory
 
 
 # pdf plumber is preferred for text, tables and metadata from PDFs extraction due to better handling of complex PDFs
@@ -30,7 +29,7 @@ class PDFExtractor:
 
     # self is the instance of the class
     
-    def __init__(self, output_dir: Path = EXTRACTED_TEXTS_DIR): # initializer constructor
+    def __init__(self, output_dir: Path): # initializer constructor
         """
         Initialize extractor
         
@@ -154,7 +153,7 @@ class PDFExtractor:
             txt_file = self.output_dir / f"{pdf_path.stem}.txt" # Corresponding text file path
             was_cached = txt_file.exists() and txt_file.stat().st_size > 0 # Check if cached file exists and is non-empty, stat().st_size gets file size in bytes
             
-            # Extract (will use cache if available and valid)
+            # Extract (will load from cache if there were cached text)
             text = self.extract_text_from_pdf(pdf_path) # Extract text
             results[pdf_path.stem] = text # Store in results dictionary
             
@@ -258,7 +257,7 @@ class UnifiedExtractor:
     Automatically detects file type based on extension
     """
     
-    def __init__(self, output_dir: Path = EXTRACTED_TEXTS_DIR):
+    def __init__(self, output_dir: Path):
         """
         Initialize unified extractor
         

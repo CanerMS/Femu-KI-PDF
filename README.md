@@ -1,21 +1,20 @@
 ﻿# PDF + TXT Classification Programm - Supervised Learning
 
-A programm that classifies PDF and TXT documents as either "useful" or "not useful" supported by supervised learning with Random Forest and intelligent text extraction caching.
-One can swith in 2 different modes: Supervised and Unsupervised learning. Also, the file type can be arranged in main.py under "# 0. Choose File Type" by typing either "pdf" or "txt". Nevertheless, in this specific case, supervised learning is more suitable. Therefore, I stopped improving unsupervised learning in previous version, but kept it for reference and comparison.  The most difficult challenge in this case is, that some pdfs don't have any semantic similarities between them and including completely different types of words, making it difficult for the model to generalize across documents.
-
+A programm that classifies PDF and TXT documents as either "useful" or "not useful" supported by supervised learning with Random Forest, SVM, Logistic Regression mode and intelligent text extraction caching.
+One can switch in 2 different modes: Supervised and Unsupervised learning. Also, the file type can be arranged in main.py under "# 0. Choose File Type" by typing either "pdf" or "txt". Nevertheless, in this specific case, supervised learning is more suitable. Therefore, I stopped improving unsupervised learning in previous version, but kept it for reference and comparison.  The most difficult challenge in this case is, that some pdfs don't have any semantic similarities between them and including completely different types of words and structure, making it difficult for the model to generalize across documents.
 ---
 
 ## **Project Status**
 
-| Component            | Status   |          Performance                 |
-|----------------------|----------|--------------------------------------|
-| **Pipeline**         | Complete | Fully operational                    |
-| **Text Extraction**  | Complete | 333/333 PDFs processed               |
-| **Preprocessing**    | Complete | Author info removal, noise filtering |
-| **Model Training**   | Complete | Random Forest trained                |
-| **Caching System**   | Complete | 36x speedup                          |
-| **Overall Accuracy** | 90%      |                                      |
-| **Production Ready** | Progress | Data quality improvement ongoing     |
+| Component            | Status   |              Performance                |
+|----------------------|----------|-----------------------------------------|
+| **Pipeline**         | Complete | Fully operational                       |
+| **Text Extraction**  | Complete |                                         |
+| **Preprocessing**    | Complete | Author info removal, noise filtering    |
+| **Model Training**   | Complete | Random Forest, SVM, Logical Regressiong |
+| **Caching System**   | Complete | 36x speedup                             |
+| **Overall Accuracy** | 90%      | Logistic Regression Trained             |
+| **Production Ready** | L. Phase | Data quality improvement ongoing        |
 
 ---
 
@@ -87,13 +86,14 @@ Femu-KI-PDF/
 │   ├── features.py            # TF-IDF feature extraction
 │   ├── model.py               # Random Forest classifier
 │   ├── utils.py               # Helper functions
-│   └── label_files.py          # Automated labeling system
+│   ├── label_files.py         # Automated labeling system
+│   └── semantic.py            # Semantic understanding (ongoing, needs integration) 
 ├── results/
 │   ├── predictions.csv        # Test set predictions
 │   ├── preprocessing_comparison.txt  # Before/after analysis
 │   └── pdf_classifier.joblib  # Trained model
 ├── logs/
-│   └── label_files.log         # Labeling process logs
+│   └── label_files.log        # Labeling process logs
 ├── main.py                    # Main pipeline orchestrator
 ├── requirements.txt
 ├── .gitignore
@@ -198,18 +198,7 @@ python src/label_files.py
 
 **Output:**
 ```
-(As an example)
-Labels saved to data/labels.csv
-Dataset Summary:
-  Total: 333 PDFs
-  Training: 249 (74.8%)
-  Testing: 84 (25.2%)
 
-Class Distribution:
-  train - not_useful: 217
-  train - useful: 32
-  test - not_useful: 73
-  test - useful: 11
 ```
 
 #### **Step 3: Train and Evaluate**
@@ -287,23 +276,14 @@ CUSTOM_STOP_WORDS = [......]
 
 ### **Known Issues**
 
-**Insufficient Training Data**
-  - I could upload in total only 200 PDFs in v0.4.0
-  - Problem: 
-  - 1) As the results were better the model could be overfitting
-  - 2) Lack of data
-
-  - Solution: 
-  - 1) I need to collect more and high quality data to figure out
-  - 2) I need to run the modell with totally different data
-
-### **HIGH PRIORITY: (3 days)**
+### **HIGH PRIORITY: (30 days)**
 - Idea: Semantic understanding integration
 - Instead of word by word understanding, switching to sentence by sentence understanding.
 
-#### **LOW PRIORITY: Model Tuning (1 month - after data expansion)**
-- Hyper parameters tuning
-- Tried, but doesn't effect sufficient
+#### **LOW PRIORITY: Model Tuning**
+- Hyper parameters tuned
+- The results weren't convincing
+- The influence was about 0.1-1%
 
 ### **What kind of contribute does Smote provide?**
 ```
@@ -442,6 +422,11 @@ canerrcc1@gmail.com
 
 ## **Changelog**
 
+### [0.5.1] - 2026-03-27
+- Detailed extraction script
+- Ability to see the extracted texts based on their class
+- Ability to see the preprocessed texts based on their class
+
 ### [0.5.0] - 2026-03-11
 - %90 Fallback for the first time ever for the both classes,
 - Semantic understanding initialized, needs to get integrated,
@@ -495,5 +480,5 @@ canerrcc1@gmail.com
 - Semantic understanding integration
 - More and cleaner data
 
-**Last Updated:** 2025-03-11
-**Version:** 0.5.0
+**Last Updated:** 2025-03-27
+**Version:** 0.5.1

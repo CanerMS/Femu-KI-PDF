@@ -18,11 +18,15 @@ LOGS_DIR = BASE_DIR / "logs" # Logs directory
 # Data directories
 RAW_PDFS_DIR = DATA_DIR / "raw_pdfs" # Directory for raw PDFs
 USEFUL_PDFS_DIR = DATA_DIR / "useful_pdfs" # Directory for useful PDFs
+EXTRACTED_RAW_PDFS_DIR = DATA_DIR / "extracted_raw_pdfs" # Directory for extracted raw PDFs (before preprocessing)
+EXTRACTED_USEFUL_PDFS_DIR = DATA_DIR / "extracted_useful_pdfs" # Directory for extracted useful PDFs (before preprocessing)
 RAW_TXTS_DIR = DATA_DIR / "raw_texts" # Directory for raw texts
 USEFUL_TXTS_DIR = DATA_DIR / "useful_texts" # Directory for useful texts
-EXTRACTED_TEXTS_DIR = DATA_DIR / "extracted_texts" # Directory for extracted texts
+EXTRACTED_RAW_TXTS_DIR = DATA_DIR / "extracted_raw_texts" # Directory for extracted raw texts (before preprocessing)
+EXTRACTED_USEFUL_TXTS_DIR = DATA_DIR / "extracted_useful_texts" # Directory for extracted useful texts (before preprocessing)
 LABELS_PATH = DATA_DIR / "labels.csv" # Path for labels CSV
-PREPROCESSED_TEXTS_DIR = DATA_DIR / "preprocessed_texts" # Directory for preprocessed texts
+PREPROCESSED_USEFUL_TEXTS_DIR = DATA_DIR / "preprocessed_useful_texts"
+PREPROCESSED_RAW_TEXTS_DIR = DATA_DIR / "preprocessed_raw_texts"
 
 # Model parameters
 MAX_FEATURES = 2000 # Maximum number of features for vectorizer
@@ -273,6 +277,9 @@ CUSTOM_STOP_WORDS = [ # List of custom stop words to exclude from text analysis
 ]
 
 # Create directories if they don't exist
-for dir_path in [DATA_DIR, RESULTS_DIR, LOGS_DIR, RAW_PDFS_DIR,     # List of directories to create
-                  USEFUL_PDFS_DIR, EXTRACTED_TEXTS_DIR, analysis_results_dir]: # Iterate through each directory path
+for dir_path in [DATA_DIR, RESULTS_DIR, LOGS_DIR, RAW_PDFS_DIR,
+                  USEFUL_PDFS_DIR, RAW_TXTS_DIR, USEFUL_TXTS_DIR,
+                  EXTRACTED_RAW_PDFS_DIR, EXTRACTED_USEFUL_PDFS_DIR, 
+                  EXTRACTED_RAW_TXTS_DIR, EXTRACTED_USEFUL_TXTS_DIR, 
+                  PREPROCESSED_USEFUL_TEXTS_DIR, PREPROCESSED_RAW_TEXTS_DIR, analysis_results_dir]: # Iterate through each directory path
     dir_path.mkdir(parents=True, exist_ok=True) # Create directory if it doesn't exist

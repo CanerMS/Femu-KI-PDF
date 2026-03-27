@@ -74,10 +74,12 @@ def main():
 
     if FILE_TYPE == 'pdf':
         data_loader = PDFLoader(pdf_dir=RAW_PDFS_DIR, useful_dir=USEFUL_PDFS_DIR)
-        extractor = PDFExtractor()
+        extractor_raw = PDFExtractor(output_dir=EXTRACTED_RAW_PDFS_DIR)
+        extractor_useful = PDFExtractor(output_dir=EXTRACTED_USEFUL_PDFS_DIR) # Separate extractor for useful PDFs if needed (can be same as raw)   
     elif FILE_TYPE == 'txt':
         data_loader = TXTLoader(txt_dir=RAW_TXTS_DIR, useful_dir=USEFUL_TXTS_DIR)
-        extractor = TXTExtractor()
+        extractor_raw = TXTExtractor()
+        extractor_useful = TXTExtractor() # Separate extractor for useful TXTs if needed (can be same as raw)
     else:
         logger.error(f"Invalid FILE_TYPE specified. Use {FILE_TYPE}.")
         return
@@ -128,15 +130,54 @@ def main():
         logger.warning(f" Current ratio is 1:{imbalance_ratio:.1f} (Not Useful : Useful)")
         logger.info("Consider collecting more useful samples or applying balancing techniques.")
     
-    # 3 Extract 
+    # 3 Extract texts
     logger.info(f"\n[Step 3] Extracting text from {FILE_TYPE.upper()}s...")
 
-    train_texts_dict = extractor.extract_batch(train_files)
-    test_texts_dict = extractor.extract_batch(test_files)
+    # Train files separation based on labels
+    train_useful_files = [f for f, l in zip(train_files, train_labels) if l == 1]
+    train_raw_files = [f for f, l in zip(train_files, train_labels) if l == 0]
+    
+    # Test files separation based on labels
+    test_useful_files = [f for f, l in zip(test_files, test_labels) if l == 1]
+    test_raw_files = [f for f, l in zip(test_files, test_labels) if l == 0]
+
+    # Useful files separate extraction (and cache in separate folders if needed for inspection)
+    logger.info("Extracting USEFUL files...")
+    train_useful_dict = extractor_useful.extract_batch(train_useful_files)
+    test_useful_dict = extractor_useful.extract_batch(test_useful_files)
+    
+    # Raw files separate extraction (and cache in separate folders if needed for inspection)
+    logger.info("Extracting RAW files...")
+    train_raw_dict = extractor_raw.extract_batch(train_raw_files)
+    test_raw_dict = extractor_raw.extract_batch(test_raw_files)
+
+    # Combine useful and raw extracted texts into single dictionaries for train and test
+    train_texts_dict = {**train_useful_dict, **train_raw_dict}
+    test_texts_dict = {**test_useful_dict, **test_raw_dict}
 
     logger.info(f"Extracted text from {len(train_texts_dict)} training {FILE_TYPE.upper()}s")
-    logger.info(f"Extracted text from {len(test_texts_dict)} testing {FILE_TYPE.upper()}s")  
+    logger.info(f"Extracted text from {len(test_texts_dict)} testing {FILE_TYPE.upper()}s") 
     
+    # Optional: Save extracted texts to cache directories for inspection before preprocessing (especially useful for TXT files where extraction is just reading text, but can be helpful for PDFs to verify extraction quality)
+    if FILE_TYPE == 'txt':
+        logger.info("\n[Step 3.1] Saving extracted TXTs to cache directories...")
+        EXTRACTED_RAW_TXTS_DIR.mkdir(parents=True, exist_ok=True)
+        EXTRACTED_USEFUL_TXTS_DIR.mkdir(parents=True, exist_ok=True)
+        
+        # save extracted useful files
+        for file_stem, text in train_useful_dict.items():
+            (EXTRACTED_USEFUL_TXTS_DIR / f"{file_stem}.txt").write_text(text, encoding='utf-8')
+        for file_stem, text in test_useful_dict.items():
+            (EXTRACTED_USEFUL_TXTS_DIR / f"{file_stem}.txt").write_text(text, encoding='utf-8')
+            
+        # save extracted raw files
+        for file_stem, text in train_raw_dict.items():
+            (EXTRACTED_RAW_TXTS_DIR / f"{file_stem}.txt").write_text(text, encoding='utf-8')
+        for file_stem, text in test_raw_dict.items():
+            (EXTRACTED_RAW_TXTS_DIR / f"{file_stem}.txt").write_text(text, encoding='utf-8')
+            
+        logger.info("Saved original TXT contents to extracted_raw_texts and extracted_useful_texts directories.")
+
     # Filter out files with empty extracted text
     valid_train_files = []
     valid_train_labels = []
@@ -185,25 +226,33 @@ def main():
 
     # Save preprocessed texts for inspection
     logger.info("\n[Step 4.1] Saving sample preprocessed texts...")
-    clean_dir = PREPROCESSED_TEXTS_DIR
-    clean_dir.mkdir(parents=True, exist_ok=True)
+    clean_useful_dir = PREPROCESSED_USEFUL_TEXTS_DIR
+    clean_raw_dir = PREPROCESSED_RAW_TEXTS_DIR
 
-    for split_name, files, texts in [
-        ('train', train_files, train_texts_clean),
-        ('test', test_files, test_texts_clean)
+    clean_useful_dir.mkdir(parents=True, exist_ok=True) # Ensure directory exists
+    clean_raw_dir.mkdir(parents=True, exist_ok=True) # Ensure directory exists
+
+    # Save preprocessed texts in separate directories based on their labels for easier inspection (useful vs not useful)
+    for split_name, files, texts, labels in [
+        ('train', train_files, train_texts_clean, train_labels),
+        ('test', test_files, test_texts_clean, test_labels)
     ]:   
-         # Save the train preprocessed texts
-        for file_id, clean_text in zip(files, texts):
-            clean_path = clean_dir / f"{split_name}_{file_id.stem}_clean.txt"
+         # Save preprocessed texts in separate directories based on their labels for easier inspection (useful vs not useful)
+        for file_id, clean_text, label in zip(files, texts, labels):
+            # if label is 1 (useful), save in useful directory, else save in raw directory
+            target_dir = clean_useful_dir if label == 1 else clean_raw_dir
+            
+            clean_path = target_dir / f"{split_name}_{file_id.stem}_clean.txt"
+            
             with open(clean_path, 'w', encoding='utf-8') as f:
                 f.write(clean_text)
 
-    logger.info(f"Saved {len(train_texts_clean)} preprocessed training texts to {clean_dir}")
-    logger.info(f"Saved {len(test_texts_clean)} preprocessed testing texts to {clean_dir}")
+    logger.info(f"Saved {len(train_texts_clean)} preprocessed training texts (split into separate directories)")
+    logger.info(f"Saved {len(test_texts_clean)} preprocessed testing texts (split into separate directories)")
 
     # Create a comparison report
     logger.info("\n[Step 4.2] Generating preprocessing comparison report...")
-    report_path = RESULTS_DIR / 'preprocessing_report.txt'
+    report_path = RESULTS_DIR / 'preprocessing_report.txt' 
     report_path.parent.mkdir(parents=True, exist_ok=True)
 
     with open(report_path, 'w', encoding='utf-8') as report_file: # Open report file

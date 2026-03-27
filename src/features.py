@@ -200,20 +200,20 @@ class FeatureExtractor:
         """
         if self.feature_names is None or len(self.feature_names) == 0:
             logger.warning("No feature names to save")
-            return
+            return 
         
         # Create results directory if it doesn't exist
-        output_dir = Path('results')
-        output_dir.mkdir(exist_ok=True)
+        output_dir = Path('results') # Directory to save results
+        output_dir.mkdir(exist_ok=True) # Create directory if it doesn't exist
         
         # Create DataFrame with feature information
-        features_df = pd.DataFrame({
-            'feature_index': range(len(self.feature_names)),
-            'feature_name': self.feature_names
+        features_df = pd.DataFrame({ # Create DataFrame with feature index and name
+            'feature_index': range(len(self.feature_names)), # Index of each feature
+            'feature_name': self.feature_names # Name of each feature (word) extracted by vectorizer
         })
         
         # Save to CSV
-        output_path = output_dir / 'selected_features.csv'
-        features_df.to_csv(output_path, index=False, encoding='utf-8')
+        output_path = output_dir / 'selected_features.csv' # Path to save selected features CSV
+        features_df.to_csv(output_path, index=False, encoding='utf-8') # Save feature names to CSV without index
         
         logger.info(f"Saved {len(self.feature_names)} feature names to {output_path}")
