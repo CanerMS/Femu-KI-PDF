@@ -295,14 +295,37 @@ def main():
     logger.info(f"Preprocessing comparison report saved to {report_path}")
 
     # 5. Extract features and handle class imbalance
-    logger.info("\n[Step 5.1] Extracting TF-IDF features...")
-    feature_extractor = FeatureExtractor(max_features=MAX_FEATURES) 
-    X_train = feature_extractor.fit_transform(train_texts_clean)
-    X_test = feature_extractor.transform(test_texts_clean)
+    logger.info(f"\n[Step 5.1] Extracting Features (Mode: {FEATURE_MODE.upper()})...")
+    
+    # 5.1.a Extract TF-IDF
+    if FEATURE_MODE in ['tfidf', 'combined']:
+        logger.info("  -> Extracting TF-IDF features...")
+        feature_extractor = FeatureExtractor(max_features=MAX_FEATURES) 
+        X_train_tfidf = feature_extractor.fit_transform(train_texts_clean)
+        X_test_tfidf = feature_extractor.transform(test_texts_clean)
+    
+    # 5.1.b Extract Semantic
+    if FEATURE_MODE in ['semantic', 'combined']:
+        logger.info("  -> Extracting Semantic features (this may take a moment)...")
+        semantic_extractor = SemanticFeatureExtractor()
+        X_train_semantic = semantic_extractor.extract_embeddings(train_texts_clean)
+        X_test_semantic = semantic_extractor.extract_embeddings(test_texts_clean)
 
-    logger.info(f"X_train shape: {X_train.shape}, X_test shape: {X_test.shape}")
-
-    # TODO: Integrate semantic understanding in this part
+    # 5.1.c Combine and Select Final Features
+    if FEATURE_MODE == 'tfidf':
+        X_train = X_train_tfidf
+        X_test = X_test_tfidf
+    elif FEATURE_MODE == 'semantic':
+        X_train = X_train_semantic
+        X_test = X_test_semantic
+        # Create a dummy feature extractor so later steps (like feature importance) don't crash
+        feature_extractor = FeatureExtractor(max_features=X_train.shape[1]) 
+    elif FEATURE_MODE == 'combined':
+        logger.info("  -> Combining TF-IDF and Semantic features...")
+        X_train = semantic_extractor.combine_with_tfidf(X_train_tfidf, X_train_semantic)
+        X_test = semantic_extractor.combine_with_tfidf(X_test_tfidf, X_test_semantic)
+        
+    logger.info(f"Final X_train shape: {X_train.shape}, X_test shape: {X_test.shape}")
 
     # fix workflow
     y_train = np.array(train_labels)  # convert to numpy array
@@ -336,29 +359,31 @@ def main():
     else:
         logger.info("\n[Step 5.2] Skipping SMOTE (imbalance ratio below threshold)")
 
-    logger.info("\n[Step 5.3] Feature Selection (Chi-Squared)...")
-    original_features = X_train.shape[1] # number of features
-    X_train = feature_extractor.select_best_features(X_train, y_train, k=1000)
-
-    if hasattr(feature_extractor, 'selector') and feature_extractor.selector is not None:
-        # Apply selector to filter test set
-        support_mask = feature_extractor.selector.get_support()
-        X_test = X_test[:, support_mask]
-        selected_features = X_train.shape[1]
-        logger.info(f"Applied feature selection to test set using selector")
+    logger.info("\n[Step 5.3] Feature Selection...")
+    original_features = X_train.shape[1] 
+    
+    if FEATURE_MODE == 'tfidf':  # ONLY run feature selection if pure tfidf
+        # Only run Chi-Squared selection on valid modes
+        X_train = feature_extractor.select_best_features(X_train, y_train, k=1000)
+        
+        if hasattr(feature_extractor, 'selector') and feature_extractor.selector is not None:
+            support_mask = feature_extractor.selector.get_support()
+            X_test = X_test[:, support_mask]
+            selected_features = X_train.shape[1]
+            logger.info(f"Applied feature selection to test set using selector")
+        else:
+            X_test = X_test[:, :X_train.shape[1]]
+            selected_features = X_train.shape[1]
     else:
-        # If selector not found, manually reduce to same number of features
-        logger.warning("Feature selector not found. Manually selecting first k features.")
-        X_test = X_test[:, :X_train.shape[1]]
-        selected_features = X_train.shape[1]
-
-    logger.info(f"Reduced features: {original_features} -> {selected_features}")
-    logger.info(f"Feature reduction: {(1 - selected_features/original_features)*100:.1f}%")
-    logger.info(f"Final shapes - X_train: {X_train.shape}, X_test: {X_test.shape}")
+        logger.info(f"Skipping Chi-Squared selection (incompatible with {FEATURE_MODE} mode due to negative embedding values).")
+        selected_features = original_features
 
 
     logger.info("\n[Step 5.4] Analyzing feature importance on selected features...")
-    feature_extractor.get_top_features(X_train, y_train, top_n=50)
+    if FEATURE_MODE == 'tfidf':
+        feature_extractor.get_top_features(X_train, y_train, top_n=50)
+    else:
+        logger.info(f"Skipping feature word analysis (incompatible with {FEATURE_MODE} due to index mismatch).")
     
     logger.info("\n[Step 5.5] Initializing Classifier...")
     
@@ -389,32 +414,34 @@ def main():
     
 
     logger.info("\n[Step 6.1] Analyzing Top Features...")
+    if FEATURE_MODE == 'tfidf':
+        if hasattr(classifier.model, 'feature_importances_'):  # Random Forest
+            feature_names = feature_extractor.get_feature_names()
+            importances = classifier.model.feature_importances_
+            indices = np.argsort(importances)[::-1][:10]
+        
+            logger.info("\nTop 10 Most Important Features (by importance):")
+            for i, idx in enumerate(indices, 1):
+                logger.info(f"  {i}. '{feature_names[idx]}': {importances[idx]:.4f}")
 
-    if hasattr(classifier.model, 'feature_importances_'):  # Random Forest
-        feature_names = feature_extractor.get_feature_names()
-        importances = classifier.model.feature_importances_
-        indices = np.argsort(importances)[::-1][:10]
-    
-        logger.info("\nTop 10 Most Important Features (by importance):")
-        for i, idx in enumerate(indices, 1):
-            logger.info(f"  {i}. '{feature_names[idx]}': {importances[idx]:.4f}")
-
-    elif hasattr(classifier.model, 'coef_'):  # Logistic Regression & SVM
-        feature_names = feature_extractor.get_feature_names()
-        coef = classifier.model.coef_
-    
-    # FIX: Convert sparse matrix to dense array
-        if hasattr(coef, "toarray"):
-            coef = coef.toarray()
-        coef = np.asarray(coef).ravel()  # Flatten to 1D array
-    
-        indices = np.argsort(np.abs(coef))[::-1][:10]
-    
-        logger.info("\nTop 10 Most Important Features (by coefficient magnitude):")
-        for i, idx in enumerate(indices, 1):
-            logger.info(f"  {i}. '{feature_names[idx]}': {coef[idx]:+.4f}")
+        elif hasattr(classifier.model, 'coef_'):  # Logistic Regression & SVM
+            feature_names = feature_extractor.get_feature_names()
+            coef = classifier.model.coef_
+        
+            # FIX: Convert sparse matrix to dense array
+            if hasattr(coef, "toarray"):
+                coef = coef.toarray()
+            coef = np.asarray(coef).ravel()  # Flatten to 1D array
+        
+            indices = np.argsort(np.abs(coef))[::-1][:10]
+        
+            logger.info("\nTop 10 Most Important Features (by coefficient magnitude):")
+            for i, idx in enumerate(indices, 1):
+                logger.info(f"  {i}. '{feature_names[idx]}': {coef[idx]:+.4f}")
+        else:
+            logger.warning("Model does not support feature importance analysis")
     else:
-        logger.warning("Model does not support feature importance analysis")
+        logger.info("Skipping extracting top model features (uninterpretable semantic vectors).")
 
     logger.info("\n[Step 6.2] Evaluating on TRAINING set...")
     train_predictions, _ = classifier.evaluate(X_train, y_train)
@@ -422,13 +449,10 @@ def main():
     logger.info(f"Training Accuracy: {train_acc:.2%}")
 
     logger.info("\n[Step 6.3] Evaluating on TESTING set...")
-    
-
     if SMOTE_applied:
         logger.warning("Note: Test set is NOT balanced (original distribution preserved)")
         logger.info(f"Test set: {sum(test_labels)} useful, {len(test_labels) - sum(test_labels)} not_useful")
 
-    
     test_predictions, test_scores = classifier.evaluate(X_test, np.array(test_labels))
     test_acc = accuracy_score(test_labels, test_predictions)
     logger.info(f"Testing Accuracy: {test_acc:.2%}")

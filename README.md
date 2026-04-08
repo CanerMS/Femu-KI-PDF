@@ -13,8 +13,8 @@ One can switch in 2 different modes: Supervised and Unsupervised learning. Also,
 | **Preprocessing**    | Complete | Author info removal, noise filtering    |
 | **Model Training**   | Complete | Random Forest, SVM, Logical Regressiong |
 | **Caching System**   | Complete | 36x speedup                             |
-| **Overall Accuracy** | 90%      | Logistic Regression Trained             |
-| **Production Ready** | L. Phase | Data quality improvement ongoing        |
+| **Overall Accuracy** | 92%      | Semantic Understanding Integrated       |
+| **Production Ready** | L. Phase | Data quality + Feature improvement ong. |
 
 ---
 
@@ -27,6 +27,11 @@ One can switch in 2 different modes: Supervised and Unsupervised learning. Also,
 ## **Features**
 
 ### **Implemented**
+- **Semantic Understanding Bert**
+  - SBERT integrated
+  - Three modes possible: Semantic , TFD-ID , Combined
+  - Combined mode result: 92% accuracy
+
 - **Supervised Learning Pipeline**
   - Random Forest classifier
   - SMOTE for class imbalance handling for increasing the number of PDFs artifically, when needed

@@ -1,5 +1,6 @@
 from sentence_transformers import SentenceTransformer
 import numpy as np
+import scipy.sparse as sp
 
 class SemanticFeatureExtractor:
     def __init__(self, model_name='all-MiniLM-L6-v2'): # small, fast, free
@@ -13,7 +14,10 @@ class SemanticFeatureExtractor:
         return self.model.encode(texts, convert_to_numpy=True)
     
     def combine_with_tfidf(self, tfidf_features, semantic_features):
-        """TF-IDF + Semantic concatenate"""
-        return np.hstack([tfidf_features, semantic_features])
-    
-    # TODO: Make this function more efficient 
+        """TF-IDF + Semantic concatenate efficiently"""
+        semantic_sparse = sp.csr_matrix(semantic_features)
+
+        # Horizontally stack the sparse matrices
+        combined = sp.hstack([tfidf_features, semantic_sparse])
+        return combined
+
