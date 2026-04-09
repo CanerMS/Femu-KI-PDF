@@ -396,10 +396,14 @@ feature_index,feature_name,useful_mean_tfidf,not_useful_mean_tfidf,difference
 - Espeacially important for the following runs with different data
 ```bash
 
-# Windows
+# For a fresh start using Windows
 src\label_files.py
-rmdir /s /q data\extracted_texts
-rmdir /s /q data\preprocessed_texts
+rmdir /s /q data\extracted_raw_pdfs
+rmdir /s /q data\extracted_raw_texts
+rmdir /s /q data\extracted_useful_pdfs
+rmdir /s /q data\extracted_useful_texts
+rmdir /s /q data\preprocessed_raw_texts
+rmdir /s /q data\preprocessed_useful_texts
 
 # Then run:
 python main.py or py main.py
@@ -426,6 +430,11 @@ canerrcc1@gmail.com
 ---
 
 ## **Changelog**
+
+### [0.6.0] - 2026-04-09
+- Semantic Understanding (SBert) integrated
+- 3 mode-switch possible: Combined, TF-IDF, Semantic Understanding
+- Better results with 92% accuracy
 
 ### [0.5.1] - 2026-03-27
 - Detailed extraction script
@@ -485,5 +494,5 @@ canerrcc1@gmail.com
 - Semantic understanding integration
 - More and cleaner data
 
-**Last Updated:** 2025-03-27
-**Version:** 0.5.1
+**Last Updated:** 2026-04-09
+**Version:** 0.6.0
