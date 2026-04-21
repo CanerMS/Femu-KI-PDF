@@ -282,13 +282,10 @@ CUSTOM_STOP_WORDS = [......]
 ### **Known Issues**
 
 ### **HIGH PRIORITY: (30 days)**
-- Idea: Semantic understanding integration
-- Instead of word by word understanding, switching to sentence by sentence understanding.
+- Optuna Integration for hyper parameters
+- SHAP, machine tells why it is useful/unuseful
+-
 
-#### **LOW PRIORITY: Model Tuning**
-- Hyper parameters tuned
-- The results weren't convincing
-- The influence was about 0.1-1%
 
 ### **What kind of contribute does Smote provide?**
 ```
@@ -405,6 +402,11 @@ rmdir /s /q data\extracted_useful_texts
 rmdir /s /q data\preprocessed_raw_texts
 rmdir /s /q data\preprocessed_useful_texts
 
+# For a fresh start for predicting new files
+rmdir /s /q data\sorted_pdfs\Manual_Check
+rmdir /s /q data\sorted_pdfs\Not_Useful
+rmdir /s /q data\sorted_pdfs\Useful
+
 # Then run:
 python main.py or py main.py
 ```
@@ -430,6 +432,13 @@ canerrcc1@gmail.com
 ---
 
 ## **Changelog**
+
+### [0.6.1] - 2026-04-21
+- Accuracy enhanced to 93.1% with summary texts
+- SciBert (better with scientific texts) integrated: Combi from TF-IDF + SciBert = 93.1%
+- Predict.py script added: Includes not only trained LR joblib, also TF-IDF and Scaler joblib
+- Cache for trained files, don't wait 2 hours if you want to run again
+
 
 ### [0.6.0] - 2026-04-09
 - Semantic Understanding (SBert) integrated
@@ -494,5 +503,5 @@ canerrcc1@gmail.com
 - Semantic understanding integration
 - More and cleaner data
 
-**Last Updated:** 2026-04-09
-**Version:** 0.6.0
+**Last Updated:** 2026-04-21
+**Version:** 0.6.1
