@@ -1,5 +1,8 @@
-# Semantic Models will be integrated here
-
+'''
+Semantic models will be implemented here. For a reference:
+I have first integrated SBert (SemanticFeatureExtractor). It was good enough 92%.
+Then I have integrated SciBert (which is better for scientific articles). The results were better 93.1%
+'''
 from sentence_transformers import SentenceTransformer
 from transformers import AutoTokenizer, AutoModel
 from tqdm import tqdm
@@ -8,7 +11,6 @@ from project_config import DATA_DIR
 import torch
 import scipy.sparse as sp
 import numpy as np
-
 
 class SemanticFeatureExtractor:
     def __init__(self, model_name='all-MiniLM-L6-v2'): # small, fast, free
@@ -32,9 +34,16 @@ class SemanticFeatureExtractor:
         indices_to_process = []
 
         for i, (text, fname) in enumerate(zip(texts, filenames)):
-            cache_path = cache_dir / f"{fname}.npy"
+            cache_path = cache_dir / f"{fname}.npy" # Standard binary file format
             if cache_path.exists():
-                final_embeddings[i] = np.load(cache_path)
+                try:
+                    final_embeddings[i] = np.load(cache_path)
+                except (ValueError, OSError):
+                    # If the file is defect:
+                    print(f"Warning: {fname}.npy looks like it is defect. It will be calculated again.")
+                    cache_path.unlink() # Delete the defect file
+                    texts_to_process.append(text)
+                    indices_to_process.append(i)
             else:
                 texts_to_process.append(text)
                 indices_to_process.append(i)
@@ -102,7 +111,14 @@ class SciBERTSemanticFeatureExtractor:
         for i,(text, fname) in enumerate(zip(texts, filenames)):
             cache_path = cache_dir / f"{fname}.npy"
             if cache_path.exists():
-                final_embeddings[i] = np.load(cache_path)
+                try:
+                    final_embeddings[i] = np.load(cache_path)
+                except (ValueError, OSError):
+                    # If the file is defect:
+                    print(f"Uyarı: {fname}.npy looks like it is defect. It will be calculated again")
+                    cache_path.unlink() # Delete the defect file
+                    texts_to_process.append(text)
+                    indices_to_process.append(i)
             else:
                 texts_to_process.append(text)
                 indices_to_process.append(i)
@@ -116,18 +132,40 @@ class SciBERTSemanticFeatureExtractor:
             with torch.no_grad():
                 for i in tqdm(range(0, len(texts_to_process), batch_size), desc=desc):
                     batch_texts = texts_to_process[i:i + batch_size]
-                    # Bu grubun orijinal indexleri (hangi dosyaya ait oldukları)
                     batch_indices = indices_to_process[i:i + batch_size]
+
+                    # Before sending to tokenizer, check batch text
+                    for text in batch_texts:
+                        if len(text.strip()) == 0:
+                            # Empty file fallback:
+                            # Whatever the output dimension of the model is (ex: SciBert 768, MiniLM 384) return a vector that consists of completely zeros
+                            print(f"Warning: {fname} is completely empty. 0 vector will be assigned.")
+                            final_embeddings[i] = np.zeros(768) # SciBERT dimension
+                            continue # Do not use it for the model
 
                     inputs = self.tokenizer(
                         batch_texts, padding=True, truncation=True,
                         max_length=512, return_tensors="pt"
                     ).to(self.device)
 
-                    outputs = self.model(**inputs)
-                    cls_embeddings = outputs.last_hidden_state[:, 0, :].cpu().numpy()
+                    try:
+                        outputs = self.model(**inputs)
+                        cls_embeddings = outputs.last_hidden_state[:, 0, :].cpu().numpy()
+                    except torch.cuda.OutOfMemoryError:
+                        # If GPU charged too much:
+                        print(f"CUDA OutOfMemory! Bu batch (Boyut: {len(batch_texts)}) için CPU'ya düşülüyor...")
+                        torch.cuda.empty_cache() # Clean GPU Memory
+                        
+                        # Load CPU for only this loop
+                        self.model.to("cpu")
+                        inputs = {k: v.to("cpu") for k, v in inputs.items()}
+                        outputs = self.model(**inputs)
+                        cls_embeddings = outputs.last_hidden_state[:, 0, :].numpy()
+                        
+                        # Take model to GPU back
+                        self.model.to(self.device)
+
                     
-                    # 
                     for emb_idx, emb in enumerate(cls_embeddings):
                         original_idx = batch_indices[emb_idx]
                         fname = filenames[original_idx]

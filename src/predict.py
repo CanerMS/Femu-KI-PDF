@@ -6,7 +6,7 @@ import joblib
 import numpy as np
 import scipy.sparse as sp
 
-sys.path.insert(0, str(Path(__file__).parent / 'src'))
+sys.path.insert(0, str(Path(__file__).parent))
 
 from project_config import FEATURE_MODE
 from extractor import PDFExtractor, TXTExtractor
@@ -29,6 +29,14 @@ def main():
     
     FILE_TYPE = 'pdf'
     CONFIDENCE_THRESHOLD = 75.0  # Human in the loop threshold
+    
+    SILENT_MODE = True # Flag
+        
+    if SILENT_MODE:  
+        logger.setLevel(logging.ERROR)
+    
+    FLAG_EX = False # for more explanations
+
     
     # 2. Arrange the files
     TARGET_DIR = Path("data/to_test_files")  # Which pdf/txt would you like to test?
@@ -131,6 +139,22 @@ def main():
             score_percentage = score * 100
         else:
             score_percentage = (1.0 - score) * 100
+
+        if score_percentage < CONFIDENCE_THRESHOLD:
+            final_score = 0.0
+            aim_directory = DIR_MANUAL_CHECK
+            if FLAG_EX:
+                explanation = f""
+        elif result == "USEFUL":
+            final_score = score_percentage
+            aim_directory = DIR_USEFUL
+            if FLAG_EX:
+                explanation = f"Positive score, archive to {DIR_USEFUL}"
+        else: 
+            final_score = -score_percentage # Negative score
+            aim_directory = DIR_NOT_USEFUL
+            if FLAG_EX:
+                explanation = f"Negative score, archive to {DIR_NOT_USEFUL}"
         
         # if not enough confident
         if score_percentage < CONFIDENCE_THRESHOLD:
@@ -144,10 +168,16 @@ def main():
             aim_directory = DIR_NOT_USEFUL
             explanation = "Overconfident, archive!"
             
-        # Dosyayı taşı (Eski yerinden al, yeni tasniflenmiş klasöre koy)
+        # Carry the file
         try:
             shutil.move(str(file_path), str(aim_directory / file_path.name))
-            logger.info(f" -> Decision: {result} (%{score_percentage:.1f} Trust) | {explanation}\n")
+
+            if SILENT_MODE:
+                print(f"{final_score:.2f}")
+            else:
+                logger.info(f" -> Decision: {result} (%{score_percentage:.1f} Trust) | {explanation}\n")
+
+            
         except Exception as e:
             logger.error(f" -> Eroor while {file_path.name} was carried: {e}\n")
 

@@ -1,0 +1,11 @@
+Evaluation Report - 28042026_092922
+General Accuracy % 83.07
+
+                precision    recall  f1-score   support
+
+Not Useful (0)       0.85      0.81      0.83       534
+    Useful (1)       0.82      0.85      0.83       535
+
+      accuracy                           0.83      1069
+     macro avg       0.83      0.83      0.83      1069
+  weighted avg       0.83      0.83      0.83      1069
