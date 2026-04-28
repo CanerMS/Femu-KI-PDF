@@ -304,12 +304,28 @@ def main():
         X_train_tfidf = feature_extractor.fit_transform(train_texts_clean)
         X_test_tfidf = feature_extractor.transform(test_texts_clean)
     
-    # 5.1.b Extract Semantic
+     # 5.1.b Extract Semantic
     if FEATURE_MODE in ['semantic', 'combined']:
-        logger.info("  -> Extracting Semantic features (this may take a moment)...")
-        semantic_extractor = SemanticFeatureExtractor()
-        X_train_semantic = semantic_extractor.extract_embeddings(train_texts_clean)
-        X_test_semantic = semantic_extractor.extract_embeddings(test_texts_clean)
+        logger.info(f"  -> Extracting Semantic features using {SEMANTIC_MODEL_TYPE.upper()} (with file-level caching)...")
+
+        if SEMANTIC_MODEL_TYPE == 'scibert':
+            from semantic import SciBERTSemanticFeatureExtractor
+            semantic_extractor = SciBERTSemanticFeatureExtractor()
+        else:
+            from semantic import SemanticFeatureExtractor
+            semantic_extractor = SemanticFeatureExtractor()
+        
+        # Extractor'a dosya isimlerini gönderiyoruz ki cache kontrolünü isme göre dosya bazlı yapabilsin
+        train_filenames = [f.stem for f in train_files]
+        test_filenames = [f.stem for f in test_files]
+
+        X_train_semantic = semantic_extractor.extract_embeddings(
+            train_texts_clean, filenames=train_filenames, desc="Extracting Train Embeddings"
+        )
+        
+        X_test_semantic = semantic_extractor.extract_embeddings(
+            test_texts_clean, filenames=test_filenames, desc="Extracting Test Embeddings"
+        )
 
     # 5.1.c Combine and Select Final Features
     if FEATURE_MODE == 'tfidf':
@@ -322,8 +338,17 @@ def main():
         feature_extractor = FeatureExtractor(max_features=X_train.shape[1]) 
     elif FEATURE_MODE == 'combined':
         logger.info("  -> Combining TF-IDF and Semantic features...")
-        X_train = semantic_extractor.combine_with_tfidf(X_train_tfidf, X_train_semantic)
-        X_test = semantic_extractor.combine_with_tfidf(X_test_tfidf, X_test_semantic)
+        X_train_raw = semantic_extractor.combine_with_tfidf(X_train_tfidf, X_train_semantic)
+        X_test_raw = semantic_extractor.combine_with_tfidf(X_test_tfidf, X_test_semantic)
+        
+        # MaxAbsScaler to avoid Convergence Error
+        logger.info("  -> Scaling global features with MaxAbsScaler to prevent dominance...")
+        from sklearn.preprocessing import MaxAbsScaler
+        scaler = MaxAbsScaler()
+        
+        # To Avoid Data Leak
+        X_train = scaler.fit_transform(X_train_raw)
+        X_test = scaler.transform(X_test_raw)
         
     logger.info(f"Final X_train shape: {X_train.shape}, X_test shape: {X_test.shape}")
 
@@ -331,7 +356,7 @@ def main():
     y_train = np.array(train_labels)  # convert to numpy array
     SMOTE_applied = False  # Flag 
 
- # Apply SMOTE if severe class imbalance detected 
+    # Apply SMOTE if severe class imbalance detected 
     if imbalance_ratio > SMOTE_THRESHOLD: 
         logger.info("\n[Step 5.2] Applying SMOTE to balance classes...")
         try:
@@ -477,11 +502,33 @@ def main():
     results_df.to_csv(results_df_path, index=False)
     logger.info(f"Test results saved to {results_df_path}")
     
-    # 8. Save trained model
-    classifier.save_model(RESULTS_DIR / f'{FILE_TYPE}_{MODEL_TYPE}_classifier.joblib')
-
+    # 8. Save trained model with accuracy in filename to avoid overwriting good models
+    acc_str = f"{test_acc*100:.1f}".replace('.', '_')
+    model_name = f'{FILE_TYPE}_{MODEL_TYPE}_{acc_str}_classifier.joblib'
     
+    # 8.1. Save main model (weights)
+    model_name = f'{FILE_TYPE}_{MODEL_TYPE}_{acc_str}_classifier.joblib'
+    model_path = RESULTS_DIR / model_name
+    classifier.save_model(model_path)
+    logger.info(f"Main model saved to: {model_path}")
+
+    if FEATURE_MODE in ['tfidf', 'combined']:
+        if hasattr(feature_extractor, 'vectorizer') and feature_extractor.vectorizer is not None:
+            # Accuracy rate added to name
+            tfidf_name = f'{FILE_TYPE}_tfidf_vocabulary_{acc_str}.joblib'
+            tfidf_path = RESULTS_DIR / tfidf_name
+            joblib.dump(feature_extractor, tfidf_path)
+            logger.info(f"TF-IDF Dictionary saved successfully to: {tfidf_path}")
+
+    if FEATURE_MODE == 'combined':
+        scaler_name = f'{FILE_TYPE}_scaler_{acc_str}.joblib'
+        scaler_path = RESULTS_DIR / scaler_name
+        joblib.dump(scaler, scaler_path)
+        logger.info(f"MaxAbsScaler saved successfully to: {scaler_path}")
+            
+    logger.info("\n================ PIPELINE END ================\n")
     return results_df
 
+    
 if __name__ == "__main__":
     main()

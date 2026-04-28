@@ -8,6 +8,7 @@ from pathlib import Path
 AVAILABLE_MODELS = ['random_forest', 'logistic_regression', 'svm'] # add more models here as needed
 MODEL_TYPE = 'logistic_regression'  # Options: 'random_forest', 'svm', 'logistic_regression'
 FEATURE_MODE = 'combined' # Options: 'tfidf', 'semantic', 'combined' (both of them together)
+SEMANTIC_MODEL_TYPE = 'scibert' # Options: 'minilm', 'scibert'
 
 # Base directories
 BASE_DIR = Path(__file__).parent.parent # Project root directory

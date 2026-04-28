@@ -66,7 +66,6 @@ class AnomalyDetector: # it is not used anymore, but kept for reference
     """
     Anomaly Detection using Isolation Forest
     Isolation Forest isolates anomalies instead of profiling normal data
-    
     """
     def __init__(self, contamination: float = 'auto', random_state: int = 42):
         self.model = IsolationForest(
@@ -323,7 +322,8 @@ class LogisticRegressionClassifier:
             random_state=random_state,
             max_iter=max_iter,
             class_weight='balanced',  # Handle class imbalance
-            solver='saga'            # Good for small to medium datasets
+            solver='lbfgs',
+            verbose=1            
         )
         self.is_trained = False
         self.feature_names = None
