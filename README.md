@@ -468,9 +468,7 @@ canerrcc1@gmail.com
 
 ## **Changelog**
 
-### [0.6.2] - 
-- More test scripts exist for better observation of the methods
-- OCR Fallback added: Suppose a pdf includes pictures instead texts
+### [0.6.2] - 2026-04-29
 - Advanced Fallback system for src\predict.py ,Solved Problem: CPU was too much charged
 
 ### [0.6.1] - 2026-04-21
