@@ -2,6 +2,10 @@
 
 A programm that classifies PDF and TXT documents as either "useful" or "not useful" supported by supervised learning with Random Forest, SVM, Logistic Regression mode and intelligent text extraction caching.
 One can switch in 2 different modes: Supervised and Unsupervised learning. Also, the file type can be arranged in main.py under "# 0. Choose File Type" by typing either "pdf" or "txt". Nevertheless, in this specific case, supervised learning is more suitable. Therefore, I stopped improving unsupervised learning in previous version, but kept it for reference and comparison.  The most difficult challenge in this case is, that some pdfs don't have any semantic similarities between them and including completely different types of words and structure, making it difficult for the model to generalize across documents.
+I named unuseful data as "raw" and useful data as "useful".
+
+# Warning! 
+The programm is not compatible with servers having little RAM. You suppose to have good memory capacity in order to run especially SciBert. Using SciBert, only before it starts calculating the unseen data, there will be crash by uploading the model. Because SciBert has approximately 110 Millions parameters to upload into RAM. This cause shutdown, if you do not have sufficient RAM. I have 16GB RAM and it works fine.  
 ---
 
 ## **Project Status**
@@ -9,11 +13,8 @@ One can switch in 2 different modes: Supervised and Unsupervised learning. Also,
 | Component            | Status   |              Performance                |
 |----------------------|----------|-----------------------------------------|
 | **Pipeline**         | Complete | Fully operational                       |
-| **Text Extraction**  | Complete |                                         |
-| **Preprocessing**    | Complete | Author info removal, noise filtering    |
 | **Model Training**   | Complete | Random Forest, SVM, Logical Regressiong |
-| **Caching System**   | Complete | 36x speedup                             |
-| **Overall Accuracy** | 92%      | Semantic Understanding Integrated       |
+| **Overall Accuracy** | 93.1%    | SciBert Understanding Integrated        |
 | **Production Ready** | L. Phase | Data quality + Feature improvement ong. |
 
 ---
@@ -21,12 +22,17 @@ One can switch in 2 different modes: Supervised and Unsupervised learning. Also,
 ## **Current Results**
 
 **Remaining Issues:**
-- More data needed
+- Optimization for more robuts programm
 
 
 ## **Features**
 
 ### **Implemented**
+
+- **Semantic Understanding Bert**
+  - Scibert integrated
+  - 3 Categories available: Prediction (setable Threshold), Evaluation, Training
+
 - **Semantic Understanding Bert**
   - SBERT integrated
   - Three modes possible: Semantic , TFD-ID , Combined
@@ -92,11 +98,13 @@ Femu-KI-PDF/
 │   ├── model.py               # Random Forest classifier
 │   ├── utils.py               # Helper functions
 │   ├── label_files.py         # Automated labeling system
-│   └── semantic.py            # Semantic understanding (ongoing, needs integration) 
+│   ├── semantic.py            # Semantic understanding (ongoing, needs integration) 
+│   ├── predict.py             # Predict unseen data, works alone
+│   └── evaluate_predictions.py       # Evaluate unseen data
 ├── results/
-│   ├── predictions.csv        # Test set predictions
+│   ├── predictions.csv               # Test set predictions
 │   ├── preprocessing_comparison.txt  # Before/after analysis
-│   └── pdf_classifier.joblib  # Trained model
+│   └── pdf_classifier.joblib         # Trained model
 ├── logs/
 │   └── label_files.log        # Labeling process logs
 ├── main.py                    # Main pipeline orchestrator
@@ -147,6 +155,11 @@ joblib>=1.3.0
 
 # Imbalanced Learning
 imbalanced-learn>=0.11.0
+
+# Semantic Understanding - AI
+sentence-transformers>=2.2.0 # Transformer based AI model
+torch>=2.0.0 # PyTorch - Deeplearning Framework
+transformers>=4.35.0 # Hugging Face Transformers
 ```
 
 ---
@@ -187,8 +200,8 @@ type results\preprocessing_comparison.txt
 Place PDFs in appropriate directories:
 ```bash
 data/
-├── raw_pdfs/       # Put "not useful" PDFs here
-└── useful_pdfs/    # Put "useful" PDFs here
+├── raw_pdfs/        # Put "not useful" PDFs here
+└── useful_pdfs/     # Put "useful" PDFs here
 ├── raw_texts/       # Put "not useful" TXTs here
 └── useful_texts/    # Put "useful" TXTs here
 ```
@@ -213,33 +226,47 @@ python main.py
 ```
 
 **Pipeline Stages:**
+
+**1: Training**
 1. Load labels and PDFs or TXTs
 2. Extract text (with caching if it includes already processed PDFs)
 3. **Preprocess and clean text (with progress bars)**
 4. **Save preprocessed texts**
 5. Extract TF-IDF features (2000 features)
 6. Apply SMOTE balancing (if needed)
-7. Train Random Forest classifier (supervised learning)
+7. If settings are combined, scibert, then it will be calculating vectors
+8. Train Classifier Model with tfidef/scibert/sbert/or combined(tfidf+scibert) data outputs
 8. Evaluate on test set 
-9. Save model, prediction and confusion matrix (png) in \results
+9. Save model, scaler and tfidf dict as .joblib into ./results, prediction and confusion matrix (png) in \results
+
+**2: Prediction**
+1. Chose the compatible file structure .txt/pdf in predict.py
+2. Have the scaler.joblib, tf-idf.joblib, scibert.joblib
+3. Set up the path of these joblib files in predict.py 
+4. Upload the unseen PDF/TXT files into src/to_test_files
+5. run src\predict.py
+6. Programm is going to create 3 Files to localize them (Useful, Not_Useful, Manual_Check) in data/sorted_pdfs
+7. The threshold for being useful,unuseful can be arranged by changing CONFIDENCE_THRESHOLD in predict.py
+8. Based on the Confidence Threshold deciding if human control needed or useful, unuseful.
+9. Manuel_Check directory is createad for human control
+
+**3: Evaluation of the new files**
+1. Important: Before you run, make sure you have labels.cv in .\data 
+2. Manually: You can type in the list in accurate format, which files useful/unuseful
+3. Automatically: You can run src\label_files.py after you uploaded your useful/unuseful files into raw_pdfs/useful_pdfs , raw_texts/useful_texts 
+4. Programm can only work with one file type at once, means set the file type (txt/pdf) in evaluate_predictions.py and also label_files.py if automatically label process needed
+5. Run the src\evaluate_predictions.py, it will create advanced confusion matrix just like in first stage: Training above
+6. You can see the results under ./results 
+7. Do not forget, that this results can be different/lower/higher from 93% accuracy. Because we push model to decide either for 1 or 0 on unseendata. In industry the stage 2 is
+used. You can check with 3. stage once in a month, to be sure, whether model is drifting, or it needs to be trained again.
 
 **Expected Runtime:**
-- Depends strongly on the number of files 
-- Example: Suppose one has uploaded 100-200 PDFs
-- First run: ~3-4 minutes (text extraction + preprocessing)
-- Subsequent runs: ~30-60 seconds (using caches)
+- Depends strongly on the model you use.
+- SciBert can last above 1-2 hours at the first time. Then, due to cache system, that I implemented, it would last so much shorter for the upcoming tries. That cache will be created in ./data/features/cache_scibert
+- SBert is so much faster (maybe not even 10 mins), but the results can be 1% to 5% worse.
+- About classification models, Random Forest lasts longer than SVM and Logistic Regression.
+- I personally stopped training the machine with Random Forest since I have gotten better results with Logistic Regression in previous versions. But I keep these models for reference.
 
-**Sample Output:**
-```
-INFO:preprocess:Preprocessing 249 documents
-INFO:preprocess:[████████████████░░░░░░░░░] 150/249 (60.2%) | 40064745
-INFO:preprocess:  Original: 45,914 chars, Cleaned: 28,500 chars, Reduction: 38.0%
-...
-INFO:preprocess:Preprocessing complete
-INFO:__main__:Saved 249 preprocessed texts to: data\preprocessed_texts
-```
-
----
 
 ## **Configuration**
 
@@ -248,30 +275,37 @@ Edit `src/project_config.py` to customize:
 ```python
 
 ...
+
 # Directories
 RAW_PDFS_DIR = Path("data/raw_pdfs")
 USEFUL_PDFS_DIR = Path("data/useful_pdfs")
-EXTRACTED_TEXTS_DIR = Path("data/extracted_texts")
+EXTRACTED_USEFUL_TEXTS_DIR = Path("data/extracted_useful_texts")
+EXTRACTED_NOT_USEFUL_TEXTS_DIR = Path("data/extracted_raw_texts")
+EXTRACTED_USEFUL_PDF_DIR = Path("data/extracted_useful_pdfs")
+EXTRACTED_NOT_USEFUL_PDF_DIR = Path("data/extracted_raw_pdfs")
 PREPROCESSED_TEXTS_DIR = Path("data/preprocessed_texts") 
 RESULTS_DIR = Path("results")
 
 # Model Hyperparameters
-N_ESTIMATORS = 100          # Number of trees in Random Forest
-MAX_DEPTH = 10              # Maximum tree depth
-MIN_SAMPLES_SPLIT = 5       # Minimum samples to split node
+N_ESTIMATORS = 100            # Number of trees in Random Forest
+MAX_DEPTH = 10                # Maximum tree depth
+MIN_SAMPLES_SPLIT = 5         # Minimum samples to split node
 CLASS_WEIGHT = {0: 1, 1: 15}  # Emphasis on useful class
-RANDOM_STATE = 42           # Reproducibility seed
+RANDOM_STATE = 42             # Reproducibility seed
 
 # Feature Extraction
-MAX_FEATURES = 2000         # Maximum TF-IDF features
-NGRAM_RANGE = (1, 2, 3)        # Unigrams and bigrams
+MAX_FEATURES = 2000           # Maximum TF-IDF features
+NGRAM_RANGE = (1, 2, 3)       # Unigrams and bigrams
 
 # Data Split
-TEST_SIZE = 0.25            # 25% for testing
-SMOTE_THRESHOLD = 3.0       # Apply SMOTE if imbalance ratio > 3
+TEST_SIZE = 0.25              # 25% for testing
+SMOTE_THRESHOLD = 3.0         # Apply SMOTE if imbalance ratio > 3
 
 # Important to edit CUSTOM_STOP_WORDS based on your CASE!!!
 CUSTOM_STOP_WORDS = [......]
+
+# For the stage 2: Prediction
+CONFIDENCE_THRESHOLD = int 0 bis 100
 ...
 ```
 
@@ -284,8 +318,6 @@ CUSTOM_STOP_WORDS = [......]
 ### **HIGH PRIORITY: (30 days)**
 - Optuna Integration for hyper parameters
 - SHAP, machine tells why it is useful/unuseful
--
-
 
 ### **What kind of contribute does Smote provide?**
 ```
@@ -402,6 +434,9 @@ rmdir /s /q data\extracted_useful_texts
 rmdir /s /q data\preprocessed_raw_texts
 rmdir /s /q data\preprocessed_useful_texts
 
+# For a fresh start with labels.csv
+rmdir /s /q data\labels.csv
+
 # For a fresh start for predicting new files
 rmdir /s /q data\sorted_pdfs\Manual_Check
 rmdir /s /q data\sorted_pdfs\Not_Useful
@@ -433,12 +468,16 @@ canerrcc1@gmail.com
 
 ## **Changelog**
 
+### [0.6.2] - 
+- More test scripts exist for better observation of the methods
+- OCR Fallback added: Suppose a pdf includes pictures instead texts
+- Advanced Fallback system for src\predict.py ,Solved Problem: CPU was too much charged
+
 ### [0.6.1] - 2026-04-21
 - Accuracy enhanced to 93.1% with summary texts
 - SciBert (better with scientific texts) integrated: Combi from TF-IDF + SciBert = 93.1%
 - Predict.py script added: Includes not only trained LR joblib, also TF-IDF and Scaler joblib
 - Cache for trained files, don't wait 2 hours if you want to run again
-
 
 ### [0.6.0] - 2026-04-09
 - Semantic Understanding (SBert) integrated
@@ -503,5 +542,5 @@ canerrcc1@gmail.com
 - Semantic understanding integration
 - More and cleaner data
 
-**Last Updated:** 2026-04-21
-**Version:** 0.6.1
+**Last Updated:** 2026-04-29
+**Version:** 0.6.2
