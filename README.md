@@ -1,11 +1,16 @@
 ﻿# PDF + TXT Classification Programm - Supervised Learning
 
-A programm that classifies PDF and TXT documents as either "useful" or "not useful" supported by supervised learning with Random Forest, SVM, Logistic Regression mode and intelligent text extraction caching.
-One can switch in 2 different modes: Supervised and Unsupervised learning. Also, the file type can be arranged in main.py under "# 0. Choose File Type" by typing either "pdf" or "txt". Nevertheless, in this specific case, supervised learning is more suitable. Therefore, I stopped improving unsupervised learning in previous version, but kept it for reference and comparison.  The most difficult challenge in this case is, that some pdfs don't have any semantic similarities between them and including completely different types of words and structure, making it difficult for the model to generalize across documents.
-I named unuseful data as "raw" and useful data as "useful".
+A programm that classifies PDF and TXT documents as either "relevant" or "not relevant" supported by supervised learning with Random Forest, SVM, Logistic Regression mode and intelligent text extraction caching concluding with preprocess phase.
+
+One can switch in 2 different modes: Supervised and Unsupervised learning. 
+The file type can be arranged in main.py under "# 0. Choose File Type" by typing either "pdf" or "txt". 
+In this specific case, supervised learning is more suitable. Therefore, I stopped improving unsupervised learning in previous version, but kept it for reference and comparison.  
+The most difficult challenge in this case is, that some pdfs don't have any semantic similarities between them and including completely different types of words and structure, making it difficult for the model to generalize across documents.
+
+I named not relevant data as "raw" and relevant file as "useful".
 
 # Warning! 
-The programm is not compatible with servers having little RAM. You suppose to have good memory capacity in order to run especially SciBert. Using SciBert, only before it starts calculating the unseen data, there will be crash by uploading the model. Because SciBert has approximately 110 Millions parameters to upload into RAM. This cause shutdown, if you do not have sufficient RAM. I have 16GB RAM and it works fine.  
+The programm is not compatible with servers owning little capacity of RAM. You suppose to have good memory capacity in order to run especially SciBert. Using SciBert, only before it starts calculating the unseen data, there will be crash by uploading the model. Because SciBert has approximately 110 Millions parameters to upload into RAM. This causes shutdown, if you do not have sufficient RAM. I have 16GB RAM and it works fine.  
 ---
 
 ## **Project Status**
@@ -14,7 +19,7 @@ The programm is not compatible with servers having little RAM. You suppose to ha
 |----------------------|----------|-----------------------------------------|
 | **Pipeline**         | Complete | Fully operational                       |
 | **Model Training**   | Complete | Random Forest, SVM, Logical Regressiong |
-| **Overall Accuracy** | 93.1%    | SciBert Understanding Integrated        |
+| **Last Accuracy**    | 93.1%    | SciBert Understanding Integrated        |
 | **Production Ready** | L. Phase | Data quality + Feature improvement ong. |
 
 ---
@@ -258,7 +263,7 @@ python main.py
 5. Run the src\evaluate_predictions.py, it will create advanced confusion matrix just like in first stage: Training above
 6. You can see the results under ./results 
 7. Do not forget, that this results can be different/lower/higher from 93% accuracy. Because we push model to decide either for 1 or 0 on unseendata. In industry the stage 2 is
-used. You can check with 3. stage once in a month, to be sure, whether model is drifting, or it needs to be trained again.
+used. You can check with 3 the results and how correct it is. Stage once in a month, to be sure, whether model is drifting, or it needs to be trained again.
 
 **Expected Runtime:**
 - Depends strongly on the model you use.
@@ -426,7 +431,7 @@ feature_index,feature_name,useful_mean_tfidf,not_useful_mean_tfidf,difference
 ```bash
 
 # For a fresh start using Windows
-src\label_files.py
+src\label_files.py # Labeling files to train the machine
 rmdir /s /q data\extracted_raw_pdfs
 rmdir /s /q data\extracted_raw_texts
 rmdir /s /q data\extracted_useful_pdfs
@@ -464,12 +469,17 @@ canerrcc1@gmail.com
 - [pdfplumber Documentation](https://github.com/jsvine/pdfplumber)
 - [TF-IDF Vectorization](https://scikit-learn.org/stable/modules/generated/sklearn.feature_extraction.text.TfidfVectorizer.html)
 - [semantic-transformer Documentation](https://sbert.net/)
+- [scibert-resource](https://github.com/allenai/scibert)
+
 ---
 
 ## **Changelog**
 
+### [0.6.3] - 2026-05-22
+- Code fixes for better reproducibility 
+
 ### [0.6.2] - 2026-04-29
-- Advanced Fallback system for src\predict.py ,Solved Problem: CPU was too much charged
+- Advanced Fallback system for src\predict.py ,Solved Problem: CPU was too much charged with fallback
 
 ### [0.6.1] - 2026-04-21
 - Accuracy enhanced to 93.1% with summary texts
