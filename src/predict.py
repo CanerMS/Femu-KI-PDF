@@ -7,7 +7,6 @@ import joblib
 import numpy as np
 import scipy.sparse as sp
 import warnings
-import json
 
 # --- Silent Mode Settings ---
 SILENT_MODE = True # If this is true, only the score will show up
@@ -29,12 +28,6 @@ if SILENT_MODE:
     # 3. Hide the errors coming from other models
     for log_name in ["transformers", "httpx", "extractor", "features", "model", "preprocess", "huggingface_hub.utils._http"]:
         logging.getLogger(log_name).setLevel(logging.CRITICAL)
-        
-    # 4. bring sys.stdout AND sys.stderr to "devnull" (print and tqdm such outputs will be vanished)
-    original_stdout = sys.stdout # Hide the original to print the result
-    sys.stdout = open(os.devnull, 'w')
-    sys.stderr = open(os.devnull, 'w') # tqdm ve "Warning" will go to stdout
-    
 else:
     # If silent mode is deactivated
     logging.basicConfig(level=logging.INFO)
@@ -121,6 +114,8 @@ def main():
     logger.info(f"In total {len(files)} will be predicted\n")
 
     # 4. Predict and divide to directories
+    all_scores = []
+
     for file_path in files:
         logger.info(f"{file_path.name} checking...")
         
@@ -167,16 +162,19 @@ def main():
 
         if score_percentage < CONFIDENCE_THRESHOLD:
             final_score = 0.0
+            all_scores.append(None)
             aim_directory = DIR_MANUAL_CHECK
             if FLAG_EX:
                 explanation = f""
         elif result == "USEFUL":
             final_score = score_percentage
+            all_scores.append(final_score)
             aim_directory = DIR_USEFUL
             if FLAG_EX:
                 explanation = f"Positive score, archive to {DIR_USEFUL}"
         else: 
             final_score = -score_percentage # Negative score
+            all_scores.append(final_score)
             aim_directory = DIR_NOT_USEFUL
             if FLAG_EX:
                 explanation = f"Negative score, archive to {DIR_NOT_USEFUL}"
@@ -196,11 +194,7 @@ def main():
         try:
             shutil.move(str(file_path), str(aim_directory / file_path.name))
 
-            if SILENT_MODE:
-                # Only here type to real screen
-                original_stdout.write(f"{final_score:.2f}\n")
-                original_stdout.flush()
-            else:
+            if not SILENT_MODE:
                 logger.info(f" -> Decision: {result} (%{score_percentage:.1f} Trust) | {explanation}\n")
             
         except Exception as e:
@@ -208,6 +202,8 @@ def main():
                 logger.error(f" -> Eroor while {file_path.name} was carried: {e}\n")
 
     logger.info("You can see the results in 'data/sorted_pdfs' .")
+
+    return all_scores
 
 if __name__ == "__main__":
     main()
