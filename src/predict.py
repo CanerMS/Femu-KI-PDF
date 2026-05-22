@@ -1,10 +1,44 @@
 import sys
+import os
 import shutil  # Dosyaları taşımak için
 from pathlib import Path
 import logging
 import joblib
 import numpy as np
 import scipy.sparse as sp
+import warnings
+import json
+
+# --- Silent Mode Settings ---
+SILENT_MODE = True # If this is true, only the score will show up
+
+
+if SILENT_MODE:
+    # 1. Turn off every warnings
+    warnings.filterwarnings("ignore")
+    os.environ["TF_CPP_MIN_LOG_LEVEL"] = "3"
+    
+    # HF Transformers logging seviyesini ERROR olarak ayarla (LOAD REPORT ve Loading weights'i engeller)
+    os.environ["TRANSFORMERS_VERBOSITY"] = "error"
+    os.environ["HF_HUB_DISABLE_SYMLINKS_WARNING"] = "1"
+    
+    # 2. For the main file, hide all of the warnings except critical errors
+    logging.basicConfig(level=logging.CRITICAL)
+    logger = logging.getLogger(__name__)
+    
+    # 3. Hide the errors coming from other models
+    for log_name in ["transformers", "httpx", "extractor", "features", "model", "preprocess", "huggingface_hub.utils._http"]:
+        logging.getLogger(log_name).setLevel(logging.CRITICAL)
+        
+    # 4. bring sys.stdout AND sys.stderr to "devnull" (print and tqdm such outputs will be vanished)
+    original_stdout = sys.stdout # Hide the original to print the result
+    sys.stdout = open(os.devnull, 'w')
+    sys.stderr = open(os.devnull, 'w') # tqdm ve "Warning" will go to stdout
+    
+else:
+    # If silent mode is deactivated
+    logging.basicConfig(level=logging.INFO)
+    logger = logging.getLogger(__name__)
 
 sys.path.insert(0, str(Path(__file__).parent))
 
@@ -13,9 +47,6 @@ from extractor import PDFExtractor, TXTExtractor
 from preprocess import TextPreprocessor
 from semantic import SciBERTSemanticFeatureExtractor
 from model import LogisticRegressionClassifier
-
-logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger(__name__)
 
 def main():
     # Which model would you like to use?
@@ -27,17 +58,11 @@ def main():
     # Which scaler model would you like to use?
     SCALER_PATH = "results/txt_scaler_93_1.joblib"
     
-    FILE_TYPE = 'pdf'
+    FILE_TYPE = 'txt'
     CONFIDENCE_THRESHOLD = 75.0  # Human in the loop threshold
-    
-    SILENT_MODE = True # Flag
-        
-    if SILENT_MODE:  
-        logger.setLevel(logging.ERROR)
     
     FLAG_EX = False # for more explanations
 
-    
     # 2. Arrange the files
     TARGET_DIR = Path("data/to_test_files")  # Which pdf/txt would you like to test?
     SORTED_DIR = Path("data/sorted_pdfs")    
@@ -74,8 +99,6 @@ def main():
     if FEATURE_MODE == 'combined':
         try:
             scaler = joblib.load(SCALER_PATH)
-            # if not hasattr(scaler, "clip"): # In case you get an error regarding incompability with scikit version
-            #     scaler.clip = False         # The current version has the attribute scaler.clip
             logger.info(f"Scaler uploaded successfully: {SCALER_PATH}")
         except FileNotFoundError:
             logger.error(f"Critical Error: Feature_Mode='{FEATURE_MODE}' but Scaler doesn't exist")
@@ -95,7 +118,6 @@ def main():
         return
     files.sort()
     
-
     logger.info(f"In total {len(files)} will be predicted\n")
 
     # 4. Predict and divide to directories
@@ -124,7 +146,6 @@ def main():
             else:    
                 final_vector = np.hstack((tf_vec, sem_vec))
         
-
         # Scale before predicting
             if FEATURE_MODE == 'combined' and scaler is not None:
                 final_vector = scaler.transform(final_vector)
@@ -162,7 +183,6 @@ def main():
         
         # if not enough confident
         if score_percentage < CONFIDENCE_THRESHOLD:
-            # Human control
             aim_directory = DIR_MANUAL_CHECK
             explanation = "Human control needed"
         elif result == "USEFUL":
@@ -177,13 +197,15 @@ def main():
             shutil.move(str(file_path), str(aim_directory / file_path.name))
 
             if SILENT_MODE:
-                print(f"{final_score:.2f}")
+                # Only here type to real screen
+                original_stdout.write(f"{final_score:.2f}\n")
+                original_stdout.flush()
             else:
                 logger.info(f" -> Decision: {result} (%{score_percentage:.1f} Trust) | {explanation}\n")
-
             
         except Exception as e:
-            logger.error(f" -> Eroor while {file_path.name} was carried: {e}\n")
+            if not SILENT_MODE:
+                logger.error(f" -> Eroor while {file_path.name} was carried: {e}\n")
 
     logger.info("You can see the results in 'data/sorted_pdfs' .")
 
