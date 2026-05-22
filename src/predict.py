@@ -18,7 +18,7 @@ if SILENT_MODE:
     warnings.filterwarnings("ignore")
     os.environ["TF_CPP_MIN_LOG_LEVEL"] = "3"
     
-    # HF Transformers logging seviyesini ERROR olarak ayarla (LOAD REPORT ve Loading weights'i engeller)
+    # set HF Transformers logging level as ERROR 
     os.environ["TRANSFORMERS_VERBOSITY"] = "error"
     os.environ["HF_HUB_DISABLE_SYMLINKS_WARNING"] = "1"
     
