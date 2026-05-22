@@ -74,6 +74,8 @@ def main():
     if FEATURE_MODE == 'combined':
         try:
             scaler = joblib.load(SCALER_PATH)
+            # if not hasattr(scaler, "clip"): # In case you get an error regarding incompability with scikit version
+            #     scaler.clip = False         # The current version has the attribute scaler.clip
             logger.info(f"Scaler uploaded successfully: {SCALER_PATH}")
         except FileNotFoundError:
             logger.error(f"Critical Error: Feature_Mode='{FEATURE_MODE}' but Scaler doesn't exist")
@@ -91,7 +93,9 @@ def main():
     if not files:
         logger.warning(f"No {FILE_TYPE} in: {TARGET_DIR}")
         return
+    files.sort()
     
+
     logger.info(f"In total {len(files)} will be predicted\n")
 
     # 4. Predict and divide to directories

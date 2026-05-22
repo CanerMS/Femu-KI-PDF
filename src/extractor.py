@@ -4,6 +4,7 @@ Extracts text content from PDF files
 """
 from pathlib import Path # Import Path for file path manipulations
 from typing import Dict, List # Import Dict and List for type hinting
+#from easyocr import Reader
 import logging # Import logging for logging messages
 
 
@@ -22,6 +23,7 @@ except ImportError: # Fallback to PyPDF2 if pdfplumber is not available
 
 logging.basicConfig(level=logging.INFO) # Configure logging
 logger = logging.getLogger(__name__) # Create logger for this module
+
 
 
 class PDFExtractor: 
@@ -72,6 +74,12 @@ class PDFExtractor:
                 text = self._extract_with_pdfplumber(pdf_path) # Use pdfplumber for extraction
             else: # Fallback to PyPDF2, because pdfplumber is not available
                 text = self._extract_with_pypdf2(pdf_path) # Use PyPDF2 for extraction
+            
+            # if the both methods can't find any texts, means text.strip would be too short
+            if len(text.strip()) < 50:
+                logger.info(f"Neither PDFPlumber nor PyPDF2 could find text in {pdf_path.name}. OCR activated!")
+                text = self._extract_with_easyocr(pdf_path)
+
         except Exception as e: # Handle extraction errors
             logger.error(f"Error extracting {pdf_path.name}: {str(e)}") # Log error message
             return "" # Return empty string on error
@@ -110,6 +118,50 @@ class PDFExtractor:
             if page_text: # Check if text is not None
                 text.append(page_text) # Append page text to list
         return "\n".join(text) # Join all page texts into single string
+    
+    def _extract_with_easyocr(self, pdf_path: Path) -> str:
+        '''
+        Extract text from a PDF file using easyocr
+
+        '''
+        import easyocr 
+        import fitz
+        import numpy as np
+        
+        text = [] # List to hold text from each page
+        
+        # with easyocr.open(pdf_path) as pdf / this caused error, because easyocr is compatible with images, not pdfs
+
+        reader = easyocr.Reader(['en', 'tr'])
+
+        # Open the pdf with fitz (PyMuPDF)
+        doc = fitz.open(pdf_path)
+
+        # Go through the pages
+        for page_num in range(len(doc)):
+            page = doc.load_page(page_num)
+
+            # page into pixels (image)
+            pix = page.get_pixmap()
+
+            # image to numpy (so that EasyOCR would be compatible)
+            img_array = np.frombuffer(pix.samples, dtype=np.uint8).reshape(pix.h, pix.w, pix.n)
+
+            # if the picture is RGBA (transparency), better to convert to RGB
+            if pix.n == 4:
+                import cv2
+                img_array = cv2.cvtColor(img_array, cv2.COLOR_RGBA2RGB)
+
+            results = reader.readtext(img_array, detail=0)
+
+            # concatenate extracted texts
+            page_text = " ".join(results)
+            if page_text:
+                text.append(page_text)
+            
+        doc.close()
+        return "\n".join(text)
+
     
     def extract_and_save(self, pdf_path: Path) -> Path:
         """
