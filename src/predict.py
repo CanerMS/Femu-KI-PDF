@@ -17,24 +17,24 @@ if SILENT_MODE:
     # 1. Turn off every warnings
     warnings.filterwarnings("ignore")
     os.environ["TF_CPP_MIN_LOG_LEVEL"] = "3"
-    
-    # set HF Transformers logging level as ERROR 
+
+    # set HF Transformers logging level as ERROR
     os.environ["TRANSFORMERS_VERBOSITY"] = "error"
     os.environ["HF_HUB_DISABLE_SYMLINKS_WARNING"] = "1"
-    
+
     # 2. For the main file, hide all of the warnings except critical errors
     logging.basicConfig(level=logging.CRITICAL)
     logger = logging.getLogger(__name__)
-    
+
     # 3. Hide the errors coming from other models
     for log_name in ["transformers", "httpx", "extractor", "features", "model", "preprocess", "huggingface_hub.utils._http"]:
         logging.getLogger(log_name).setLevel(logging.CRITICAL)
-        
+
     # 4. bring sys.stdout AND sys.stderr to "devnull" (print and tqdm such outputs will be vanished)
     original_stdout = sys.stdout # Hide the original to print the result
     sys.stdout = open(os.devnull, 'w')
     sys.stderr = open(os.devnull, 'w') # tqdm ve "Warning" will go to stdout
-    
+
 else:
     # If silent mode is deactivated
     logging.basicConfig(level=logging.INFO)
@@ -51,27 +51,27 @@ from model import LogisticRegressionClassifier
 def main():
     # Which model would you like to use?
     MODEL_PATH = "results/txt_logistic_regression_93_1_classifier.joblib"
-    
+
     # Which tf-idf model would you like to combine?
     TFIDF_DICT_PATH = "results/txt_tfidf_vocabulary_93_1.joblib"
 
     # Which scaler model would you like to use?
     SCALER_PATH = "results/txt_scaler_93_1.joblib"
-    
+
     FILE_TYPE = 'txt'
     CONFIDENCE_THRESHOLD = 75.0  # Human in the loop threshold
-    
+
     FLAG_EX = False # for more explanations
 
     # 2. Arrange the files
     TARGET_DIR = Path("data/to_test_files")  # Which pdf/txt would you like to test?
-    SORTED_DIR = Path("data/sorted_pdfs")    
-    
+    SORTED_DIR = Path("data/sorted_pdfs")
+
     # Create aim directory
     DIR_USEFUL = SORTED_DIR / "Useful"
     DIR_NOT_USEFUL = SORTED_DIR / "Not_Useful"
     DIR_MANUAL_CHECK = SORTED_DIR / "Manual_Check"
-    
+
     for d in [TARGET_DIR, DIR_USEFUL, DIR_NOT_USEFUL, DIR_MANUAL_CHECK]:
         d.mkdir(parents=True, exist_ok=True)
 
@@ -85,7 +85,7 @@ def main():
         logger.error("Error: Trained model could not be found!")
         return
 
-    # Upload TF-IDF Dict 
+    # Upload TF-IDF Dict
     tfidf_extractor = None
     if FEATURE_MODE in ['tfidf', 'combined']:
         try:
@@ -94,7 +94,7 @@ def main():
         except FileNotFoundError:
             logger.error(f"Critical Error: Feature_Mode='{FEATURE_MODE} but TF-IDF doesn't exist")
             return
-        
+
     scaler = None
     if FEATURE_MODE == 'combined':
         try:
@@ -103,7 +103,7 @@ def main():
         except FileNotFoundError:
             logger.error(f"Critical Error: Feature_Mode='{FEATURE_MODE}' but Scaler doesn't exist")
             return
-    
+
     preprocessor = TextPreprocessor()
     semantic_extractor = SciBERTSemanticFeatureExtractor()
 
@@ -117,21 +117,21 @@ def main():
         logger.warning(f"No {FILE_TYPE} in: {TARGET_DIR}")
         return
     files.sort()
-    
+
     logger.info(f"In total {len(files)} will be predicted\n")
 
     # 4. Predict and divide to directories
     for file_path in files:
         logger.info(f"{file_path.name} checking...")
-        
+
         # Extract the text
         if FILE_TYPE == 'pdf':
             text = extractor.extract_text_from_pdf(file_path)
         else:
             text = extractor.extract_text(file_path)
-            
+
         clean_text = preprocessor.clean_text(text)
-        
+
         final_vector = None
         if FEATURE_MODE == 'semantic':
             final_vector = semantic_extractor.extract_embeddings([clean_text], [file_path.stem])
@@ -143,9 +143,9 @@ def main():
 
             if sp.issparse(tf_vec):
                 final_vector = sp.hstack((tf_vec, sp.csr_matrix(sem_vec)))
-            else:    
+            else:
                 final_vector = np.hstack((tf_vec, sem_vec))
-        
+
         # Scale before predicting
             if FEATURE_MODE == 'combined' and scaler is not None:
                 final_vector = scaler.transform(final_vector)
@@ -156,10 +156,10 @@ def main():
             score = model.predict_scores(final_vector)[0]
         except ValueError as e:
             logger.error(f"Convergence error")
-            return 
-    
+            return
+
         result = "USEFUL" if prediction == 1 else "NOT USEFUL"
-        
+
         if prediction == 1:
             score_percentage = score * 100
         else:
@@ -175,12 +175,12 @@ def main():
             aim_directory = DIR_USEFUL
             if FLAG_EX:
                 explanation = f"Positive score, archive to {DIR_USEFUL}"
-        else: 
+        else:
             final_score = -score_percentage # Negative score
             aim_directory = DIR_NOT_USEFUL
             if FLAG_EX:
                 explanation = f"Negative score, archive to {DIR_NOT_USEFUL}"
-        
+
         # if not enough confident
         if score_percentage < CONFIDENCE_THRESHOLD:
             aim_directory = DIR_MANUAL_CHECK
@@ -191,7 +191,7 @@ def main():
         else:
             aim_directory = DIR_NOT_USEFUL
             explanation = "Overconfident, archive!"
-            
+
         # Carry the file
         try:
             shutil.move(str(file_path), str(aim_directory / file_path.name))
@@ -202,7 +202,7 @@ def main():
                 original_stdout.flush()
             else:
                 logger.info(f" -> Decision: {result} (%{score_percentage:.1f} Trust) | {explanation}\n")
-            
+
         except Exception as e:
             if not SILENT_MODE:
                 logger.error(f" -> Eroor while {file_path.name} was carried: {e}\n")
@@ -211,5 +211,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
-
