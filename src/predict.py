@@ -7,7 +7,6 @@ import joblib
 import numpy as np
 import scipy.sparse as sp
 import warnings
-import json
 
 # --- Silent Mode Settings ---
 SILENT_MODE = True # If this is true, only the score will show up
@@ -42,6 +41,7 @@ else:
 
 sys.path.insert(0, str(Path(__file__).parent))
 
+import lisa
 from project_config import FEATURE_MODE
 from extractor import PDFExtractor, TXTExtractor
 from preprocess import TextPreprocessor
@@ -49,6 +49,8 @@ from semantic import SciBERTSemanticFeatureExtractor
 from model import LogisticRegressionClassifier
 
 def main():
+    LISA_MODE = os.environ.get("LISA", "") != ""
+
     # Which model would you like to use?
     MODEL_PATH = "results/txt_logistic_regression_93_1_classifier.joblib"
 
@@ -72,8 +74,15 @@ def main():
     DIR_NOT_USEFUL = SORTED_DIR / "Not_Useful"
     DIR_MANUAL_CHECK = SORTED_DIR / "Manual_Check"
 
+    # Clean up leftovers in the target directory:
+    if LISA_MODE and os.path.exists(TARGET_DIR):
+        shutil.rmtree(TARGET_DIR)
+
     for d in [TARGET_DIR, DIR_USEFUL, DIR_NOT_USEFUL, DIR_MANUAL_CHECK]:
         d.mkdir(parents=True, exist_ok=True)
+
+    if LISA_MODE:
+        lisa.write_items_to_directory(lisa.read_input(sys.stdin), TARGET_DIR)
 
     logger.info(f"Uploaded Model: {MODEL_PATH}")
 
@@ -121,6 +130,8 @@ def main():
     logger.info(f"In total {len(files)} will be predicted\n")
 
     # 4. Predict and divide to directories
+    lisa_items = []
+
     for file_path in files:
         logger.info(f"{file_path.name} checking...")
 
@@ -162,21 +173,20 @@ def main():
 
         if prediction == 1:
             score_percentage = score * 100
+            lisa_items.append(lisa.OutputItem(relevant=True, score=score_percentage))
         else:
             score_percentage = (1.0 - score) * 100
+            lisa_items.append(lisa.OutputItem(relevant=False, score=score_percentage))
 
         if score_percentage < CONFIDENCE_THRESHOLD:
-            final_score = 0.0
             aim_directory = DIR_MANUAL_CHECK
             if FLAG_EX:
                 explanation = f""
         elif result == "USEFUL":
-            final_score = score_percentage
             aim_directory = DIR_USEFUL
             if FLAG_EX:
                 explanation = f"Positive score, archive to {DIR_USEFUL}"
         else:
-            final_score = -score_percentage # Negative score
             aim_directory = DIR_NOT_USEFUL
             if FLAG_EX:
                 explanation = f"Negative score, archive to {DIR_NOT_USEFUL}"
@@ -196,16 +206,15 @@ def main():
         try:
             shutil.move(str(file_path), str(aim_directory / file_path.name))
 
-            if SILENT_MODE:
-                # Only here type to real screen
-                original_stdout.write(f"{final_score:.2f}\n")
-                original_stdout.flush()
-            else:
+            if not SILENT_MODE:
                 logger.info(f" -> Decision: {result} (%{score_percentage:.1f} Trust) | {explanation}\n")
 
         except Exception as e:
             if not SILENT_MODE:
                 logger.error(f" -> Eroor while {file_path.name} was carried: {e}\n")
+
+    if LISA_MODE:
+        lisa.write_output(lisa_items, original_stdout)
 
     logger.info("You can see the results in 'data/sorted_pdfs' .")
 
