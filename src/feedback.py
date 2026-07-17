@@ -48,8 +48,7 @@ def _find_file(filename: str, file_type: str) -> tuple[Path, str | None]:
 
     Returns:
         (file_path, detected_label)
-        detected_label is "useful" / "not_useful" when found in a
-        training directory, or None when found in manual_check/.
+        detected_label is "useful" / "not_useful" / "manual_check.
 
     Raises:
         FileNotFoundError: if the file is not found anywhere.
