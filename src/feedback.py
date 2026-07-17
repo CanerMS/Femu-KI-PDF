@@ -1,17 +1,17 @@
 from __future__ import annotations  # Must be first import
 
-from typing import Any
-from datetime import datetime, timezone
-from pathlib import Path
+from typing import Any # helps to handle with types 
+from datetime import datetime, timezone 
+from pathlib import Path # helps to handle with files and directories
 
-import json
-import shutil
-import logging
+import json 
+import shutil # helps to move files
+import logging 
 
 from project_config import (
     VALID_LABELS, FEEDBACK_FILE, FEEDBACK_DIR,
     RAW_TXTS_DIR, USEFUL_TXTS_DIR,
-    RAW_PDFS_DIR, USEFUL_PDFS_DIR,
+    RAW_PDFS_DIR, USEFUL_PDFS_DIR, 
     MANUAL_CHECK_DIR,
     DATA_DIR,
 )
@@ -20,7 +20,7 @@ from label_files import create_labels
 logger = logging.getLogger(__name__)
 
 
-def build_pipeline_version(
+def build_pipeline_version( # for feedback.jsonl to track the version of the pipeline
     model_version: str | None,
     tfidf_version: str | None,
     scaler_version: str | None,
@@ -30,13 +30,10 @@ def build_pipeline_version(
         f"tfidf={tfidf_version or 'unknown'}",
         f"scaler={scaler_version or 'unknown'}",
     ]
-    return " | ".join(parts)
+    return " | ".join(parts) # converts into one single string with separator " |"
 
 
-# ---------------------------------------------------------------------------
 # Private helpers
-# ---------------------------------------------------------------------------
-
 def _get_dirs(file_type: str) -> dict[str, Path]:
     """Return {label -> directory} mapping for a given file type."""
     if file_type == "txt":
@@ -60,32 +57,32 @@ def _find_file(filename: str, file_type: str) -> tuple[Path, str | None]:
     dirs = _get_dirs(file_type)
 
     # 1. Search training directories (label-aware)
-    for label, directory in dirs.items():
-        candidate = directory / filename
-        if candidate.exists():
-            return candidate, label
+    for label, directory in dirs.items(): # iterate over the training directories: useful_texts and raw_texts or useful_pdfs and raw_pdfs
+        candidate = directory / filename 
+        if candidate.exists(): # check if file exists in training directory
+            return candidate, label # returns the file path and the label
 
     # 2. Search manual_check (unlabelled)
-    candidate = MANUAL_CHECK_DIR / filename
-    if candidate.exists():
-        return candidate, None
+    candidate = MANUAL_CHECK_DIR / filename 
+    if candidate.exists(): # check if file exists in manual_check directory
+        return candidate, None # returns the file path and None as the label
 
     # Not found
-    searched = ", ".join(d.name for d in [*dirs.values(), MANUAL_CHECK_DIR])
-    raise FileNotFoundError(f"File '{filename}' not found. Searched: {searched}")
+    searched = ", ".join(d.name for d in [*dirs.values(), MANUAL_CHECK_DIR]) # create a string of all directories that were searched
+    raise FileNotFoundError(f"File '{filename}' not found. Searched: {searched}") # raise FileNotFoundError if file is not found
 
 
 def _move_file(
-    file_path: Path,
-    target_dir: Path,
-    filename: str,
-) -> tuple[Path, bool]:
+    file_path: Path, # path to the file
+    target_dir: Path, # target directory
+    filename: str, # file name
+) -> tuple[Path, bool]: # returns the target directory and a boolean indicating if the file was already in the target directory
     """Move a file to the target directory.
 
     Returns:
         (target_directory, was_already_there)
     """
-    was_already_there = file_path.parent.resolve() == target_dir.resolve()
+    was_already_there = file_path.parent.resolve() == target_dir.resolve() # check if file is already in the target directory
 
     if was_already_there:
         logger.info(f"[CORRECT] {filename}: already in {target_dir.name}/")
@@ -101,10 +98,10 @@ def _log_to_jsonl(record: dict) -> None:
     """Append a single feedback record to feedback.jsonl."""
     FEEDBACK_DIR.mkdir(parents=True, exist_ok=True)
     with open(FEEDBACK_FILE, "a", encoding="utf-8") as fh:
-        fh.write(json.dumps(record, ensure_ascii=False) + "\n")
+        fh.write(json.dumps(record, ensure_ascii=False) + "\n") # json.dumps() converts a Python dictionary into a JSON formatted string. ensure_ascii=False ensures that non-ASCII characters are written as-is, and + "\n" appends a newline character to ensure each record is on its own line in the JSONL file.
 
 
-def _refresh_labels(file_type: str, update: bool) -> None:
+def _refresh_labels(file_type: str, update: bool) -> None: # for feedback.jsonl to track the version of the pipeline
     """Re-generate labels.csv if requested."""
     if not update:
         return
@@ -115,37 +112,25 @@ def _refresh_labels(file_type: str, update: bool) -> None:
         logger.warning(f"  labels.csv update failed: {exc}")
 
 
-# ---------------------------------------------------------------------------
 # Public API
-# ---------------------------------------------------------------------------
-
 def correct(
     filename: str,
-    decision: str | None = None,
+    decision: str,
     *,
     predicted_score: float | None = None,
     file_type: str = "txt",
     reviewer: str | None = None,
     update_labels: bool = True,
 ) -> dict[str, str]:
-    """Unified correction: flip a wrong prediction or label an uncertain one.
+    """Unified correction: change the label of a wrong/uncertain prediction.
 
-    Two modes based on ``decision``:
-
-      decision=None (auto-flip)
-          Finds the file's current label and moves it to the opposite
-          training directory.  Use when the reviewer simply says "wrong".
-          The file must already be in a training directory (useful_texts/
-          or raw_texts/) so that its current label can be determined.
-
-      decision="useful" | "not_useful" (explicit label)
-          Moves the file to the directory matching the reviewer's
-          decision.  Use for uncertain predictions sitting in
-          manual_check/ (or anywhere else).
+    decision="useful" | "not_useful" (explicit label)
+      Moves the file to the directory matching the reviewer's
+      decision.  Use for wrong predictions + manual_check directory.
 
     Args:
         filename:        Name of the file (e.g. "paper_42.txt").
-        decision:        Reviewer's label, or None to auto-flip.
+        decision:        Reviewer's label.
         predicted_score: Model's confidence score (optional, for logging).
         file_type:       "txt" or "pdf" (default: "txt").
         reviewer:        Optional reviewer name for logging.
@@ -162,43 +147,28 @@ def correct(
         ValueError:        If decision is not a valid label or file_type
                            is invalid.
 
-    Examples::
-
-        # Auto-flip (mark_wrong): reviewer says "Falsch"
-        correct("paper_42.txt")
+    Examples:
 
         # Explicit label (review_uncertain): reviewer labels uncertain file
         correct("paper_42.txt", "useful")
     """
-    if decision is not None and decision not in VALID_LABELS:
-        raise ValueError(
-            f"decision must be one of {sorted(VALID_LABELS)} or None, "
+    if decision not in VALID_LABELS:
+        raise ValueError( 
+            f"decision must be one of {sorted(VALID_LABELS)}, "
             f"got {decision!r}"
         )
 
     dirs = _get_dirs(file_type)
     file_path, current_label = _find_file(filename, file_type)
 
-    if decision is None:
-        # Auto-flip mode — current label must be known
-        if current_label is None:
-            raise FileNotFoundError(
-                f"File '{filename}' found in {file_path.parent.name}/ but its "
-                f"label cannot be determined. Provide an explicit decision= "
-                f"parameter (e.g. decision='useful')."
-            )
-        new_label = "useful" if current_label == "not_useful" else "not_useful"
-        method = "mark_wrong"
-    else:
-        # Explicit reviewer decision
-        new_label = decision
-        method = "review_uncertain"
+
+    new_label = decision
+    method = "Wrong marked or Uncertain labeled"
 
     target_dir, was_already_there = _move_file(
         file_path, dirs[new_label], filename
     )
 
-    # Log to JSONL for traceability
     now = datetime.now(timezone.utc)
     _log_to_jsonl({
         "record_id":       f"{now.strftime('%Y%m%d%H%M%S%f')}_{filename}",
@@ -222,7 +192,6 @@ def correct(
         "moved_to":          target_dir.name,
         "was_already_there": was_already_there,
     }
-
 
 # Detailed feedback for the full feedback_apply.py workflow (for the future improvements)
 
