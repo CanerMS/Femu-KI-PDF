@@ -1,6 +1,6 @@
 import sys
 import os
-import shutil  # Dosyaları taşımak için
+import shutil  # For carrying the files
 from pathlib import Path
 import logging
 import joblib
@@ -9,9 +9,8 @@ import scipy.sparse as sp
 import warnings
 import json
 
-# --- Silent Mode Settings ---
+# Silent Mode Settings 
 SILENT_MODE = True # If this is true, only the score will show up
-
 
 if SILENT_MODE:
     # 1. Turn off every warnings
@@ -31,7 +30,7 @@ if SILENT_MODE:
         logging.getLogger(log_name).setLevel(logging.CRITICAL)
         
     # 4. bring sys.stdout AND sys.stderr to "devnull" (print and tqdm such outputs will be vanished)
-    original_stdout = sys.stdout # Hide the original to print the result
+    original_stdout = sys.stdout       # Hide the original to print the result
     sys.stdout = open(os.devnull, 'w')
     sys.stderr = open(os.devnull, 'w') # tqdm ve "Warning" will go to stdout
     
@@ -42,35 +41,76 @@ else:
 
 sys.path.insert(0, str(Path(__file__).parent))
 
-from project_config import FEATURE_MODE
+from project_config import FEATURE_MODE, RAW_TXTS_DIR, USEFUL_TXTS_DIR, RAW_PDFS_DIR, USEFUL_PDFS_DIR, MANUAL_CHECK_DIR
 from extractor import PDFExtractor, TXTExtractor
 from preprocess import TextPreprocessor
 from semantic import SciBERTSemanticFeatureExtractor
 from model import LogisticRegressionClassifier
 
-def main():
-    # Which model would you like to use?
-    MODEL_PATH = "results/txt_logistic_regression_93_1_classifier.joblib"
-    
-    # Which tf-idf model would you like to combine?
-    TFIDF_DICT_PATH = "results/txt_tfidf_vocabulary_93_1.joblib"
+def find_latest_model_set(results_dir: Path, file_type: str, model_type: str):
+    """
+    Find the latest model set based on the timestamp in the filename.
+    Returns a dictionary with the paths to the model, tf-idf vocabulary, and scaler.
+    """
+    import re
 
-    # Which scaler model would you like to use?
-    SCALER_PATH = "results/txt_scaler_93_1.joblib"
+    # Pattern: {file_type}_{model_type}_{YYYYMMDD_HHMMSS}_{acc_str}_classifier.joblib
+    # acc_str örneği: "93_1" — sadece timestamp kısmını yakala (group 1)
+    pattern = re.compile(
+        rf"^{re.escape(file_type)}_{re.escape(model_type)}_(\d{{8}}_\d{{6}})_[\d_]+_classifier\.joblib$"
+    )
+
+    timestamps = []
+    for f in results_dir.glob(f"{file_type}_{model_type}_*_classifier.joblib"):
+        m = pattern.match(f.name)
+        if m:
+            timestamps.append(m.group(1))
+
+    if not timestamps:
+        return None, None, None  # hiç model bulunamadı
+
+    latest_ts = sorted(timestamps)[-1]  # en büyük string = en yeni tarih
+
+    # Tam dosya adını bul (acc_str kısmını da içeren)
+    latest_model_file = next(
+        f for f in results_dir.glob(f"{file_type}_{model_type}_{latest_ts}_*_classifier.joblib")
+    )
+    # acc_str'yi dosya adından çıkar
+    acc_str = latest_model_file.stem.replace(f"{file_type}_{model_type}_{latest_ts}_", "").replace("_classifier", "")
+
+    model_path  = results_dir / f"{file_type}_{model_type}_{latest_ts}_{acc_str}_classifier.joblib"
+    tfidf_path  = results_dir / f"{file_type}_tfidf_vocabulary_{latest_ts}_{acc_str}.joblib"
+    scaler_path = results_dir / f"{file_type}_scaler_{latest_ts}_{acc_str}.joblib"
+
+    return model_path, tfidf_path, scaler_path
+
+def main():
+    FILE_TYPE  = 'txt'
+    RESULTS_DIR = Path(__file__).parent.parent / "results"  # Proje kökünden mutlak yol
     
-    FILE_TYPE = 'txt'
+    MODEL_PATH, TFIDF_DICT_PATH, SCALER_PATH = find_latest_model_set(
+        RESULTS_DIR, FILE_TYPE, "logistic_regression"
+    )
+    if MODEL_PATH is None:
+        print("Error: No trained model found!")
+        return
+    logger.info(f"Auto selected model: {MODEL_PATH.name}")
+    
     CONFIDENCE_THRESHOLD = 75.0  # Human in the loop threshold
     
     FLAG_EX = False # for more explanations
 
     # 2. Arrange the files
     TARGET_DIR = Path("data/to_test_files")  # Which pdf/txt would you like to test?
-    SORTED_DIR = Path("data/sorted_pdfs")    
     
-    # Create aim directory
-    DIR_USEFUL = SORTED_DIR / "Useful"
-    DIR_NOT_USEFUL = SORTED_DIR / "Not_Useful"
-    DIR_MANUAL_CHECK = SORTED_DIR / "Manual_Check"
+    # Target directories: confident → training dirs, uncertain → manual_check
+    if FILE_TYPE == 'txt':
+        DIR_USEFUL = USEFUL_TXTS_DIR
+        DIR_NOT_USEFUL = RAW_TXTS_DIR
+    else:
+        DIR_USEFUL = USEFUL_PDFS_DIR
+        DIR_NOT_USEFUL = RAW_PDFS_DIR
+    DIR_MANUAL_CHECK = MANUAL_CHECK_DIR
     
     for d in [TARGET_DIR, DIR_USEFUL, DIR_NOT_USEFUL, DIR_MANUAL_CHECK]:
         d.mkdir(parents=True, exist_ok=True)
@@ -121,6 +161,9 @@ def main():
     logger.info(f"In total {len(files)} will be predicted\n")
 
     # 4. Predict and divide to directories
+
+    output_scores = [] # Create a list, hold scores
+
     for file_path in files:
         logger.info(f"{file_path.name} checking...")
         
@@ -198,8 +241,7 @@ def main():
 
             if SILENT_MODE:
                 # Only here type to real screen
-                original_stdout.write(f"{final_score:.2f}\n")
-                original_stdout.flush()
+                output_scores.append(final_score)
             else:
                 logger.info(f" -> Decision: {result} (%{score_percentage:.1f} Trust) | {explanation}\n")
             
@@ -207,7 +249,13 @@ def main():
             if not SILENT_MODE:
                 logger.error(f" -> Eroor while {file_path.name} was carried: {e}\n")
 
+    if SILENT_MODE and output_scores:
+        formatted_scores = ["null" if score == 0.0 else f"{score:.2f}" for score in output_scores]
+        original_stdout.write(f"[{', '.join(formatted_scores)}]\n")
+        original_stdout.flush()
+    
     logger.info("You can see the results in 'data/sorted_pdfs' .")
+
 
 if __name__ == "__main__":
     main()
