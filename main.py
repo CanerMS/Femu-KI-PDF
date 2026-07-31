@@ -23,6 +23,7 @@ from project_config import * # Import all necessary configurations
 from imblearn.over_sampling import SMOTE # For handling class imbalance, helpful if needed
 from semantic import SemanticFeatureExtractor # TODO: Integrate semantic understanding in feature extraction
 from model import create_classifier
+from datetime import datetime # For timestamping the model results
 
 
 logging.basicConfig(
@@ -495,18 +496,18 @@ def main():
 
     # 7. Save results
     logger.info("\n[Step 7] Saving results...")
+    TIMESTAMP = datetime.now().strftime('%Y%m%d_%H%M%S')
     test_filenames = [f.name for f in test_files]
     results_df = save_predictions(test_filenames, test_predictions, test_scores)
-    results_df_path = RESULTS_DIR / f'{FILE_TYPE}_{MODEL_TYPE}_test_results.csv'
+    results_df_path = RESULTS_DIR / f'{FILE_TYPE}_{MODEL_TYPE}_{TIMESTAMP}_test_results.csv'
     results_df.to_csv(results_df_path, index=False)
     logger.info(f"Test results saved to {results_df_path}")
     
     # 8. Save trained model with accuracy in filename to avoid overwriting good models
     acc_str = f"{test_acc*100:.1f}".replace('.', '_')
-    model_name = f'{FILE_TYPE}_{MODEL_TYPE}_{acc_str}_classifier.joblib'
     
     # 8.1. Save main model (weights)
-    model_name = f'{FILE_TYPE}_{MODEL_TYPE}_{acc_str}_classifier.joblib'
+    model_name = f'{FILE_TYPE}_{MODEL_TYPE}_{TIMESTAMP}_{acc_str}_classifier.joblib'
     model_path = RESULTS_DIR / model_name
     classifier.save_model(model_path)
     logger.info(f"Main model saved to: {model_path}")
@@ -514,13 +515,13 @@ def main():
     if FEATURE_MODE in ['tfidf', 'combined']:
         if hasattr(feature_extractor, 'vectorizer') and feature_extractor.vectorizer is not None:
             # Accuracy rate added to name
-            tfidf_name = f'{FILE_TYPE}_tfidf_vocabulary_{acc_str}.joblib'
+            tfidf_name = f'{FILE_TYPE}_tfidf_vocabulary_{TIMESTAMP}_{acc_str}.joblib'
             tfidf_path = RESULTS_DIR / tfidf_name
             joblib.dump(feature_extractor, tfidf_path)
             logger.info(f"TF-IDF Dictionary saved successfully to: {tfidf_path}")
 
     if FEATURE_MODE == 'combined':
-        scaler_name = f'{FILE_TYPE}_scaler_{acc_str}.joblib'
+        scaler_name = f'{FILE_TYPE}_scaler_{TIMESTAMP}_{acc_str}.joblib'
         scaler_path = RESULTS_DIR / scaler_name
         joblib.dump(scaler, scaler_path)
         logger.info(f"MaxAbsScaler saved successfully to: {scaler_path}")

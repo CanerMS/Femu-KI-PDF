@@ -55,7 +55,6 @@ def find_latest_model_set(results_dir: Path, file_type: str, model_type: str):
     import re
 
     # Pattern: {file_type}_{model_type}_{YYYYMMDD_HHMMSS}_{acc_str}_classifier.joblib
-    # acc_str örneği: "93_1" — sadece timestamp kısmını yakala (group 1)
     pattern = re.compile(
         rf"^{re.escape(file_type)}_{re.escape(model_type)}_(\d{{8}}_\d{{6}})_[\d_]+_classifier\.joblib$"
     )
@@ -67,15 +66,16 @@ def find_latest_model_set(results_dir: Path, file_type: str, model_type: str):
             timestamps.append(m.group(1))
 
     if not timestamps:
-        return None, None, None  # hiç model bulunamadı
+        return None, None, None  # no models found
 
-    latest_ts = sorted(timestamps)[-1]  # en büyük string = en yeni tarih
+    latest_ts = sorted(timestamps)[-1]  # the latest date
 
-    # Tam dosya adını bul (acc_str kısmını da içeren)
+    # Find the full file name
     latest_model_file = next(
         f for f in results_dir.glob(f"{file_type}_{model_type}_{latest_ts}_*_classifier.joblib")
     )
-    # acc_str'yi dosya adından çıkar
+    
+    # Extract the acc_str from the file name
     acc_str = latest_model_file.stem.replace(f"{file_type}_{model_type}_{latest_ts}_", "").replace("_classifier", "")
 
     model_path  = results_dir / f"{file_type}_{model_type}_{latest_ts}_{acc_str}_classifier.joblib"
@@ -86,7 +86,7 @@ def find_latest_model_set(results_dir: Path, file_type: str, model_type: str):
 
 def main():
     FILE_TYPE  = 'txt'
-    RESULTS_DIR = Path(__file__).parent.parent / "results"  # Proje kökünden mutlak yol
+    RESULTS_DIR = Path(__file__).parent.parent / "results"  # absolute path from project root
     
     MODEL_PATH, TFIDF_DICT_PATH, SCALER_PATH = find_latest_model_set(
         RESULTS_DIR, FILE_TYPE, "logistic_regression"
