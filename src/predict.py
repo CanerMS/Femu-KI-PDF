@@ -82,7 +82,7 @@ def main():
         d.mkdir(parents=True, exist_ok=True)
 
     if LISA_MODE:
-        lisa.write_items_to_directory(lisa.read_input(sys.stdin), TARGET_DIR)
+        lisa_items = lisa.write_items_to_directory(lisa.read_input(sys.stdin), TARGET_DIR)
 
     logger.info(f"Uploaded Model: {MODEL_PATH}")
 
@@ -125,13 +125,10 @@ def main():
     if not files:
         logger.warning(f"No {FILE_TYPE} in: {TARGET_DIR}")
         return
-    files.sort()
 
     logger.info(f"In total {len(files)} will be predicted\n")
 
     # 4. Predict and divide to directories
-    lisa_items = []
-
     for file_path in files:
         logger.info(f"{file_path.name} checking...")
 
@@ -170,15 +167,28 @@ def main():
             return
 
         result = "USEFUL" if prediction == 1 else "NOT USEFUL"
+        uncertain = score_percentage < CONFIDENCE_THRESHOLD
 
         if prediction == 1:
             score_percentage = score * 100
-            lisa_items.append(lisa.OutputItem(relevant=True, score=score_percentage))
+
+            if LISA_MODE:
+                lisa_items[file_path.name] = lisa.OutputItem(
+                    relevant=True,
+                    score=score_percentage,
+                    uncertain=uncertain,
+                )
         else:
             score_percentage = (1.0 - score) * 100
-            lisa_items.append(lisa.OutputItem(relevant=False, score=score_percentage))
 
-        if score_percentage < CONFIDENCE_THRESHOLD:
+            if LISA_MODE:
+                lisa_items[file_path.name] = lisa.OutputItem(
+                    relevant=False,
+                    score=score_percentage,
+                    uncertain=uncertain,
+                )
+
+        if uncertain:
             aim_directory = DIR_MANUAL_CHECK
             if FLAG_EX:
                 explanation = f""
@@ -192,7 +202,7 @@ def main():
                 explanation = f"Negative score, archive to {DIR_NOT_USEFUL}"
 
         # if not enough confident
-        if score_percentage < CONFIDENCE_THRESHOLD:
+        if uncertain:
             aim_directory = DIR_MANUAL_CHECK
             explanation = "Human control needed"
         elif result == "USEFUL":
@@ -214,7 +224,7 @@ def main():
                 logger.error(f" -> Eroor while {file_path.name} was carried: {e}\n")
 
     if LISA_MODE:
-        lisa.write_output(lisa_items, original_stdout)
+        lisa.write_output(list(lisa_items.values()), original_stdout)
 
     logger.info("You can see the results in 'data/sorted_pdfs' .")
 
