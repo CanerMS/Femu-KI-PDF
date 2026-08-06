@@ -9,6 +9,7 @@ class InputItem(TypedDict):
 class OutputItem(TypedDict):
 	relevant: bool
 	score: float
+	uncertain: bool
 
 def read_input(stream: TextIO) -> list[InputItem]:
 	data = json.load(stream)
@@ -18,15 +19,23 @@ def read_input(stream: TextIO) -> list[InputItem]:
 
 	return data # type: ignore[no-any-return]
 
-def write_items_to_directory(items: list[InputItem], directory: str) -> None:
+def write_items_to_directory(items: list[InputItem], directory: str) -> dict[str, OutputItem | None]:
+	files: list[str] = []
+
 	for item in items:
-		file = join(directory, item["id"] + ".txt")
+		file = item["id"] + ".txt"
+
+		files.append(file)
+
+		file = join(directory, file)
 
 		# Always overwrite the file as the content might have changed.
 		with open(file, "w", encoding="utf-8") as stream:
 			stream.write(item["content"])
 
-def write_output(items: list[OutputItem], stream: TextIO) -> None:
+	return dict.fromkeys(files)
+
+def write_output(items: list[OutputItem | None], stream: TextIO) -> None:
 	json.dump(items, stream)
 
 def _is_valid_input(data: Any) -> bool:
