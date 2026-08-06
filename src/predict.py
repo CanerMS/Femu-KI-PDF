@@ -92,7 +92,7 @@ def main():
         model.load_model(MODEL_PATH)
     except FileNotFoundError:
         logger.error("Error: Trained model could not be found!")
-        return
+        sys.exit(1)
 
     # Upload TF-IDF Dict
     tfidf_extractor = None
@@ -102,7 +102,7 @@ def main():
             logger.info(f"TF-IDF Dict uploaded successfully: {TFIDF_DICT_PATH}")
         except FileNotFoundError:
             logger.error(f"Critical Error: Feature_Mode='{FEATURE_MODE} but TF-IDF doesn't exist")
-            return
+            sys.exit(1)
 
     scaler = None
     if FEATURE_MODE == 'combined':
@@ -111,7 +111,7 @@ def main():
             logger.info(f"Scaler uploaded successfully: {SCALER_PATH}")
         except FileNotFoundError:
             logger.error(f"Critical Error: Feature_Mode='{FEATURE_MODE}' but Scaler doesn't exist")
-            return
+            sys.exit(1)
 
     preprocessor = TextPreprocessor()
     semantic_extractor = SciBERTSemanticFeatureExtractor()
@@ -163,8 +163,9 @@ def main():
             prediction = model.predict(final_vector)[0]
             score = model.predict_scores(final_vector)[0]
         except ValueError as e:
-            logger.error(f"Convergence error")
-            return
+            logger.error(f"Convergence error: {e}")
+
+            continue
 
         result = "USEFUL" if prediction == 1 else "NOT USEFUL"
         uncertain = score_percentage < CONFIDENCE_THRESHOLD
