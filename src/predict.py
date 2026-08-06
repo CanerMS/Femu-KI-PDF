@@ -29,11 +29,6 @@ if SILENT_MODE:
     for log_name in ["transformers", "httpx", "extractor", "features", "model", "preprocess", "huggingface_hub.utils._http"]:
         logging.getLogger(log_name).setLevel(logging.CRITICAL)
 
-    # 4. bring sys.stdout AND sys.stderr to "devnull" (print and tqdm such outputs will be vanished)
-    original_stdout = sys.stdout # Hide the original to print the result
-    sys.stdout = open(os.devnull, 'w')
-    sys.stderr = open(os.devnull, 'w') # tqdm ve "Warning" will go to stdout
-
 else:
     # If silent mode is deactivated
     logging.basicConfig(level=logging.INFO)
@@ -42,7 +37,7 @@ else:
 sys.path.insert(0, str(Path(__file__).parent))
 
 import lisa
-from project_config import FEATURE_MODE
+from project_config import FEATURE_MODE, LOGS_DIR
 from extractor import PDFExtractor, TXTExtractor
 from preprocess import TextPreprocessor
 from semantic import SciBERTSemanticFeatureExtractor
@@ -50,6 +45,11 @@ from model import LogisticRegressionClassifier
 
 def main():
     LISA_MODE = os.environ.get("LISA", "") != ""
+
+    if LISA_MODE:
+        original_stdout = sys.stdout
+        sys.stdout = (LOGS_DIR / "predict_out.log").open("w", encoding="utf-8")
+        sys.stderr = (LOGS_DIR / "predict_err.log").open("w", encoding="utf-8")
 
     # Which model would you like to use?
     MODEL_PATH = "results/txt_logistic_regression_93_1_classifier.joblib"
