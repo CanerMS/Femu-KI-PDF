@@ -20,6 +20,7 @@ LOGS_DIR = BASE_DIR / "logs"            # Logs directory
 FEEDBACK_DIR = DATA_DIR / "feedback"
 FEEDBACK_FILE = FEEDBACK_DIR / "feedback.jsonl"
 VALID_LABELS = {"useful", "not_useful"}
+MANUAL_CHECK_DIR = DATA_DIR / "manual_check"  # Uncertain predictions go here for reviewer
 
 # Data directories
 RAW_PDFS_DIR = DATA_DIR / "raw_pdfs" # Directory for raw PDFs
@@ -287,5 +288,6 @@ for dir_path in [DATA_DIR, RESULTS_DIR, LOGS_DIR, RAW_PDFS_DIR,
                   USEFUL_PDFS_DIR, RAW_TXTS_DIR, USEFUL_TXTS_DIR,
                   EXTRACTED_RAW_PDFS_DIR, EXTRACTED_USEFUL_PDFS_DIR, 
                   EXTRACTED_RAW_TXTS_DIR, EXTRACTED_USEFUL_TXTS_DIR, 
-                  PREPROCESSED_USEFUL_TEXTS_DIR, PREPROCESSED_RAW_TEXTS_DIR, analysis_results_dir]: # Iterate through each directory path
+                  PREPROCESSED_USEFUL_TEXTS_DIR, PREPROCESSED_RAW_TEXTS_DIR,
+                  MANUAL_CHECK_DIR, analysis_results_dir]: # Iterate through each directory path
     dir_path.mkdir(parents=True, exist_ok=True) # Create directory if it doesn't exist
