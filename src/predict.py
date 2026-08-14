@@ -1,6 +1,6 @@
 import sys
 import os
-import shutil  # Dosyaları taşımak için
+import shutil  # For carrying the files
 from pathlib import Path
 import logging
 import joblib
@@ -8,9 +8,8 @@ import numpy as np
 import scipy.sparse as sp
 import warnings
 
-# --- Silent Mode Settings ---
+# Silent Mode Settings 
 SILENT_MODE = True # If this is true, only the score will show up
-
 
 if SILENT_MODE:
     # 1. Turn off every warnings
@@ -30,11 +29,12 @@ if SILENT_MODE:
         logging.getLogger(log_name).setLevel(logging.CRITICAL)
 
     # 4. bring sys.stdout AND sys.stderr to "devnull" (print and tqdm such outputs will be vanished)
-    original_stdout = sys.stdout # Hide the original to print the result
+    original_stdout = sys.stdout       # Hide the original to print the result
     sys.stdout = open(os.devnull, 'w')
     sys.stderr = open(os.devnull, 'w') # tqdm ve "Warning" will go to stdout
 
 else:
+    original_stdout = sys.stdout  # always available for LISA output
     # If silent mode is deactivated
     logging.basicConfig(level=logging.INFO)
     logger = logging.getLogger(__name__)
@@ -42,28 +42,48 @@ else:
 sys.path.insert(0, str(Path(__file__).parent))
 
 import lisa
-from project_config import FEATURE_MODE
+from project_config import FEATURE_MODE, RAW_TXTS_DIR, USEFUL_TXTS_DIR, RAW_PDFS_DIR, USEFUL_PDFS_DIR, MANUAL_CHECK_DIR
 from extractor import PDFExtractor, TXTExtractor
 from preprocess import TextPreprocessor
 from semantic import SciBERTSemanticFeatureExtractor
 from model import LogisticRegressionClassifier
 
+
+def find_latest_model_set(results_dir: Path, file_type: str, model_type: str):
+    """
+    Find the latest model set by sorting filenames lexicographically.
+    """
+    models = sorted(results_dir.glob(f"{file_type}_{model_type}_*_classifier.joblib"))  # find the matching classifier.joblib files and sort them
+
+    if not models: return None, None, None
+
+    latest_model = models[-1]  # asc to desc, so last one is the latest
+
+    suffix = latest_model.stem[len(f"{file_type}_{model_type}_"):].removesuffix("_classifier")
+
+    return (
+        latest_model,
+        results_dir / f"{file_type}_tfidf_vocabulary_{suffix}.joblib",
+        results_dir / f"{file_type}_scaler_{suffix}.joblib"
+    )
+
+
 def main():
     LISA_MODE = os.environ.get("LISA", "") != ""
 
-    # Which model would you like to use?
-    MODEL_PATH = "results/txt_logistic_regression_93_1_classifier.joblib"
+    FILE_TYPE  = 'txt'
+    RESULTS_DIR = Path(__file__).parent.parent / "results"  # absolute path from project root
 
-    # Which tf-idf model would you like to combine?
-    TFIDF_DICT_PATH = "results/txt_tfidf_vocabulary_93_1.joblib"
+    MODEL_PATH, TFIDF_DICT_PATH, SCALER_PATH = find_latest_model_set(
+        RESULTS_DIR, FILE_TYPE, "logistic_regression"
+    )
+    if MODEL_PATH is None:
+        print("Error: No trained model found!")
+        return
+    logger.info(f"Auto selected model: {MODEL_PATH.name}")
 
-    # Which scaler model would you like to use?
-    SCALER_PATH = "results/txt_scaler_93_1.joblib"
-
-    FILE_TYPE = 'txt'
     CONFIDENCE_THRESHOLD = 75.0  # Human in the loop threshold
-
-    FLAG_EX = False # for more explanations
+    FLAG_EX = False  # for more explanations
 
     # 2. Arrange the files
     TARGET_DIR = Path("data/to_test_files")  # Which pdf/txt would you like to test?
@@ -74,12 +94,13 @@ def main():
     DIR_NOT_USEFUL = SORTED_DIR / "Not_Useful"
     DIR_MANUAL_CHECK = SORTED_DIR / "Manual_Check"
 
-    # Clean up leftovers in the target directory:
+    for d in [DIR_USEFUL, DIR_NOT_USEFUL, DIR_MANUAL_CHECK]:
+        d.mkdir(parents=True, exist_ok=True)
+
+    # Clean up and recreate TARGET_DIR so LISA gets fresh files
     if LISA_MODE and os.path.exists(TARGET_DIR):
         shutil.rmtree(TARGET_DIR)
-
-    for d in [TARGET_DIR, DIR_USEFUL, DIR_NOT_USEFUL, DIR_MANUAL_CHECK]:
-        d.mkdir(parents=True, exist_ok=True)
+    TARGET_DIR.mkdir(parents=True, exist_ok=True)
 
     if LISA_MODE:
         lisa.write_items_to_directory(lisa.read_input(sys.stdin), TARGET_DIR)
@@ -157,8 +178,8 @@ def main():
             else:
                 final_vector = np.hstack((tf_vec, sem_vec))
 
-        # Scale before predicting
-            if FEATURE_MODE == 'combined' and scaler is not None:
+            # Scale before predicting
+            if scaler is not None:
                 final_vector = scaler.transform(final_vector)
 
         # Prediction and confident rate
@@ -177,19 +198,6 @@ def main():
         else:
             score_percentage = (1.0 - score) * 100
             lisa_items.append(lisa.OutputItem(relevant=False, score=score_percentage))
-
-        if score_percentage < CONFIDENCE_THRESHOLD:
-            aim_directory = DIR_MANUAL_CHECK
-            if FLAG_EX:
-                explanation = f""
-        elif result == "USEFUL":
-            aim_directory = DIR_USEFUL
-            if FLAG_EX:
-                explanation = f"Positive score, archive to {DIR_USEFUL}"
-        else:
-            aim_directory = DIR_NOT_USEFUL
-            if FLAG_EX:
-                explanation = f"Negative score, archive to {DIR_NOT_USEFUL}"
 
         # if not enough confident
         if score_percentage < CONFIDENCE_THRESHOLD:
@@ -211,12 +219,13 @@ def main():
 
         except Exception as e:
             if not SILENT_MODE:
-                logger.error(f" -> Eroor while {file_path.name} was carried: {e}\n")
+                logger.error(f" -> Error while {file_path.name} was carried: {e}\n")
 
     if LISA_MODE:
         lisa.write_output(lisa_items, original_stdout)
 
     logger.info("You can see the results in 'data/sorted_pdfs' .")
+
 
 if __name__ == "__main__":
     main()
