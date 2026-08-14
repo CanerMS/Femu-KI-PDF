@@ -49,40 +49,23 @@ from model import LogisticRegressionClassifier
 
 def find_latest_model_set(results_dir: Path, file_type: str, model_type: str):
     """
-    Find the latest model set based on the timestamp in the filename.
-    Returns a dictionary with the paths to the model, tf-idf vocabulary, and scaler.
+    Find the latest model set by sorting filenames lexicographically.
     """
-    import re
+    models = sorted(results_dir.glob(f"{file_type}_{model_type}_*_classifier.joblib")) # find the matching classifier.joblib files and sort them
 
-    # Pattern: {file_type}_{model_type}_{YYYYMMDD_HHMMSS}_{acc_str}_classifier.joblib
-    pattern = re.compile(
-        rf"^{re.escape(file_type)}_{re.escape(model_type)}_(\d{{8}}_\d{{6}})_[\d_]+_classifier\.joblib$"
-    )
+    if not models: return None, None, None
 
-    timestamps = []
-    for f in results_dir.glob(f"{file_type}_{model_type}_*_classifier.joblib"):
-        m = pattern.match(f.name)
-        if m:
-            timestamps.append(m.group(1))
+    latest_model = models[-1] # asc to desc, so last one its he latest
 
-    if not timestamps:
-        return None, None, None  # no models found
+    suffix = latest_model.stem[len(f"{file_type}_{model_type}_"):].removesuffix("_classifier")
 
-    latest_ts = sorted(timestamps)[-1]  # the latest date
-
-    # Find the full file name
-    latest_model_file = next(
-        f for f in results_dir.glob(f"{file_type}_{model_type}_{latest_ts}_*_classifier.joblib")
+    return (
+        latest_model,
+        results_dir / f"{file_type}_tfidf_vocabulary_{suffix}.joblib",
+        results_dir / f"{file_type}_scaler_{suffix}.joblib"
     )
     
-    # Extract the acc_str from the file name
-    acc_str = latest_model_file.stem.replace(f"{file_type}_{model_type}_{latest_ts}_", "").replace("_classifier", "")
-
-    model_path  = results_dir / f"{file_type}_{model_type}_{latest_ts}_{acc_str}_classifier.joblib"
-    tfidf_path  = results_dir / f"{file_type}_tfidf_vocabulary_{latest_ts}_{acc_str}.joblib"
-    scaler_path = results_dir / f"{file_type}_scaler_{latest_ts}_{acc_str}.joblib"
-
-    return model_path, tfidf_path, scaler_path
+    
 
 def main():
     FILE_TYPE  = 'txt'
@@ -97,7 +80,6 @@ def main():
     logger.info(f"Auto selected model: {MODEL_PATH.name}")
     
     CONFIDENCE_THRESHOLD = 75.0  # Human in the loop threshold
-    
     FLAG_EX = False # for more explanations
 
     # 2. Arrange the files
