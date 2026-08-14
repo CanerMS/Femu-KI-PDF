@@ -5,16 +5,21 @@ Centralized configuration for the PDF classifier
 from pathlib import Path
 
 # Model selection
-AVAILABLE_MODELS = ['random_forest', 'logistic_regression', 'svm'] # add more models here as needed
+AVAILABLE_MODELS = ['random_forest', 'logistic_regression', 'svm'] # Add more models here as needed
 MODEL_TYPE = 'logistic_regression'  # Options: 'random_forest', 'svm', 'logistic_regression'
-FEATURE_MODE = 'combined' # Options: 'tfidf', 'semantic', 'combined' (both of them together)
-SEMANTIC_MODEL_TYPE = 'scibert' # Options: 'minilm', 'scibert'
+FEATURE_MODE = 'combined'           # Options: 'tfidf', 'semantic', 'combined' (both of them together gives usually better results)
+SEMANTIC_MODEL_TYPE = 'scibert'     # Options: 'minilm', 'scibert'
 
 # Base directories
 BASE_DIR = Path(__file__).parent.parent # Project root directory
-DATA_DIR = BASE_DIR / "data" # Data directory
-RESULTS_DIR = BASE_DIR / "results" # Results directory
-LOGS_DIR = BASE_DIR / "logs" # Logs directory
+DATA_DIR = BASE_DIR / "data"            # Data directory
+RESULTS_DIR = BASE_DIR / "results"      # Results directory
+LOGS_DIR = BASE_DIR / "logs"            # Logs directory
+
+# Feedback Directories
+FEEDBACK_DIR = DATA_DIR / "feedback"
+FEEDBACK_FILE = FEEDBACK_DIR / "feedback.jsonl"
+VALID_LABELS = {"useful", "not_useful"}
 
 # Data directories
 RAW_PDFS_DIR = DATA_DIR / "raw_pdfs" # Directory for raw PDFs
@@ -30,21 +35,23 @@ PREPROCESSED_USEFUL_TEXTS_DIR = DATA_DIR / "preprocessed_useful_texts"
 PREPROCESSED_RAW_TEXTS_DIR = DATA_DIR / "preprocessed_raw_texts"
 
 # Model parameters
-MAX_FEATURES = 2000 # Maximum number of features for vectorizer
+MAX_FEATURES = 2000  # Maximum number of features for vectorizer
 NGRAM_RANGE = (1, 2) # N-gram range for text vectorization
-TEST_SIZE = 0.25 # Proportion of data for test set
-RANDOM_STATE = 42 # Random state for reproducibility
-SMOTE_THRESHOLD =5  #  Imbalance ratio threshold, above which SMOTE will be applied
+TEST_SIZE = 0.25     # Proportion of data for test set
+RANDOM_STATE = 42    # Random state for reproducibility
+SMOTE_THRESHOLD = 5  # Imbalance ratio threshold, above which SMOTE will be applied
 
 # Model hyperparameters
-N_ESTIMATORS = 100 # Number of trees in Random Forest
-MAX_DEPTH = 10 # Maximum depth of each tree
+N_ESTIMATORS = 100    # Number of trees in Random Forest
+MAX_DEPTH = 10        # Maximum depth of each tree
 MIN_SAMPLES_SPLIT = 5 # Minimum samples required to split a node
 
 analysis_results_dir = RESULTS_DIR / "feature_analysis" # Directory for feature analysis results
 
 # Custom stop words
-CUSTOM_STOP_WORDS = [ # List of custom stop words to exclude from text analysis
+CUSTOM_STOP_WORDS = [ 
+    # List of custom stop words to exclude from text analysis
+    
     # GENERIC RESEARCH TERMS 
     'study', 'studies', 'studied', 'result', 'results',
     'method', 'methods', 'data', 'analysis', 'conclusion',
@@ -94,19 +101,19 @@ CUSTOM_STOP_WORDS = [ # List of custom stop words to exclude from text analysis
     'cohort', 'trial', 'trials', 'experiment', 'experimental',
     'approved', 
     # META WORDS 
-    'targeting',     # Generic term
+    'targeting',     
     'algorithm', 'algorithms',
     'artificial', 'intelligence',
     'features', 'feature',
-    'united', 'states',  # Geographic noise
+    'united', 'states',  
     'longitudinal',
     # JOURNAL/FIGURE NOISE TERMS
-    'fig', 'figs',   # Already has, but add variations
-    'crossref', 'pubmed',  # Journal metadata
+    'fig', 'figs',   
+    'crossref', 'pubmed',  
     'researcharticle', 'vol',
     'opticsexpress',
-    'cid',  # Citation ID
-    'ps',  'pdf',   # File format noise
+    'cid',  
+    'ps',  'pdf',  
     # COMPARISON & OUTCOMES 
     'comparison', 'compare', 'difference', 'differences',
     'similar', 'similarly', 'higher', 'lower',
@@ -127,14 +134,14 @@ CUSTOM_STOP_WORDS = [ # List of custom stop words to exclude from text analysis
     'important', 'potential', 'possible', 'likely',
     'general', 'specific', 'particular', 'common',
     'primary', 'secondary', 'initial', 'final',
-    'major', 'minor', 'main', 'overall', 'processing',      # Generic processing term
-    'shorter',                                              # Generic descriptor
-    'disorder', 'disorders',        # Generic medical
-    'enabling',                     # Generic capability term
-    'associations',                 # Generic statistics
-    'technology', 'technologies',   # Generic tech
-    'la',                           # Abbreviation noise (Los Angeles?)
-    'respiratory',                  # Generic medical term
+    'major', 'minor', 'main', 'overall', 'processing',     
+    'shorter',                                              
+    'disorder', 'disorders',        
+    'enabling',                     
+    'associations',                 
+    'technology', 'technologies',   
+    'la',                           
+    'respiratory',                  
     'processing', 'severe', 'stronger', 'radiology',
     'spectra', 'spectral', 'reconstruction', 'view',
     # Countries 
@@ -143,9 +150,7 @@ CUSTOM_STOP_WORDS = [ # List of custom stop words to exclude from text analysis
     'italy', 'italian', 'korea', 'korean', 'south korea', 'north korea', 'turkey', 'turkish', 'mexico', 'mexican', 'saudi', 'arabia', 'saudi arabia',
     'uae', 'united arab emirates', 'singapore', 'singaporean', 'sweden', 'swedish', 'norway', 'norwegian','denmark', 'danish', 'finland', 'finnish', 'netherlands', 'dutch','belgium', 'belgian','switzerland', 'swiss', 'austria', 'austrian','poland', 'polish','greece', 'greek','portugal', 'portuguese','ireland', 'irish',
     'new zealand', 'zealandic','egypt', 'egyptian','south africa', 'african','argentina', 'argentinian', 'chile', 'chilean',
-    'colombia', 'colombian',
-    'venezuela', 'venezuelan',
-    'peru', 'peruvian',
+    'colombia', 'colombian', 'venezuela', 'venezuelan', 'peru', 'peruvian',
     'pakistan', 'pakistani',
     'bangladesh', 'bangladeshi',    
     'sri lanka', 'sri lankan',
