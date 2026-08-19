@@ -77,9 +77,11 @@ def main():
     MODEL_PATH, TFIDF_DICT_PATH, SCALER_PATH = find_latest_model_set(
         RESULTS_DIR, FILE_TYPE, "logistic_regression"
     )
+    
     if MODEL_PATH is None:
         print("Error: No trained model found!")
         return
+
     logger.info(f"Auto selected model: {MODEL_PATH.name}")
 
     CONFIDENCE_THRESHOLD = 75.0  # Human in the loop threshold
