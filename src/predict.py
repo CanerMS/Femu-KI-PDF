@@ -166,6 +166,14 @@ def main():
 
         clean_text = preprocessor.clean_text(text)
 
+        # If the clean text is empty, we cannot make a prediction, skip the file
+        if not clean_text.strip():
+            logger.warning(f"Skipping {file_path.name} because clean text is empty")
+
+            # TODO: Lisa should be notified that the file is empty
+
+            continue
+
         final_vector = None
         if FEATURE_MODE == 'semantic':
             final_vector = semantic_extractor.extract_embeddings([clean_text], [file_path.stem])
