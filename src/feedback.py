@@ -48,7 +48,7 @@ def _find_file(filename: str, file_type: str) -> tuple[Path, str | None]:
 
     Returns:
         (file_path, detected_label)
-        detected_label is "useful" / "not_useful" / "manual_check.
+        detected_label is "useful" / "not_useful" / "manual_check".
 
     Raises:
         FileNotFoundError: if the file is not found anywhere.
@@ -70,7 +70,6 @@ def _find_file(filename: str, file_type: str) -> tuple[Path, str | None]:
     searched = ", ".join(d.name for d in [*dirs.values(), MANUAL_CHECK_DIR]) # create a string of all directories that were searched
     raise FileNotFoundError(f"File '{filename}' not found. Searched: {searched}") # raise FileNotFoundError if file is not found
 
-
 def _move_file(
     file_path: Path, # path to the file
     target_dir: Path, # target directory
@@ -82,16 +81,14 @@ def _move_file(
         (target_directory, was_already_there)
     """
     was_already_there = file_path.parent.resolve() == target_dir.resolve() # check if file is already in the target directory
-
     if was_already_there:
         logger.info(f"[CORRECT] {filename}: already in {target_dir.name}/")
         return target_dir, True
 
-    target_dir.mkdir(parents=True, exist_ok=True)
-    shutil.move(str(file_path), target_dir / filename)
-    logger.info(f"[CORRECT] {filename}: {file_path.parent.name}/ → {target_dir.name}/")
-    return target_dir, False
-
+    target_dir.mkdir(parents=True, exist_ok=True) # create the target directory if it doesn't exist
+    shutil.move(str(file_path), target_dir / filename) # move the file from its current directory to the new directory
+    logger.info(f"[CORRECT] {filename}: {file_path.parent.name}/ → {target_dir.name}/") # log the file movement
+    return target_dir, False # returns the target directory and a boolean indicating if the file was already in the target directory
 
 def _log_to_jsonl(record: dict) -> None:
     """Append a single feedback record to feedback.jsonl."""
@@ -99,17 +96,15 @@ def _log_to_jsonl(record: dict) -> None:
     with open(FEEDBACK_FILE, "a", encoding="utf-8") as fh:
         fh.write(json.dumps(record, ensure_ascii=False) + "\n") # json.dumps() converts a Python dictionary into a JSON formatted string. ensure_ascii=False ensures that non-ASCII characters are written as-is, and + "\n" appends a newline character to ensure each record is on its own line in the JSONL file.
 
-
 def _refresh_labels(file_type: str, update: bool) -> None: # for feedback.jsonl to track the version of the pipeline
     """Re-generate labels.csv if requested."""
-    if not update:
-        return
+    if not update: # if update is False, exit the function
+        return # exit the function if update is False
     try:
-        create_labels(file_type=file_type)
-        logger.info("  labels.csv updated.")
+        create_labels(file_type=file_type) # create the labels.csv file with the updated labels
+        logger.info("  labels.csv updated.") # log the update
     except Exception as exc:
-        logger.warning(f"  labels.csv update failed: {exc}")
-
+        logger.warning(f"  labels.csv update failed: {exc}") # log the error
 
 # Public API
 def correct(
@@ -120,7 +115,8 @@ def correct(
     file_type: str = "txt",
     reviewer: str | None = None,
     update_labels: bool = True,
-) -> dict[str, str]:
+) -> dict[str, Any]:
+    
     """Unified correction: change the label of a wrong/uncertain prediction.
 
     decision="useful" | "not_useful" (explicit label)
@@ -157,34 +153,43 @@ def correct(
             f"got {decision!r}"
         )
 
-    dirs = _get_dirs(file_type)
-    file_path, current_label = _find_file(filename, file_type)
+    dirs = _get_dirs(file_type) # get the directories for the file type
+    file_path, current_label = _find_file(filename, file_type) # find the file and get its current label
 
 
-    new_label = decision
-    method = "Wrong marked or Uncertain labeled"
+    new_label = decision # set the new label to the decision
+    method = "Wrong marked or Uncertain labeled" # set the method to "Wrong marked or Uncertain labeled"
 
-    target_dir, was_already_there = _move_file(
-        file_path, dirs[new_label], filename
+    target_dir, was_already_there = _move_file(  # move the file from its current directory to the new directory based on the reviewer's decision. 
+        file_path, dirs[new_label], filename # file_path: path to the file, dirs[new_label]: target directory, filename: file name
     )
 
-    now = datetime.now(timezone.utc)
-    _log_to_jsonl({
-        "record_id":       f"{now.strftime('%Y%m%d%H%M%S%f')}_{filename}",
-        "filename":        filename,
-        "old_label":       current_label,
-        "new_label":       new_label,
-        "predicted_score": predicted_score,
-        "reviewer":        reviewer,
-        "method":          method,
-        "apply_status":    "applied",
-        "applied_at":      now.isoformat(),
-        "created_at":      now.isoformat(),
-    })
+    now = datetime.now(timezone.utc) # get the current date and time in UTC
 
-    _refresh_labels(file_type, update_labels)
+    if not was_already_there: # if the file was not already in the target directory, log it
+        try:
+            _log_to_jsonl({ # log the feedback to the feedback.jsonl file
+                "record_id":       f"{now.strftime('%Y%m%d%H%M%S%f')}_{filename}", # create a unique record id based on the current date and time and the filename
+                "filename":        filename, # file name
+                "old_label":       current_label, # old label
+                "new_label":       new_label, # new label
+                "predicted_score": predicted_score, # model's confidence score
+                "reviewer":        reviewer, # reviewer's name
+                "method":          method, # method used to correct the feedback
+                "apply_status":    "applied", # status of the feedback
+                "applied_at":      now.isoformat(), # date and time when the feedback was applied
+                "created_at":      now.isoformat(), # date and time when the feedback was created
+            })
+        except OSError as exc:
+            logger.error(
+                f"[CRITICAL] {filename} moved but could not be logged to JSONL. "
+                f"Manual control required! Error: {exc}"
+            )
+            raise RuntimeError(f"Feedback log could not be written: {exc}") from exc
 
-    return {
+    _refresh_labels(file_type, update_labels) # update the labels.csv file if update_labels is True
+
+    return { # return a dictionary with the correction details
         "filename":          filename,
         "old_label":         current_label,
         "new_label":         new_label,
@@ -193,6 +198,7 @@ def correct(
     }
 
 # Detailed feedback for the full feedback_apply.py workflow (for the future improvements)
+# ----------------------- Not for now --------------------------------------------------
 
 def submit_feedback(
     filename: str,
