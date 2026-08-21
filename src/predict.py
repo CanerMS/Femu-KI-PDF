@@ -8,7 +8,7 @@ import numpy as np
 import scipy.sparse as sp
 import warnings
 
-# Silent Mode Settings 
+# Silent Mode Settings
 SILENT_MODE = True # If this is true, only the score will show up
 
 if SILENT_MODE:
@@ -79,7 +79,7 @@ def main():
     MODEL_PATH, TFIDF_DICT_PATH, SCALER_PATH = find_latest_model_set(
         RESULTS_DIR, FILE_TYPE, "logistic_regression"
     )
-    
+
     if MODEL_PATH is None:
         print("Error: No trained model found!")
         return
