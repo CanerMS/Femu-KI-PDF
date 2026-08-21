@@ -101,12 +101,12 @@ def main():
         d.mkdir(parents=True, exist_ok=True)
 
     # Clean up and recreate TARGET_DIR so LISA gets fresh files
-    if LISA_MODE and os.path.exists(TARGET_DIR):
+    if LISA_MODE and TARGET_DIR.exists():
         shutil.rmtree(TARGET_DIR)
     TARGET_DIR.mkdir(parents=True, exist_ok=True)
 
     if LISA_MODE:
-        lisa_items = lisa.write_items_to_directory(lisa.read_input(sys.stdin), TARGET_DIR)
+        lisa_items = lisa.write_items_to_directory(lisa.read_input(sys.stdin), str(TARGET_DIR))
 
     logger.info(f"Uploaded Model: {MODEL_PATH}")
 
