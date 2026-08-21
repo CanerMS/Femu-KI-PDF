@@ -37,7 +37,7 @@ else:
 sys.path.insert(0, str(Path(__file__).parent))
 
 import lisa
-from project_config import FEATURE_MODE, LOGS_DIR, RAW_TXTS_DIR, USEFUL_TXTS_DIR, RAW_PDFS_DIR, USEFUL_PDFS_DIR, MANUAL_CHECK_DIR
+from project_config import FEATURE_MODE, LOGS_DIR
 from extractor import PDFExtractor, TXTExtractor
 from preprocess import TextPreprocessor
 from semantic import SciBERTSemanticFeatureExtractor
@@ -87,7 +87,6 @@ def main():
     logger.info(f"Auto selected model: {MODEL_PATH.name}")
 
     CONFIDENCE_THRESHOLD = 75.0  # Human in the loop threshold
-    FLAG_EX = False  # for more explanations
 
     # 2. Arrange the files
     TARGET_DIR = Path("data/to_test_files")  # Which pdf/txt would you like to test?
