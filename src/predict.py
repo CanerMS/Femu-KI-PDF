@@ -81,8 +81,8 @@ def main():
     )
 
     if MODEL_PATH is None:
-        print("Error: No trained model found!")
-        return
+        logger.error("Error: No trained model found!")
+        sys.exit(1)
 
     logger.info(f"Auto selected model: {MODEL_PATH.name}")
 
@@ -149,7 +149,6 @@ def main():
     files = list(TARGET_DIR.glob(f"*.{FILE_TYPE}"))
     if not files:
         logger.warning(f"No {FILE_TYPE} in: {TARGET_DIR}")
-        return
 
     logger.info(f"In total {len(files)} will be predicted\n")
 
@@ -168,8 +167,6 @@ def main():
         # If the clean text is empty, we cannot make a prediction, skip the file
         if not clean_text.strip():
             logger.warning(f"Skipping {file_path.name} because clean text is empty")
-
-            # TODO: Lisa should be notified that the file is empty
 
             continue
 
