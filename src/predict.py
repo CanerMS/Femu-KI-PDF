@@ -28,11 +28,6 @@ if SILENT_MODE:
     for log_name in ["transformers", "httpx", "extractor", "features", "model", "preprocess", "huggingface_hub.utils._http"]:
         logging.getLogger(log_name).setLevel(logging.CRITICAL)
 
-    # 4. bring sys.stdout AND sys.stderr to "devnull" (print and tqdm such outputs will be vanished)
-    original_stdout = sys.stdout       # Hide the original to print the result
-    sys.stdout = open(os.devnull, 'w')
-    sys.stderr = open(os.devnull, 'w') # tqdm ve "Warning" will go to stdout
-
 else:
     original_stdout = sys.stdout  # always available for LISA output
     # If silent mode is deactivated
@@ -42,7 +37,7 @@ else:
 sys.path.insert(0, str(Path(__file__).parent))
 
 import lisa
-from project_config import FEATURE_MODE, RAW_TXTS_DIR, USEFUL_TXTS_DIR, RAW_PDFS_DIR, USEFUL_PDFS_DIR, MANUAL_CHECK_DIR
+from project_config import FEATURE_MODE, LOGS_DIR, RAW_TXTS_DIR, USEFUL_TXTS_DIR, RAW_PDFS_DIR, USEFUL_PDFS_DIR, MANUAL_CHECK_DIR
 from extractor import PDFExtractor, TXTExtractor
 from preprocess import TextPreprocessor
 from semantic import SciBERTSemanticFeatureExtractor
@@ -71,6 +66,13 @@ def find_latest_model_set(results_dir: Path, file_type: str, model_type: str):
 def main():
     LISA_MODE = os.environ.get("LISA", "") != ""
 
+    if LISA_MODE:
+        original_stdout = sys.stdout
+        sys.stdout = (LOGS_DIR / "predict_out.log").open("w", encoding="utf-8")
+        sys.stderr = (LOGS_DIR / "predict_err.log").open("w", encoding="utf-8")
+
+    # Which model would you like to use?
+    MODEL_PATH = "results/txt_logistic_regression_93_1_classifier.joblib"
     FILE_TYPE  = 'txt'
     RESULTS_DIR = Path(__file__).parent.parent / "results"  # absolute path from project root
 
@@ -105,7 +107,7 @@ def main():
     TARGET_DIR.mkdir(parents=True, exist_ok=True)
 
     if LISA_MODE:
-        lisa.write_items_to_directory(lisa.read_input(sys.stdin), TARGET_DIR)
+        lisa_items = lisa.write_items_to_directory(lisa.read_input(sys.stdin), TARGET_DIR)
 
     logger.info(f"Uploaded Model: {MODEL_PATH}")
 
@@ -115,7 +117,7 @@ def main():
         model.load_model(MODEL_PATH)
     except FileNotFoundError:
         logger.error("Error: Trained model could not be found!")
-        return
+        sys.exit(1)
 
     # Upload TF-IDF Dict
     tfidf_extractor = None
@@ -125,7 +127,7 @@ def main():
             logger.info(f"TF-IDF Dict uploaded successfully: {TFIDF_DICT_PATH}")
         except FileNotFoundError:
             logger.error(f"Critical Error: Feature_Mode='{FEATURE_MODE} but TF-IDF doesn't exist")
-            return
+            sys.exit(1)
 
     scaler = None
     if FEATURE_MODE == 'combined':
@@ -134,7 +136,7 @@ def main():
             logger.info(f"Scaler uploaded successfully: {SCALER_PATH}")
         except FileNotFoundError:
             logger.error(f"Critical Error: Feature_Mode='{FEATURE_MODE}' but Scaler doesn't exist")
-            return
+            sys.exit(1)
 
     preprocessor = TextPreprocessor()
     semantic_extractor = SciBERTSemanticFeatureExtractor()
@@ -148,13 +150,10 @@ def main():
     if not files:
         logger.warning(f"No {FILE_TYPE} in: {TARGET_DIR}")
         return
-    files.sort()
 
     logger.info(f"In total {len(files)} will be predicted\n")
 
     # 4. Predict and divide to directories
-    lisa_items = []
-
     for file_path in files:
         logger.info(f"{file_path.name} checking...")
 
@@ -197,20 +196,33 @@ def main():
             prediction = model.predict(final_vector)[0]
             score = model.predict_scores(final_vector)[0]
         except ValueError as e:
-            logger.error(f"Convergence error")
-            return
+            logger.error(f"Convergence error: {e}")
+
+            continue
 
         result = "USEFUL" if prediction == 1 else "NOT USEFUL"
+        uncertain = score_percentage < CONFIDENCE_THRESHOLD
 
         if prediction == 1:
             score_percentage = score * 100
-            lisa_items.append(lisa.OutputItem(relevant=True, score=score_percentage))
+
+            if LISA_MODE:
+                lisa_items[file_path.name] = lisa.OutputItem(
+                    relevant=True,
+                    score=score_percentage,
+                    uncertain=uncertain,
+                )
         else:
             score_percentage = (1.0 - score) * 100
-            lisa_items.append(lisa.OutputItem(relevant=False, score=score_percentage))
 
+            if LISA_MODE:
+                lisa_items[file_path.name] = lisa.OutputItem(
+                    relevant=False,
+                    score=score_percentage,
+                    uncertain=uncertain,
+                )
         # if not enough confident
-        if score_percentage < CONFIDENCE_THRESHOLD:
+        if uncertain:
             aim_directory = DIR_MANUAL_CHECK
             explanation = "Human control needed"
         elif result == "USEFUL":
@@ -232,7 +244,7 @@ def main():
                 logger.error(f" -> Error while {file_path.name} was carried: {e}\n")
 
     if LISA_MODE:
-        lisa.write_output(lisa_items, original_stdout)
+        lisa.write_output(list(lisa_items.values()), original_stdout)
 
     logger.info("You can see the results in 'data/sorted_pdfs' .")
 
