@@ -36,7 +36,7 @@ else:
 sys.path.insert(0, str(Path(__file__).parent))
 
 import lisa
-from project_config import FEATURE_MODE, LOGS_DIR, DATA_DIR
+from project_config import FEATURE_MODE, LOGS_DIR, DATA_DIR, MANUAL_CHECK_DIR, RAW_TXTS_DIR, USEFUL_TXTS_DIR
 from extractor import PDFExtractor, TXTExtractor
 from preprocess import TextPreprocessor
 from semantic import SciBERTSemanticFeatureExtractor
@@ -88,13 +88,18 @@ def main():
     CONFIDENCE_THRESHOLD = 75.0  # Human in the loop threshold
 
     # 2. Arrange the files
-    TARGET_DIR = Path("data/to_test_files")  # Which pdf/txt would you like to test?
-    SORTED_DIR = Path("data/sorted_pdfs")
+    TARGET_DIR = DATA_DIR / "to_test_files"  # Which pdf/txt would you like to test?
+    SORTED_DIR = DATA_DIR / "sorted_pdfs"
 
     # Create aim directory
-    DIR_USEFUL = SORTED_DIR / "Useful"
-    DIR_NOT_USEFUL = SORTED_DIR / "Not_Useful"
-    DIR_MANUAL_CHECK = SORTED_DIR / "Manual_Check"
+    if LISA_MODE:
+        DIR_USEFUL = USEFUL_TXTS_DIR
+        DIR_NOT_USEFUL = RAW_TXTS_DIR
+        DIR_MANUAL_CHECK = MANUAL_CHECK_DIR
+    else:
+        DIR_USEFUL = SORTED_DIR / "Useful"
+        DIR_NOT_USEFUL = SORTED_DIR / "Not_Useful"
+        DIR_MANUAL_CHECK = SORTED_DIR / "Manual_Check"
 
     for d in [DIR_USEFUL, DIR_NOT_USEFUL, DIR_MANUAL_CHECK]:
         d.mkdir(parents=True, exist_ok=True)
