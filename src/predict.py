@@ -237,6 +237,11 @@ def main():
             aim_directory = DIR_NOT_USEFUL
             explanation = "Overconfident, archive!"
 
+        # Prevent file duplication in case of repeated prediction with differing results.
+        if LISA_MODE:
+            for directory in (DIR_MANUAL_CHECK, DIR_USEFUL, DIR_NOT_USEFUL):
+                (directory / file_path.name).unlink(True)
+
         # Carry the file
         try:
             shutil.move(str(file_path), str(aim_directory / file_path.name))
