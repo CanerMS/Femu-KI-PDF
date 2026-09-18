@@ -36,7 +36,7 @@ else:
 sys.path.insert(0, str(Path(__file__).parent))
 
 import lisa
-from project_config import FEATURE_MODE, LOGS_DIR
+from project_config import FEATURE_MODE, LOGS_DIR, DATA_DIR
 from extractor import PDFExtractor, TXTExtractor
 from preprocess import TextPreprocessor
 from semantic import SciBERTSemanticFeatureExtractor
@@ -106,6 +106,10 @@ def main():
 
     if LISA_MODE:
         lisa_items = lisa.write_items_to_directory(lisa.read_input(sys.stdin), str(TARGET_DIR))
+
+        # Delete SciBERT cache files.
+        for file in lisa_items:
+            (DATA_DIR / "features" / "cache_scibert" / file).with_suffix(".npy").unlink(True)
 
     logger.info(f"Uploaded Model: {MODEL_PATH}")
 
