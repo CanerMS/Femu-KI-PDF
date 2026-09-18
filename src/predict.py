@@ -29,7 +29,6 @@ if SILENT_MODE:
         logging.getLogger(log_name).setLevel(logging.CRITICAL)
 
 else:
-    original_stdout = sys.stdout  # always available for LISA output
     # If silent mode is deactivated
     logging.basicConfig(level=logging.INFO)
     logger = logging.getLogger(__name__)
@@ -245,7 +244,6 @@ def main():
         original_stdout.flush()
 
     logger.info("You can see the results in 'data/sorted_pdfs' .")
-
 
 if __name__ == "__main__":
     main()
