@@ -37,10 +37,11 @@ data/extracted_texts/*.txt
 data/useful_pdfs/*.pdf
 data/useful_texts/*.txt
 data/processed_data/*.csv
-data/features/*.joblib
 data/labels.csv
 data/preprocessed_texts/*.txt
-
+data/features/
+data/sorted_pdfs/
+logs/
 
 # Results
 results/*.joblib
