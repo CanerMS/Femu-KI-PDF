@@ -189,18 +189,18 @@ def main():
 
         # Prediction and confident rate
         try:
-            prediction = model.predict(final_vector)[0]
-            score = model.predict_scores(final_vector)[0]
+            prediction = model.predict(final_vector)[0].item()
+            score = model.predict_scores(final_vector)[0].item()
         except ValueError as e:
             logger.error(f"Convergence error: {e}")
 
             continue
 
         result = "USEFUL" if prediction == 1 else "NOT USEFUL"
-        uncertain = score_percentage < CONFIDENCE_THRESHOLD
 
         if prediction == 1:
             score_percentage = score * 100
+            uncertain = score_percentage < CONFIDENCE_THRESHOLD
 
             if LISA_MODE:
                 lisa_items[file_path.name] = lisa.OutputItem(
@@ -210,6 +210,7 @@ def main():
                 )
         else:
             score_percentage = (1.0 - score) * 100
+            uncertain = score_percentage < CONFIDENCE_THRESHOLD
 
             if LISA_MODE:
                 lisa_items[file_path.name] = lisa.OutputItem(
@@ -241,6 +242,7 @@ def main():
 
     if LISA_MODE:
         lisa.write_output(list(lisa_items.values()), original_stdout)
+        original_stdout.flush()
 
     logger.info("You can see the results in 'data/sorted_pdfs' .")
 
