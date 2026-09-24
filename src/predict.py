@@ -1,5 +1,5 @@
-import sys
-import os
+import sys 
+import os  # For LISA mode
 import shutil  # For carrying the files
 from pathlib import Path
 import logging
@@ -7,12 +7,13 @@ import joblib
 import numpy as np
 import scipy.sparse as sp
 import warnings
+import gc # Garbage Collector
 
 # Silent Mode Settings
 SILENT_MODE = True # If this is true, only the score will show up
 
 if SILENT_MODE:
-    # 1. Turn off every warnings
+    # 1. Turn off every warning
     warnings.filterwarnings("ignore")
     os.environ["TF_CPP_MIN_LOG_LEVEL"] = "3"
 
@@ -252,6 +253,9 @@ def main():
         except Exception as e:
             if not SILENT_MODE:
                 logger.error(f" -> Error while {file_path.name} was carried: {e}\n")
+
+    del semantic_extractor
+    gc.collect()
 
     if LISA_MODE:
         lisa.write_output(list(lisa_items.values()), original_stdout)

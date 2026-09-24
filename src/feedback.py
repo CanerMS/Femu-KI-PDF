@@ -78,7 +78,7 @@ def _move_file(
     """Move a file to the target directory.
 
     Returns:
-        (target_directory, was_already_there)
+        (target_directory, was_already_there) 
     """
     was_already_there = file_path.parent.resolve() == target_dir.resolve() # check if file is already in the target directory
     if was_already_there:
@@ -169,16 +169,15 @@ def correct(
     if not was_already_there: # if the file was not already in the target directory, log it
         try:
             _log_to_jsonl({ # log the feedback to the feedback.jsonl file
-                "record_id":       f"{now.strftime('%Y%m%d%H%M%S%f')}_{filename}", # create a unique record id based on the current date and time and the filename
+                "created_at":      now.isoformat(), # date and time when the feedback was created
                 "filename":        filename, # file name
                 "old_label":       current_label, # old label
                 "new_label":       new_label, # new label
                 "predicted_score": predicted_score, # model's confidence score
-                "reviewer":        reviewer, # reviewer's name
-                "method":          method, # method used to correct the feedback
+                # "reviewer":        reviewer, # reviewer's name
+                # "method":          method, # method used to correct the feedback
                 "apply_status":    "applied", # status of the feedback
-                "applied_at":      now.isoformat(), # date and time when the feedback was applied
-                "created_at":      now.isoformat(), # date and time when the feedback was created
+                # "applied_at":      now.isoformat(), # date and time when the feedback was applied
             })
         except OSError as exc:
             logger.error(
@@ -198,7 +197,7 @@ def correct(
     }
 
 # Detailed feedback for the full feedback_apply.py workflow (for the future improvements)
-# ----------------------- Not for now --------------------------------------------------
+# ------------------------------ Not for now --------------------------------------------
 
 def submit_feedback(
     filename: str,

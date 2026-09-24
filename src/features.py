@@ -31,11 +31,11 @@ class FeatureExtractor:
 
         self.vectorizer = TfidfVectorizer( # Sklearn TF-IDF tool for converting text to numerical features 
             max_features=max_features, # Keep only top N features by TF-IDF score
-            ngram_range=ngram_range, # Consider unigrams and bigrams as specified
-            min_df=5, # Ignore terms that appear in only one document
+            ngram_range=ngram_range, # Consider unigrams and bigrams as specified in project_config.py (1,2)
+            min_df=5, # Ignore terms that appear in only one document, makes the vocabulary smaller
             stop_words=all_stop_words, # Remove common English stop words (like "the", "is", etc.
-            token_pattern=r'\b[a-z]{2,}\b' # Tokens must be at least 2 letters long (ignore single letters and numbers
-        )
+            token_pattern=r'\b[a-z]{2,}\b' # Tokens must be at least 2 letters long (ignore single letters and numbers)
+        ) 
 
         """
         Indicates if the vectorizer has been fitted
@@ -48,8 +48,8 @@ class FeatureExtractor:
         # if a word either appears very often and is common (like "the", "is", "and") 
         # or appears very rarely (like a typo), it gets lower weight
 
-        self.is_fitted = False
-        self.feature_names = None
+        self.is_fitted = False # Indicates if the vectorizer has been fitted
+        self.feature_names = None # Feature names (words and ngrams)
 
     
     # here it learns and returns the feature matrix by scanning the texts
@@ -93,13 +93,13 @@ class FeatureExtractor:
             logger.warning("Vectorizer not fitted yet. Cannot get feature names.")
             return
         
-        # Average TF-IDF scores for class
-        X_Dense = X.toarray() # Convert sparse matrix to dense for easier manipulation
+        # Average TF-IDF scores for class (only useful and not useful classes)
         useful_mask = (y == 1) # Mask for useful class
         not_useful_mask = (y == 0) # Mask for not useful class
 
-        useful_mean = X_Dense[useful_mask].mean(axis=0) # Mean TF-IDF for useful
-        not_useful_mean = X_Dense[not_useful_mask].mean(axis=0) # Mean TF-IDF for not useful
+        useful_mean = np.asarray(X[useful_mask].mean(axis=0)).ravel()
+        not_useful_mean = np.asarray(X[not_useful_mask].mean(axis=0)).ravel()
+
         diff = useful_mean - not_useful_mean # Difference in means
 
         # Top Features
@@ -108,19 +108,19 @@ class FeatureExtractor:
 
         # Create DataFrames for better visualization
         useful_features = pd.DataFrame({
-            'feature_index': top_useful_indices,
-            'feature_name': [self.feature_names[i] for i in top_useful_indices], 
+            'feature_index': top_useful_indices, # feature indices
+            'feature_name': [self.feature_names[i] for i in top_useful_indices], # feature names
             'useful_mean_tfidf': [useful_mean[i] for i in top_useful_indices], # mean TF-IDF in useful class
             'not_useful_mean_tfidf': [not_useful_mean[i] for i in top_useful_indices], # mean TF-IDF in not useful class
-            'difference': [diff[i] for i in top_useful_indices]
+            'difference': [diff[i] for i in top_useful_indices] # difference in means
         })
 
         not_useful_features = pd.DataFrame({
-            'feature_index': top_not_useful_indices,
-            'feature_name': [self.feature_names[i] for i in top_not_useful_indices],
-            'useful_mean_tfidf': [useful_mean[i] for i in top_not_useful_indices],
-            'not_useful_mean_tfidf': [not_useful_mean[i] for i in top_not_useful_indices],
-            'difference': [diff[i] for i in top_not_useful_indices]
+            'feature_index': top_not_useful_indices, # feature indices
+            'feature_name': [self.feature_names[i] for i in top_not_useful_indices], # feature names
+            'useful_mean_tfidf': [useful_mean[i] for i in top_not_useful_indices], # mean TF-IDF in useful class
+            'not_useful_mean_tfidf': [not_useful_mean[i] for i in top_not_useful_indices], # mean TF-IDF in not useful class
+            'difference': [diff[i] for i in top_not_useful_indices] # difference in means
         })
 
         output_dir = Path('results')
@@ -179,18 +179,18 @@ class FeatureExtractor:
         Returns:
             Reduced feature matrix with top K features
         """
-        logger.info(f"Selecting top {k} features using Chi-Squared test")
-        selector = SelectKBest(chi2, k=k)
-        X_new = selector.fit_transform(X, y)
+        logger.info(f"Selecting top {k} features using Chi-Squared test") # Selecting top K features
+        selector = SelectKBest(chi2, k=k) # Sklearn tool for selecting top K features using Chi-Squared test
+        X_new = selector.fit_transform(X, y) # Apply Chi-Squared test to select top K features
         
         # Store selector for later use (test set transformation)
         self.selector = selector
 
-        selected_indices = selector.get_support(indices=True)
-        self.feature_names = [self.feature_names[i] for i in selected_indices]
+        selected_indices = selector.get_support(indices=True) # Get the indices of the selected features
+        self.feature_names = [self.feature_names[i] for i in selected_indices] # Update feature names with selected features
 
-        logger.info(f"Selected {X_new.shape[1]} features out of {X.shape[1]}")
-        self._save_feature_names()
+        logger.info(f"Selected {X_new.shape[1]} features out of {X.shape[1]}") # Log the number of selected features
+        self._save_feature_names() # Save the selected feature names
         return X_new
     
     def _save_feature_names(self):

@@ -1,9 +1,10 @@
-﻿"""
+"""
 Main Pipeline
 Orchestrates the PDF/TXT classification workflow
 """
 
 import sys
+import gc
 import numpy as np
 import pandas as pd
 import logging
@@ -327,6 +328,15 @@ def main():
             test_texts_clean, filenames=test_filenames, desc="Extracting Test Embeddings"
         )
 
+        # Delete SciBERT cache files.
+        for file in train_filenames:
+            (DATA_DIR / "features" / "cache_scibert" / file).with_suffix(".npy").unlink(True)
+        for file in test_filenames:
+            (DATA_DIR / "features" / "cache_scibert" / file).with_suffix(".npy").unlink(True)
+
+        del semantic_extractor
+        gc.collect()
+
     # 5.1.c Combine and Select Final Features
     if FEATURE_MODE == 'tfidf':
         X_train = X_train_tfidf
@@ -338,17 +348,47 @@ def main():
         feature_extractor = FeatureExtractor(max_features=X_train.shape[1]) 
     elif FEATURE_MODE == 'combined':
         logger.info("  -> Combining TF-IDF and Semantic features...")
-        X_train_raw = semantic_extractor.combine_with_tfidf(X_train_tfidf, X_train_semantic)
-        X_test_raw = semantic_extractor.combine_with_tfidf(X_test_tfidf, X_test_semantic)
-        
+        import scipy.sparse as sp
+
+        # Convert memmap → sparse in chunks to avoid a single large RAM spike.
+        # sp.csr_matrix() on a full memmap would materialise the whole array in RAM.
+        def memmap_to_sparse_chunked(arr, chunk_rows=500):
+            """Convert a (possibly memmap) 2-D float array to csr_matrix in chunks."""
+            chunks = []
+            for start in range(0, arr.shape[0], chunk_rows):
+                chunk = np.array(arr[start:start + chunk_rows], dtype="float32")
+                chunks.append(sp.csr_matrix(chunk))
+            return sp.vstack(chunks, format="csr")
+
+        logger.info("    Converting train semantic embeddings to sparse (chunked)...")
+        X_train_sem_sparse = memmap_to_sparse_chunked(X_train_semantic)
+        del X_train_semantic
+        gc.collect()
+
+        logger.info("    Converting test semantic embeddings to sparse (chunked)...")
+        X_test_sem_sparse = memmap_to_sparse_chunked(X_test_semantic)
+        del X_test_semantic
+        gc.collect()
+
+        X_train_raw = sp.hstack([X_train_tfidf, X_train_sem_sparse])
+        X_test_raw  = sp.hstack([X_test_tfidf,  X_test_sem_sparse])
+
+        # Free intermediate matrices now that they're merged
+        del X_train_sem_sparse, X_test_sem_sparse, X_train_tfidf, X_test_tfidf
+        gc.collect()
+
+
         # MaxAbsScaler to avoid Convergence Error
         logger.info("  -> Scaling global features with MaxAbsScaler to prevent dominance...")
         from sklearn.preprocessing import MaxAbsScaler
         scaler = MaxAbsScaler()
-        
+
         # To Avoid Data Leak
         X_train = scaler.fit_transform(X_train_raw)
         X_test = scaler.transform(X_test_raw)
+
+        del X_train_raw, X_test_raw
+        gc.collect()
         
     logger.info(f"Final X_train shape: {X_train.shape}, X_test shape: {X_test.shape}")
 
