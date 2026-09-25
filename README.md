@@ -25,12 +25,12 @@ To overcome this, this project implements a **Hybrid NLP Architecture**:
 
 ## **Project Status**
 
-| Component            | Status   |              Performance                |
-|----------------------|----------|-----------------------------------------|
-| **Pipeline**         | Complete | Operational                             |
-| **Model Training**   | Complete | Random Forest, SVM, Logistic Regression |
-| **Last Accuracy**    | 93.7%    | LR, Scibert integrated, TF-IDF Features |
-| **Production Ready** | Ready    |                                         |
+| Core Aspect          | Current State  | Key Characteristics                       |
+|----------------------|----------------|-------------------------------------------|
+| **End-to-End Flow**  | Fully Active   | Incremental caching, garbage collection   |
+| **Classification**   | 93.7% Accuracy | Logistic Regression via Hybrid Features   |
+| **NLP Engine**       | Integrated     | TF-IDF combined with SciBERT / MiniLM     |
+| **Production**       | Ready          | Smart routing and feedback loop enabled   |
 
 ---
 
