@@ -243,7 +243,7 @@ def main():
             # if label is 1 (useful), save in useful directory, else save in raw directory
             target_dir = clean_useful_dir if label == 1 else clean_raw_dir
             
-            clean_path = target_dir / f"{split_name}_{file_id.stem}_clean.txt"
+            clean_path = target_dir / f"{file_id.stem}.txt" # changed split name to just the file_id
             
             with open(clean_path, 'w', encoding='utf-8') as f:
                 f.write(clean_text)
