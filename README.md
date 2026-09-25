@@ -264,7 +264,7 @@ py src/give_feedback.py artikel_042 false   # → marks as NOT USEFUL
 
 **Step 7 - Retrain with new data**
 ```bash
-# No deletions needed — embeddings are cached per file (.npy)
+# No deletions needed - embeddings are cached per file (.npy)
 # Only new files will be recomputed; everything else loads from cache
 py src/label_files.py
 py main.py
@@ -302,19 +302,20 @@ python main.py
 **Pipeline Stages:**
 
 **1: Training**
-0. Setup environment variables: Edit `src/project_config.py`, `src/label_files.py` and `src/main.py` to customize the settings of the pipeline.
-1. Load labels from `labels.csv` and corresponding PDF/TXT files
-2. Extract text from files *(disk-cached per file skipped on re-runs)*
-3. Preprocess and clean text *(noise removal, author filtering, normalization)*
-4. Save preprocessed texts to `data/preprocessed_texts/` for inspection
-5. Extract TF-IDF features *(up to 2000 features; Chi-Squared selection applied in `tfidf` mode only)*
-6. Extract semantic embeddings via **SciBERT** or **MiniLM** *(per-file .npy cache, only new files computed)*
-7. Combine TF-IDF + semantic vectors if `FEATURE_MODE = 'combined'` *(MaxAbsScaler applied)*
-8. Apply **SMOTE** oversampling if class imbalance exceeds threshold
-9. Train **Logistic Regression** classifier *(5-fold cross-validation included)*
-10. Evaluate on held-out test set *(accuracy, classification report, confusion matrix)*
-11. Save model, TF-IDF vocabulary, and scaler as `.joblib` into `results/`
-12. Confusion matrix in png format and prediction in csv format are saved in `results/`
+
+1. Setup environment variables: Edit `src/project_config.py`, `src/label_files.py` and `src/main.py` to customize the settings of the pipeline.
+2. Load labels from `labels.csv` and corresponding PDF/TXT files
+3. Extract text from files *(disk-cached per file skipped on re-runs)*
+4. Preprocess and clean text *(noise removal, author filtering, normalization)*
+5. Save preprocessed texts to `data/preprocessed_texts/` for inspection
+6. Extract TF-IDF features *(up to 2000 features; Chi-Squared selection applied in `tfidf` mode only)*
+7. Extract semantic embeddings via **SciBERT** or **MiniLM** *(per-file .npy cache, only new files computed)*
+8. Combine TF-IDF + semantic vectors if `FEATURE_MODE = 'combined'` *(MaxAbsScaler applied)*
+9. Apply **SMOTE** oversampling if class imbalance exceeds threshold
+10. Train **Logistic Regression** classifier *(5-fold cross-validation included)*
+11. Evaluate on held-out test set *(accuracy, classification report, confusion matrix)*
+12. Save model, TF-IDF vocabulary, and scaler as `.joblib` into `results/`
+13. Confusion matrix in png format and prediction in csv format are saved in `results/`
 
 **2: Prediction (Production)**
 1. Chose the compatible file structure .txt/pdf in `predict.py`
@@ -426,7 +427,7 @@ According to my experience, SMOTE approach doesn't work as fine as one needs in 
 
 ### **Issue: "Data Splitting Error: X and y must have same number of samples"**
 - This means there are no new "unlabeled" texts in `data/useful_texts/` or `data/raw_texts/` to split for evaluation.
-- Check `data/useful_texts/` and `data/raw_texts/` — if both are empty, the model has nothing new to evaluate.
+- Check `data/useful_texts/` and `data/raw_texts/` - if both are empty, the model has nothing new to evaluate.
 - Fix: Add new PDF files to `data/raw_pdfs/` and `data/useful_pdfs/` and run the pipeline again to generate new training data.
 
 ---
