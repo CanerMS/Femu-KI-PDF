@@ -1,46 +1,59 @@
-# PDF + TXT Classification Programm - Supervised Learning
+# PDF + TXT Document Classification Program - Supervised Learning
 
-A programm that classifies PDF and TXT documents as either "relevant" or "not relevant" supported by supervised learning with Random Forest, SVM, Logistic Regression mode and intelligent text extraction caching concluding with preprocess phase.
+An end-to-end machine learning pipeline designed to automatically classify PDF and TXT documents as either **Relevant** (`useful`) or **Not Relevant** (`raw`). Built for accuracy, the system leverages a hybrid feature extraction approach to achieve robust classification, even when documents lack structural consistency or share little overlapping vocabulary.
 
-One can switch in 2 different modes: Supervised and Unsupervised learning. 
-The file type can be arranged in main.py under "# 0. Choose File Type" by typing either "pdf" or "txt". 
-In this specific case, supervised learning is more suitable. Therefore, I stopped improving unsupervised learning in previous version, but kept it for reference and comparison.  
-The most difficult challenge in this case is, that some pdfs don't have any semantic similarities between them and including completely different types of words and structure, making it difficult for the model to generalize across documents.
+### **Why This Project?**
+It is a time consuming process to decide on scientific papers if they are relevant or not. It may take 10 minutes to decide on one paper, when you have to decide on 1000 papers, it will take 10000 minutes (166 hours). This is where this project comes in. The core challenge in automated document classification is that many scientific or technical PDFs lack semantic similarity. They often contain completely different structures, terminologies, and layouts, making it difficult for standard models to generalize. 
+To overcome this, this project implements a **Hybrid NLP Architecture**:
+1. **TF-IDF:** Captures statistical keyword importance and domain-specific terminology.
+2. **SciBERT / MiniLM:** Understands deep contextual and semantic meaning.
+3. **Logistic Regression:** Acts as a powerful meta-classifier to weigh these combined features.
 
-I named not relevant data as "raw" and relevant file as "useful".
+### **Core Highlights**
+- **Intelligent Pipeline:** Automated text extraction, advanced noise filtering, and incremental per-file caching.
+- **Human-in-the-Loop (HITL):** Confident predictions are automatically routed, while uncertain documents are set aside for manual review and seamlessly fed back into the training loop.
+- **Resource Optimized:** Implements memory-mapped arrays and garbage collection to process large vector spaces (like SciBERT's 768-dim embeddings) efficiently on standard hardware.
 
-# Warning! 
-The programm is not compatible with servers owning little capacity of RAM. You suppose to have good memory capacity in order to run especially SciBert. Using SciBert, only before it starts calculating the unseen data, there will be crash by uploading the model. Because SciBert has approximately 110 Millions parameters to upload into RAM. This causes shutdown, if you do not have sufficient RAM. I have 16GB RAM and it works fine.  
+> [!WARNING]
+> **Memory Requirements**
+> - **SciBERT** (`allenai/scibert_scivocab_uncased`): ~110M parameters -> ~450 MB RAM on load
+> - **Minimum:** 8 GB RAM | **Recommended:** 16 GB RAM
+> - On low-memory machines, the process will be killed during model initialization, before any or some files are processed.
+> - **GPU:** Automatically used if CUDA is available; falls back to CPU otherwise (significantly slower).
+> - **Lighter alternative:** Switch to MiniLM in `project_config.py` (`SEMANTIC_MODEL_TYPE = 'minilm'`) uses ~90 MB RAM and achieves ~92% accuracy. 
 ---
 
 ## **Project Status**
 
 | Component            | Status   |              Performance                |
 |----------------------|----------|-----------------------------------------|
-| **Pipeline**         | Complete | Fully operational                       |
-| **Model Training**   | Complete | Random Forest, SVM, Logical Regressiong |
-| **Last Accuracy**    | 93.1%    | SciBert Understanding Integrated        |
-| **Production Ready** | L. Phase | Data quality + Feature improvement ong. |
+| **Pipeline**         | Complete | Operational                             |
+| **Model Training**   | Complete | Random Forest, SVM, Logistic Regression |
+| **Last Accuracy**    | 93.7%    | LR, Scibert integrated, TF-IDF Features |
+| **Production Ready** | Ready    |                                         |
 
 ---
 
 ## **Current Results**
 
-**Remaining Issues:**
-- Optimization for more robuts programm
-
-
-## **Features**
-
 ### **Implemented**
 
-- **Semantic Understanding Bert**
-  - Scibert integrated
+- **Garbage Collector**
+  - Automatic Memory Cleanup after model operations
+  - Reduces memory usage, reduces RAM usage significantly
+
+- **Smart Cache Management**
+  - Automatically detects changed source files
+  - Updates cache only when needed
+  - Preserves previous cache files for reference
+
+- **Semantic Understanding SciBERT**
+  - SciBERT integrated
   - 3 Categories available: Prediction (setable Threshold), Evaluation, Training
 
-- **Semantic Understanding Bert**
+- **Semantic Understanding MiniLM/BERT**
   - SBERT integrated
-  - Three modes possible: Semantic , TFD-ID , Combined
+  - Three modes possible: Semantic , TF-IDF , Combined
   - Combined mode result: 92% accuracy
 
 - **Supervised Learning Pipeline**
@@ -97,8 +110,10 @@ Femu-KI-PDF/
 │   ├── raw_texts/             # "Not useful" Texts (Training)
 │   ├── useful_pdfs/           # "Useful" PDFs (Training)
 │   ├── useful_texts/          # "Useful" Texts (Training)
-│   ├── extracted_texts/       # Cached raw text extractions 
-│   ├── preprocessed_texts/    # Cleaned texts after preprocessing
+│   ├── extracted_useful_texts/ # Cached useful text extractions
+│   ├── extracted_raw_pdfs/    # Cached useful pdf extractions
+│   ├── preprocessed_raw_texts/ # Cleaned texts after preprocessing
+│   ├── preprocessed_useful_texts/ # Cleaned texts after preprocessing
 │   ├── manual_check/          # Uncertain predictions requiring human review
 │   ├── feedback/              # JSONL logs for human feedback actions
 │   └── labels.csv             # Training labels 
@@ -113,20 +128,25 @@ Femu-KI-PDF/
 │   ├── label_files.py         # Automated labeling system
 │   ├── semantic.py            # Semantic understanding (SciBERT/MiniLM)
 │   ├── predict.py             # Predict unseen data (Production flow)
-│   ├── evaluate_predictions.py# Evaluate unseen data
+│   ├── evaluate_predictions.py  # Evaluate unseen data
 │   ├── feedback.py            # Human-in-the-loop correction logic
-│   ├── feedback_apply.py      # Applies pending feedback to filesystem
+│   ├── give_feedback.py       # 
 │   └── lisa.py                # External JSON processing integration API
 ├── results/
 │   ├── predictions.csv               # Test set predictions
 │   ├── preprocessing_comparison.txt  # Before/after analysis
-│   └── pdf_classifier.joblib         # Trained model
+│   ├── classification_report.txt     # Classification report
+│   ├── feature_importance.txt        # Feature importance analysis (only in TF-IDF mode, not in combined)
+│   ├── confusion_matrix.png          # Confusion matrix
+│   ├── *_classifier.joblib           # Trained model
+│   ├── *_scaler.joblib               # Trained scaler
+│   └── *_tfidf.joblib                # Trained vectorizer
 ├── logs/
-│   └── label_files.log        # Labeling process logs
-├── main.py                    # Main pipeline orchestrator
-├── requirements.txt
-├── .gitignore
-└── README.md
+│   └── label_files.log               # Labeling process logs
+├── main.py                           # Main pipeline orchestrator
+├── requirements.txt                  # Dependencies
+├── .gitignore                        # Gitignore
+└── README.md                         # Project README
 ```
 
 ---
@@ -184,19 +204,70 @@ transformers>=4.35.0 # Hugging Face Transformers
 
 ### **Quick Start**
 
+> **Prerequisites:** Python 3.8+, 8 GB RAM minimum (16 GB recommended for SciBERT)
+
+**Step 1 - Clone & Install**
 ```bash
-# Complete pipeline (labeling + training + evaluation)
-python main.py
+git clone <repository-url>
+cd Femu-KI-PDF
+pip install -r requirements.txt
 ```
 
-### **Force Re-preprocessing**
+**Step 2 - Add your documents**
+```
+data/
+├── useful_texts/  <- Put your RELEVANT .txt files here
+└── raw_texts/     <- Put your NOT RELEVANT .txt files here
+```
+> Switch to PDF mode: set `FILE_TYPE = 'pdf'` in `main.py` and use `useful_pdfs/` / `raw_pdfs/` instead.
 
+**Step 3 - Configure**
+
+Open `src/project_config.py` and adjust at minimum:
+```python
+FEATURE_MODE = 'combined'        # 'tfidf' | 'semantic' | 'combined'
+SEMANTIC_MODEL_TYPE = 'scibert'  # 'scibert' | 'minilm' (lighter, less RAM)
+CUSTOM_STOP_WORDS = [...]        # Add domain-specific noise words for your case
+```
+
+**Step 4 - Label & Train**
 ```bash
-# Clear caches to re-extract and re-preprocess
-rmdir /s /q data\extracted_texts
-rmdir /s /q data\preprocessed_texts
+py src/label_files.py   # Scans directories → generates data/labels.csv
+py main.py              # Full training pipeline → saves model to results/
+```
 
-python main.py
+**Step 5 - Predict new files**
+```bash
+# Drop new files into:
+data/to_test_files/
+
+# Run prediction:
+py src/predict.py
+
+```
+
+**Step 6 - Review uncertain predictions**
+- Results automatically routed to:
+```bash
+- data/useful_texts/      confident USEFUL predictions    (added to training data)
+- data/raw_texts/         confident NOT USEFUL predictions (added to training data)
+- data/manual_check/      uncertain predictions (review manually)
+```
+
+# After reviewing files in data/manual_check/:
+py src/give_feedback.py <filename_without_extension> <true/false>
+
+# Examples:
+py src/give_feedback.py artikel_042 true    # → marks as USEFUL
+py src/give_feedback.py artikel_042 false   # → marks as NOT USEFUL
+```
+
+**Step 7 - Retrain with new data**
+```bash
+# No deletions needed — embeddings are cached per file (.npy)
+# Only new files will be recomputed; everything else loads from cache
+py src/label_files.py
+py main.py
 ```
 
 ### **Step-by-Step**
@@ -216,7 +287,7 @@ data/
 
 ```python
 # main.py 
-FILE_TYPE = 'pdf' # switching into txt is also possible
+FILE_TYPE = 'txt' # switching into pdf is also possible
 ```
 ```bash
 python src/label_files.py
@@ -231,16 +302,19 @@ python main.py
 **Pipeline Stages:**
 
 **1: Training**
-1. Load labels and PDFs or TXTs
-2. Extract text (with caching if it includes already processed PDFs)
-3. Preprocess and clean text (with progress bars)
-4. Save preprocessed texts
-5. Extract TF-IDF features (2000 features)
-6. Apply SMOTE balancing (if needed)
-7. If settings are combined, scibert, then it will be calculating vectors
-8. Train Classifier Model with tfidef/scibert/sbert/or combined(tfidf+scibert) data outputs
-9. Evaluate on test set 
-10. Save model, scaler and tfidf dict as .joblib into `./results`, prediction and confusion matrix (png) in `\results`
+0. Setup environment variables: Edit `src/project_config.py`, `src/label_files.py` and `src/main.py` to customize the settings of the pipeline.
+1. Load labels from `labels.csv` and corresponding PDF/TXT files
+2. Extract text from files *(disk-cached per file skipped on re-runs)*
+3. Preprocess and clean text *(noise removal, author filtering, normalization)*
+4. Save preprocessed texts to `data/preprocessed_texts/` for inspection
+5. Extract TF-IDF features *(up to 2000 features; Chi-Squared selection applied in `tfidf` mode only)*
+6. Extract semantic embeddings via **SciBERT** or **MiniLM** *(per-file .npy cache, only new files computed)*
+7. Combine TF-IDF + semantic vectors if `FEATURE_MODE = 'combined'` *(MaxAbsScaler applied)*
+8. Apply **SMOTE** oversampling if class imbalance exceeds threshold
+9. Train **Logistic Regression** classifier *(5-fold cross-validation included)*
+10. Evaluate on held-out test set *(accuracy, classification report, confusion matrix)*
+11. Save model, TF-IDF vocabulary, and scaler as `.joblib` into `results/`
+12. Confusion matrix in png format and prediction in csv format are saved in `results/`
 
 **2: Prediction (Production)**
 1. Chose the compatible file structure .txt/pdf in `predict.py`
@@ -260,7 +334,7 @@ python main.py
    # If you decide the paper is useful:
    correct("paper_123.txt", decision="useful")
    ```
-3. The file is immediately moved to `useful_texts` and the action is safely logged in `data/feedback/feedback.jsonl`.
+3. The file is immediately moved to `useful_texts` or `raw_texts` based on your feedback.
 4. (Optional) If you spot a wrong file already in training data, simply call `correct("paper_456.txt")` without a decision to automatically flip its label.
 
 **4: Evaluation of the new files**
@@ -268,10 +342,35 @@ python main.py
 2. See the results under `./results`
 3. Note: These results can differ from the initial 93% accuracy because we force the model to decide 1/0 on unseen data. Schedule this stage once a month to check if the model is drifting and needs retraining.
 
+## **Left As References (Not Actively Maintained)**
+These components exist in the codebase and still functional, but were 
+not further improved as better alternatives were found:
+1. **Unsupervised / Anomaly Detection** (`model.py` -> `AnomalyDetector`)
+   - Uses IsolationForest; no labels required
+   - Abandoned: supervised learning gave significantly better results
+2. **Random Forest** (`model.py` -> `FILEClassifier`)
+   - Still selectable via `project_config.py`
+   - Lower accuracy than Logistic Regression in this use case
+3. **SVM** (`model.py` -> `SVMClassifier`)
+   - Still selectable via `project_config.py`
+   - ~3-5% less accurate than Logistic Regression
+4. **MiniLM / SBERT** (`semantic.py` -> `SemanticFeatureExtractor`)
+   - Faster and lighter than SciBERT (~384 dim vs 768 dim)
+   - ~92% accuracy vs SciBERT's 93.1% on scientific texts
+   - Use this if RAM/speed is a concern
+5. **`combine_with_tfidf()` method** (in both semantic classes)
+   - Defined but never called; main.py uses its own combining logic
+6. **SMOTE** (`train.py` in `balancing_type='smote'`)
+   - Balancing method that oversamples minority class
+   - Not used in final pipeline; main.py uses `class_weight` instead
+7. **chisquare** (`train.py` in `scoring_method='chi2'`)
+   - Feature selection method
+   - Not used in final pipeline; main.py uses `feature_selection='best_k'`
+
 
 ## **Configuration**
 
-Edit `src/project_config.py` to customize:
+Edit `src/project_config.py` to customize the settings of the pipeline:
 
 ```python
 # Directories
@@ -313,6 +412,23 @@ According to my experience, SMOTE approach doesn't work as fine as one needs in 
 - Check progress bars for status
 - Subsequent runs use cache and takes usually ~5 seconds
 
+### **Issue: "MemoryError: model.fit()"**
+- Model is too big for your RAM
+- Use MiniLM instead of SciBERT (set `SEMANTIC_MODEL_TYPE = 'minilm'` in `project_config.py`)
+
+### **Issue: "No files found" after preprocessing**
+- Ensure PDFs are in `data/raw_pdfs/` and `data/useful_pdfs/`
+- Check file extensions (must be `.pdf`)
+
+### **Issue: "Evaluation Failed"**
+- Ensure you have a `labels.csv` file in your `data` directory
+- Or run `src/label_files.py` to create one
+
+### **Issue: "Data Splitting Error: X and y must have same number of samples"**
+- This means there are no new "unlabeled" texts in `data/useful_texts/` or `data/raw_texts/` to split for evaluation.
+- Check `data/useful_texts/` and `data/raw_texts/` — if both are empty, the model has nothing new to evaluate.
+- Fix: Add new PDF files to `data/raw_pdfs/` and `data/useful_pdfs/` and run the pipeline again to generate new training data.
+
 ---
 
 ## **To force complete re-processing:**
@@ -329,12 +445,14 @@ rmdir /s /q data\preprocessed_useful_texts
 
 # For a fresh start with labels.csv
 del data\labels.csv
+del data\features\cache_scibert\*.npy
 
 # For a fresh start for predicting new files
 rmdir /s /q data\manual_check
 rmdir /s /q data\to_test_files
 
-# Then run:
+# Then if you want to retrain run:
+python label_files.py or py label_files.py
 python main.py or py main.py
 ```
 
@@ -350,7 +468,12 @@ python main.py or py main.py
 
 ## **Changelog**
 
-### [0.7.0] - Upcoming
+### [1.0.0] - 2026-09-25
+- **Architecture**: Production Ready For Special Needs
+- **Memory Management**: Garbage Collector Added for better performance avoiding memory leaks
+- **Smart Cache Management**: Updated
+
+### [0.7.0] - 
 - **Architecture**: Replaced `sorted_pdfs` structure with direct automated routing to training directories (`useful_texts`, `raw_texts`) and `manual_check/`.
 - **Human-in-the-Loop**: Integrated `feedback.py` with unified `correct()` API for manual label reviews and auto-flips.
 - **Traceability**: Added append-only `.jsonl` logging system (`feedback.jsonl`) for tracking human reviewer decisions.
@@ -373,9 +496,12 @@ python main.py or py main.py
 - 3 mode-switch possible: Combined, TF-IDF, Semantic Understanding
 - Better results with 92% accuracy
 
-**Status:** **Active Development** 
-- Semantic understanding integration
-- More and cleaner data
+### What can be done in the future
+- Add web interface, for example FASTAPI
+- Add more ML models and compare their performance
+- Add more NLP models and compare their performance
+- Change the architecture into streaming if needed
+- Improve the referenced part of the code to make it more modular
 
-**Last Updated:** 2026-07-14
-**Version:** 0.7.0
+**Last Updated:** 2026-09-25
+**Version:** 1.0.0
