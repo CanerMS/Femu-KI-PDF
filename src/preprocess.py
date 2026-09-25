@@ -57,9 +57,9 @@ class TextPreprocessor:
                 text = parts[0]  # Keep text before 'Author contribution' section
 
         noise_words = [
-        'education', 'studying', 'diploma', 'degree',
-        'university', 'institute', 'college', 'school',
-        'received', 'obtained', 'graduated', 'phd', 'bachelor', 'master'
+        #'education', 'studying', 'diploma', 'degree',
+        #'university', 'institute', 'college', 'school',
+        #'received', 'obtained', 'graduated', 'phd', 'bachelor', 'master'
         ]
     
         for word in noise_words:
@@ -74,6 +74,9 @@ class TextPreprocessor:
         text = re.sub(r'\S+@\S+', '', text)  # Emails
     
         text = re.sub(r'\b\d+\b(?!\.\d)', '', text) # Remove standalone numbers (not part of decimals)
+
+        text = re.sub(r'\b([a-zA-Z])-([a-zA-Z]+)\b',r'\1\2', text) # remove "-a" type words
+        text = re.sub(r'\b([a-zA-Z]+)-([a-zA-Z])\b', r'\1\2', text) # remove "a-" type words
 
         if self.remove_special_chars: # Remove special characters if specified
             text = re.sub(r'[^a-zA-Z0-9\s]', ' ', text) # Keep only alphanumeric and spaces
