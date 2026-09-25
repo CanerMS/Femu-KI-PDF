@@ -1,4 +1,4 @@
-import sys 
+import sys
 import os  # For LISA mode
 import shutil  # For carrying the files
 from pathlib import Path
