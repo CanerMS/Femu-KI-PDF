@@ -81,7 +81,6 @@ def create_labels(file_type: Literal['pdf', 'txt'] = 'txt'): # Create labels for
     all_labels = pd.concat([train_df, test_df], ignore_index=True) # Combine train and test DataFrames
     all_labels = all_labels.sort_values(by='filename').reset_index(drop=True) # Sort by filename
 
-    # Save labels
     all_labels.to_csv(LABELS_PATH, index=False) # Save labels to CSV
     logger.info(f"\nLabels saved to {LABELS_PATH}") # Log success message
     
