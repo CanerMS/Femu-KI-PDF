@@ -457,13 +457,13 @@ python label_files.py or py label_files.py
 python main.py or py main.py
 ```
 
-## **References**
+## **References & Acknowledgments**
 - [scikit-learn Random Forest](https://scikit-learn.org/stable/modules/generated/sklearn.ensemble.RandomForestClassifier.html)
 - [imbalanced-learn SMOTE](https://imbalanced-learn.org/stable/references/generated/imblearn.over_sampling.SMOTE.html)
 - [pdfplumber Documentation](https://github.com/jsvine/pdfplumber)
 - [TF-IDF Vectorization](https://scikit-learn.org/stable/modules/generated/sklearn.feature_extraction.text.TfidfVectorizer.html)
-- [semantic-transformer Documentation](https://sbert.net/)
-- [scibert-resource](https://github.com/allenai/scibert)
+- [sentence-transformers Documentation](https://sbert.net/)
+- **SciBERT**: Beltagy, I., Lo, K., & Cohan, A. (2019). *SciBERT: A Pretrained Language Model for Scientific Text*. EMNLP. Model: [`allenai/scibert_scivocab_uncased`](https://huggingface.co/allenai/scibert_scivocab_uncased), provided by [Allen Institute for AI (AllenAI)](https://github.com/allenai/scibert) under the **Apache License 2.0**.
 
 ---
 
