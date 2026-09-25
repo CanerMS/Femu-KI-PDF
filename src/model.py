@@ -49,20 +49,28 @@ def create_classifier(model_type=None, mode='supervised', random_state=RANDOM_ST
         )
     
     logger.info(f"Creating {model_type} classifier in {mode} mode")
-    
+
+    # Currently not in use, a way less accuracy in compare with logistic regression
     if model_type == 'random_forest':
         return FILEClassifier(mode=mode, random_state=random_state)
+
+    # Currently in use, The best results were given by this model for our case
     elif model_type == 'logistic_regression':
         if mode != 'supervised':
             logger.warning("Logistic Regression only supports supervised mode. Ignoring mode parameter.")
         return LogisticRegressionClassifier(random_state=random_state)
+    
+    # Currently not in use: 3-5% less in accuracy in compare with logistic regression
     elif model_type == 'svm':
         if mode != 'supervised':
             logger.warning("SVM only supports supervised mode. Ignoring mode parameter.")
         return SVMClassifier(random_state=random_state)
+    
     # If new models are added in the future, they can be included here
 
-class AnomalyDetector: # it is not used anymore, but kept for reference
+
+# ================== not in use : left as a reference, not improved ==================
+class AnomalyDetector: 
     """
     Anomaly Detection using Isolation Forest
     Isolation Forest isolates anomalies instead of profiling normal data
@@ -116,6 +124,7 @@ class AnomalyDetector: # it is not used anymore, but kept for reference
         self.model = joblib.load(path) # Load the trained model from disk
         self.is_trained = True
         logger.info(f"Model loaded from {path}")
+
 
 class FILEClassifier:
     """
@@ -311,6 +320,9 @@ class FILEClassifier:
         
         return scores
 
+
+# =========== mainly used ===========
+
 class LogisticRegressionClassifier:
     """
     Logistic Regression classifier for text classification
@@ -322,8 +334,8 @@ class LogisticRegressionClassifier:
             random_state=random_state,
             max_iter=max_iter,
             class_weight='balanced',  # Handle class imbalance
-            solver='lbfgs',
-            verbose=1            
+            solver='saga',
+            verbose=0            
         )
         self.is_trained = False
         self.feature_names = None
@@ -409,8 +421,6 @@ class LogisticRegressionClassifier:
         scores = cross_val_score(self.model, X, y, cv=cv, scoring='f1_weighted')
         return scores
 
-
-    
 class SVMClassifier:
     """
     Support Vector Machine classifier for text classification

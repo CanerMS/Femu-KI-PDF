@@ -316,7 +316,7 @@ def main():
             from semantic import SemanticFeatureExtractor
             semantic_extractor = SemanticFeatureExtractor()
         
-        # Extractor'a dosya isimlerini gönderiyoruz ki cache kontrolünü isme göre dosya bazlı yapabilsin
+        # Pass the file names to the extractor to control cache based on file names
         train_filenames = [f.stem for f in train_files]
         test_filenames = [f.stem for f in test_files]
 
@@ -329,13 +329,19 @@ def main():
         )
 
         # Delete SciBERT cache files.
-        for file in train_filenames:
-            (DATA_DIR / "features" / "cache_scibert" / file).with_suffix(".npy").unlink(True)
-        for file in test_filenames:
-            (DATA_DIR / "features" / "cache_scibert" / file).with_suffix(".npy").unlink(True)
+        #for file in train_filenames:
+        #    (DATA_DIR / "features" / "cache_scibert" / file).with_suffix(".npy").unlink(True)
+        #for file in test_filenames:
+        #    (DATA_DIR / "features" / "cache_scibert" / file).with_suffix(".npy").unlink(True)
 
         del semantic_extractor
         gc.collect()
+
+    # Free raw text dicts — no longer needed after preprocessing
+    del train_texts_dict, test_texts_dict
+    del train_useful_dict, test_useful_dict, train_raw_dict, test_raw_dict
+    gc.collect()
+    logger.info("[Memory] Raw text dicts freed from RAM.")
 
     # 5.1.c Combine and Select Final Features
     if FEATURE_MODE == 'tfidf':
