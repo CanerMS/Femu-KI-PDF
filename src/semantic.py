@@ -9,6 +9,13 @@ RAM Optimization:
 - Final result is assembled via np.memmap (disk-backed) → ~0 extra RAM.
 - Only `batch_size` rows live in RAM at any given time during computation.
 '''
+
+# MUST be set before ANY huggingface/transformers import 
+import os
+os.environ["HF_HUB_VERBOSITY"]    = "error"  # Remove HuggingFace warnings
+os.environ["TRANSFORMERS_OFFLINE"] = "1"      # Never hit the network, use local cache only
+os.environ["HF_DATASETS_OFFLINE"]  = "1"      # Same for datasets
+
 from sentence_transformers import SentenceTransformer
 from transformers import AutoTokenizer, AutoModel
 from tqdm import tqdm
@@ -23,19 +30,22 @@ import gc # Garbage collection, helps with memory management
 import logging # To silence logging warnings
 import warnings # To silence warning warnings
 
-# Remove HuggingFace, httpx and unnecessary warnings
-import os
-
-os.environ["HF_HUB_VERBOSITY"] = "error" # Remove HugginFace Warning
-
-logging.getLogger("httpx").setLevel(logging.WARNING)
+# Debug
+# logging.getLogger("httpx").setLevel(logging.WARNING)
 hf_logging.set_verbosity_error()
 
 class SemanticFeatureExtractor:
+    _HF_CACHE = Path.home() / ".cache" / "huggingface" / "hub" # HuggingFace cache
+
     def __init__(self, model_name='all-MiniLM-L6-v2'):  # small, fast, free
-        self.model = SentenceTransformer(model_name)
+        logging.getLogger(__name__).info(f"[MiniLM] Loading '{model_name}' from local cache...")
+        self.model = SentenceTransformer( # SentenceTransformer is a deep learning framework for sentence embeddings
+            model_name, 
+            cache_folder=str(self._HF_CACHE),  # load from local cache, no network call
+        )
         self.model_name = "minilm"
         self.embedding_dim = 384  # MiniLM output dimension
+        logging.getLogger(__name__).info(f"[MiniLM] Model loaded successfully (dim={self.embedding_dim}).")
 
     def extract_embeddings(self, texts, filenames=None, desc="Extracting"):
         """
@@ -121,12 +131,14 @@ class SciBERTSemanticFeatureExtractor:
     ):
         # Device settings
         self.device = device or ("cuda" if torch.cuda.is_available() else "cpu")
-        print(f"[SciBERT] Using device: {self.device}")
-        self.model = AutoModel.from_pretrained(model_name).to(self.device)
-        self.tokenizer = AutoTokenizer.from_pretrained(model_name)
+        _log = logging.getLogger(__name__)
+        _log.info(f"[SciBERT] Loading '{model_name}' from local cache (device: {self.device})...")
+        self.model = AutoModel.from_pretrained(model_name, local_files_only=True).to(self.device)
+        self.tokenizer = AutoTokenizer.from_pretrained(model_name, local_files_only=True)
         self.model_name = "scibert"
         self.embedding_dim = 768  # SciBERT CLS-token output dimension
         self.batch_size = batch_size
+        _log.info(f"[SciBERT] Model + tokenizer loaded successfully (device: {self.device}, dim={self.embedding_dim}).")
 
     def extract_embeddings(self, texts, filenames=None, batch_size=None, desc="Extracting Embeddings"):
         """
