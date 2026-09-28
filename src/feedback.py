@@ -12,6 +12,9 @@ from project_config import (
     VALID_LABELS, FEEDBACK_FILE, FEEDBACK_DIR,
     RAW_TXTS_DIR, USEFUL_TXTS_DIR,
     RAW_PDFS_DIR, USEFUL_PDFS_DIR, 
+    EXTRACTED_RAW_TXTS_DIR, EXTRACTED_USEFUL_TXTS_DIR,
+    EXTRACTED_RAW_PDFS_DIR, EXTRACTED_USEFUL_PDFS_DIR,
+    PREPROCESSED_RAW_TEXTS_DIR, PREPROCESSED_USEFUL_TEXTS_DIR,
     MANUAL_CHECK_DIR,
     DATA_DIR,
 )
@@ -75,7 +78,9 @@ def _move_file(
     target_dir: Path, # target directory
     filename: str, # file name
 ) -> tuple[Path, bool]: # returns the target directory and a boolean indicating if the file was already in the target directory
-    """Move a file to the target directory.
+    """Move a file to the target directory. Also, the "derivative" files, such as text files corresponding to the input files, 
+    if the input files are PDFs, the corresponding text files are also moved to the target directory, 
+    if the input files are text files, the corresponding text files are also moved to the target directory.
 
     Returns:
         (target_directory, was_already_there) 
@@ -87,7 +92,23 @@ def _move_file(
 
     target_dir.mkdir(parents=True, exist_ok=True) # create the target directory if it doesn't exist
     shutil.move(str(file_path), target_dir / filename) # move the file from its current directory to the new directory
-    logger.info(f"[CORRECT] {filename}: {file_path.parent.name}/ → {target_dir.name}/") # log the file movement
+    logger.info(f"[CORRECT] {filename}: {file_path.parent.name}/ -> {target_dir.name}/") # log the file movement
+
+    # Sync derivative files
+    is_useful = "useful" in target_dir.name # check if the file is useful
+    txt_name = f"{Path(filename).stem}.txt" # get the name of the text file
+    pairs = [
+        (EXTRACTED_RAW_TXTS_DIR, EXTRACTED_USEFUL_TXTS_DIR), # pair of raw and useful text directories
+        (PREPROCESSED_RAW_TEXTS_DIR, PREPROCESSED_USEFUL_TEXTS_DIR), # pair of preprocessed raw and useful text directories
+        (EXTRACTED_RAW_PDFS_DIR, EXTRACTED_USEFUL_PDFS_DIR), # pair of raw and useful PDF directories
+    ]
+    for raw_d, useful_d in pairs: # iterates through the pairs of raw and useful directories
+        src, dst = (raw_d, useful_d) if is_useful else (useful_d, raw_d) # src is the source directory and dst is the destination directory 
+        if (src / txt_name).exists(): # check if the file exists in the source directory
+            dst.mkdir(parents=True, exist_ok=True) # create the destination directory if it doesn't exist
+            shutil.move(str(src / txt_name), str(dst / txt_name)) # move the file from its current directory to the new directory
+            logger.info(f"[CORRECT] {txt_name}: {src.name}/ -> {dst.name}/")
+
     return target_dir, False # returns the target directory and a boolean indicating if the file was already in the target directory
 
 def _log_to_jsonl(record: dict) -> None:
